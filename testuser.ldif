@@ -1,0 +1,15 @@
+dn: ou=users,dc=lfs-koeln,dc=local
+objectClass: organizationalUnit
+ou: users
+
+dn: uid=max.mustermann,ou=users,dc=lfs-koeln,dc=local
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: Max Mustermann
+sn: Mustermann
+uid: max.mustermann
+uidNumber: 1001
+gidNumber: 1001
+homeDirectory: /home/max.mustermann
+mail: max.mustermann@lfs-koeln.de
+userPassword: test123

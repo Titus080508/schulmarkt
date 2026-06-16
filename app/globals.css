@@ -1,0 +1,25 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+  .desktop-only { display: none !important; }
+  .mobile-only { display: flex !important; }
+  .grid-mobile { grid-template-columns: repeat(2, 1fr) !important; }
+  .detail-grid { grid-template-columns: 1fr !important; }
+  .hero-stats { display: none !important; }
+  .hero-padding { padding: 28px 16px !important; }
+  .main-padding { padding: 16px !important; }
+  .nav-links { display: none !important; }
+}
+
+@media (min-width: 641px) {
+  .mobile-only { display: none !important; }
+}
