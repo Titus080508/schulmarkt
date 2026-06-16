@@ -7,6 +7,7 @@ import ReportButton from '@/components/ReportButton'
 import ImageGallery from '@/components/ImageGallery'
 import SimilarPosts from '@/components/SimilarPosts'
 import Footer from '@/components/Footer'
+import SoldButton from '@/components/SoldButton'
 
 const categoryLabel: Record<string, string> = {
   calculator: 'Taschenrechner',
@@ -168,10 +169,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
                 </div>
               )}
               {isOwn && post.status === 'active' && (
-                <Link href={`/post/${id}/sold`}
-                  style={{ display: 'block', textAlign: 'center', background: '#f0fdf4', border: '1px solid #86efac', color: '#1a6e3a', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '10px', textDecoration: 'none' }}>
-                  Als verkauft markieren
-                </Link>
+                <SoldButton postId={id} />
               )}
             </div>
           </div>
