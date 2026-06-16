@@ -4,18 +4,24 @@ import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import DeleteButton from '@/components/DeleteButton'
 import Footer from '@/components/Footer'
+import SoldButton from '@/components/SoldButton'
 
 const categoryLabel: Record<string, string> = {
   calculator: 'Taschenrechner',
-  shirt: 'Sportshirt',
-  book: 'Schulbuch',
+  lfs_shirt: 'LFS Sportshirt',
+  clothing: 'Klamotten',
+  notebook: 'Schulhefte',
+  lecture: 'Lektüren',
+  supplies: 'Schulzubehör',
   other: 'Sonstiges'
 }
 const categoryEmoji: Record<string, string> = {
-  calculator: '🔢', shirt: '👕', book: '📚', other: '📦'
+  calculator: '🔢', lfs_shirt: '👕', clothing: '👗',
+  notebook: '📓', lecture: '📖', supplies: '✏️', other: '📦'
 }
 const categoryBg: Record<string, string> = {
-  calculator: '#edf2ff', shirt: '#fdf0f7', book: '#f0fdf4', other: '#fdf8f0'
+  calculator: '#edf2ff', lfs_shirt: '#fdf0f7', clothing: '#fdf0f7',
+  notebook: '#f0fdf4', lecture: '#f0fdf4', supplies: '#fdf8f0', other: '#f7f5f0'
 }
 
 export default async function MyPostsPage() {
@@ -87,7 +93,7 @@ export default async function MyPostsPage() {
                     <div style={{ padding: '12px' }}>
                       <p style={{ fontSize: '13px', fontWeight: 500, color: '#1a2040', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{post.title}</p>
                       <p style={{ fontSize: '15px', fontWeight: 500, color: '#1a3a6e', marginBottom: '10px' }}>{post.price.toFixed(2)} €</p>
-                      <div style={{ display: 'flex', gap: '6px' }}>
+                      <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
                         <Link href={`/post/${post.id}`}
                           style={{ flex: 1, background: '#f7f5f0', border: '1px solid #ddd', color: '#666', fontSize: '12px', fontWeight: 500, borderRadius: '4px', padding: '7px', textDecoration: 'none', textAlign: 'center' }}>
                           Ansehen
@@ -98,10 +104,7 @@ export default async function MyPostsPage() {
                         </Link>
                         <DeleteButton postId={post.id} />
                       </div>
-                      <Link href={`/post/${post.id}/sold`}
-                        style={{ display: 'block', textAlign: 'center', marginTop: '6px', background: '#f0fdf4', border: '1px solid #86efac', color: '#1a6e3a', fontSize: '12px', fontWeight: 500, borderRadius: '4px', padding: '7px', textDecoration: 'none' }}>
-                        Als verkauft markieren
-                      </Link>
+                      <SoldButton postId={post.id} />
                     </div>
                   </div>
                 ))}
