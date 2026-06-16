@@ -15,10 +15,18 @@ export default async function DashboardPage() {
     .eq('status', 'active')
     .order('created_at', { ascending: false })
 
+  const { data: allPosts } = await supabase
+    .from('posts')
+    .select('price, seller_id, status')
+    .eq('seller_id', user.id)
+
   const { data: profile } = await supabase
     .from('profiles').select('*').eq('id', user.id).single()
 
   const totalSellers = new Set(posts?.map(p => p.seller_id)).size
+  const verdient = allPosts
+    ?.filter(p => p.status === 'sold')
+    .reduce((sum, p) => sum + p.price, 0) || 0
 
   return (
     <>
@@ -47,8 +55,9 @@ export default async function DashboardPage() {
             <div className="hero-stats" style={{ display: 'flex', gap: '12px' }}>
               {[
                 { num: posts?.length || 0, label: 'Angebote' },
-                { num: 4, label: 'Kategorien' },
+                { num: 7, label: 'Kategorien' },
                 { num: totalSellers, label: 'Verkäufer' },
+                { num: `${verdient.toFixed(2)} €`, label: 'Verdient' },
               ].map(s => (
                 <div key={s.label} style={{ textAlign: 'center', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '12px 16px' }}>
                   <div style={{ fontSize: '22px', fontWeight: 500, color: '#f0c040' }}>{s.num}</div>
