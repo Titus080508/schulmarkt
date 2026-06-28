@@ -6,22 +6,29 @@ export default function ReportButton({ postId }: { postId: string }) {
   const [reason, setReason] = useState('')
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
+  const [error, setError] = useState('')
 
   async function handleReport() {
     if (!reason) return
     setLoading(true)
-    await fetch(`/report/${postId}`, {
+    setError('')
+    const res = await fetch(`/report/${postId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reason })
     })
     setLoading(false)
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setError(data.error || 'Meldung konnte nicht gesendet werden.')
+      return
+    }
     setDone(true)
     setOpen(false)
   }
 
   if (done) return (
-    <p style={{ fontSize: '12px', color: '#888', textAlign: 'center', marginTop: '8px' }}>
+    <p style={{ fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', marginTop: '8px' }}>
       Meldung wurde übermittelt.
     </p>
   )
@@ -31,7 +38,7 @@ export default function ReportButton({ postId }: { postId: string }) {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          style={{ width: '100%', background: 'none', border: '1px solid #ddd', color: '#aaa', fontSize: '12px', borderRadius: '6px', padding: '8px', cursor: 'pointer' }}
+          style={{ width: '100%', background: 'none', border: '1px solid var(--border-input)', color: 'var(--text-faint)', fontSize: '12px', borderRadius: '6px', padding: '8px', cursor: 'pointer' }}
         >
           Post melden
         </button>
@@ -42,7 +49,7 @@ export default function ReportButton({ postId }: { postId: string }) {
           <select
             value={reason}
             onChange={e => setReason(e.target.value)}
-            style={{ width: '100%', background: '#fff', border: '1px solid #ddd', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: '#444', outline: 'none', marginBottom: '10px', boxSizing: 'border-box' }}
+            style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: '#444', outline: 'none', marginBottom: '10px', boxSizing: 'border-box' }}
           >
             <option value="">Grund auswählen...</option>
             <option>Unangemessener Inhalt</option>
@@ -51,10 +58,13 @@ export default function ReportButton({ postId }: { postId: string }) {
             <option>Bereits verkauft</option>
             <option>Sonstiges</option>
           </select>
+          {error && (
+            <p style={{ fontSize: '12px', color: '#b91c1c', marginBottom: '10px' }}>{error}</p>
+          )}
           <div style={{ display: 'flex', gap: '8px' }}>
             <button
               onClick={() => setOpen(false)}
-              style={{ flex: 1, background: '#f7f5f0', border: '1px solid #ddd', color: '#666', fontSize: '13px', borderRadius: '6px', padding: '8px', cursor: 'pointer' }}
+              style={{ flex: 1, background: 'var(--bg-page)', border: '1px solid var(--border-input)', color: 'var(--text-secondary)', fontSize: '13px', borderRadius: '6px', padding: '8px', cursor: 'pointer' }}
             >
               Abbrechen
             </button>

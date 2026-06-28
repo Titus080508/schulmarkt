@@ -6,7 +6,7 @@ export default function Footer() {
       </p>
       <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
         Bei Fragen und Anmerkungen bitte eine E-Mail an{' '}
-        <a href="mailto:tituskullmann@icloud.com"
+        <a href="mailto:tituskullmann@icloud.com" className="link-modern"
           style={{ color: '#f0c040', textDecoration: 'none' }}>
           tituskullmann@icloud.com
         </a>{' '}

@@ -4,6 +4,39 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 
+function BellIcon({ size = 17, color = 'currentColor' }: { size?: number, color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 8a6 6 0 1 1 12 0c0 3.2 1 5 2 6.5H4C5 13 6 11.2 6 8Z" />
+      <path d="M9.5 18.5a2.5 2.5 0 0 0 5 0" />
+    </svg>
+  )
+}
+
+function ChatIcon({ size = 17, color = 'currentColor' }: { size?: number, color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12c0 4.4-4 8-9 8-1.1 0-2.2-.2-3.1-.5L4 21l1.2-4C4.4 15.7 3 14 3 12c0-4.4 4-8 9-8s9 3.6 9 8Z" />
+    </svg>
+  )
+}
+
+function MenuLineIcon({ d, size = 15, color = 'currentColor' }: { d: string, size?: number, color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+      <path d={d} />
+    </svg>
+  )
+}
+
+const navIcons = {
+  profile: 'M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z M4.5 20.5c1-3.5 4-5.5 7.5-5.5s6.5 2 7.5 5.5',
+  heart: 'M12 20.5s-7.5-4.6-9.8-9.1C.7 8.1 2.2 5 5.4 4.3c2-.4 3.8.5 4.9 2.1.2.3.6.3.8 0 1.1-1.6 2.9-2.5 4.9-2.1 3.2.7 4.7 3.8 3.2 7.1-2.3 4.5-9.8 9.1-9.8 9.1Z',
+  list: 'M8 6h12M8 12h12M8 18h12 M4 6h.01M4 12h.01M4 18h.01',
+  admin: 'M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z',
+  logout: 'M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4 M16 16l4-4-4-4 M20 12H9'
+}
+
 export default function Navbar({ username }: { username?: string }) {
   const router = useRouter()
   const supabase = createClient()
@@ -18,6 +51,15 @@ export default function Navbar({ username }: { username?: string }) {
   const chatRef = useRef<HTMLDivElement>(null)
   const notifRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    function handleScroll() {
+      setScrolled(window.scrollY > 10)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   async function loadData() {
     const { data: { user } } = await supabase.auth.getUser()
@@ -26,6 +68,13 @@ export default function Navbar({ username }: { username?: string }) {
     const { data: profile } = await supabase
       .from('profiles').select('*').eq('id', user.id).single()
     setIsAdmin(profile?.is_admin || false)
+
+    if (profile?.suspended) {
+      sessionStorage.setItem('suspended_reason', profile.suspended_reason || '')
+      await supabase.auth.signOut()
+      router.push('/suspended')
+      return
+    }
 
     const { data: msgs } = await supabase
       .from('messages')
@@ -115,101 +164,84 @@ export default function Navbar({ username }: { username?: string }) {
   }
 
   return (
-    <nav style={{ background: '#1a3a6e', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: '54px', position: 'sticky', top: 0, zIndex: 50 }}>
-      <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
-        <div style={{ fontSize: '16px', fontWeight: 500, color: '#fff', letterSpacing: '0.01em', lineHeight: 1.2 }}>
-          LFS Köln
-          <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', display: 'block' }}>Liebfrauenschule</span>
-        </div>
-        <div style={{ width: '1px', height: '28px', background: 'rgba(255,255,255,0.2)' }} />
-        <div style={{ fontSize: '15px', fontWeight: 500, color: '#f0c040' }}>Markt</div>
+    <nav className={`navbar-modern${scrolled ? ' scrolled' : ''}`} style={{ background: '#1a3a6e', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', height: '56px', position: 'sticky', top: 0, zIndex: 50 }}>
+      <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
+        <span style={{ fontSize: '16px', fontWeight: 600, color: '#fff', letterSpacing: '0.01em' }}>LFS</span>
+        <span style={{ fontSize: '16px', fontWeight: 600, color: '#f0c040' }}>Markt</span>
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {username && (
-            <Link href="/my-posts" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', padding: '6px 12px', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px' }}>
-              Meine Inserate
-            </Link>
-          )}
-          {isAdmin && (
-            <Link href="/admin" style={{ fontSize: '12px', color: '#f0c040', textDecoration: 'none', padding: '6px 12px', border: '1px solid rgba(240,192,64,0.3)', borderRadius: '4px' }}>
-              Admin
-            </Link>
-          )}
-        </div>
-
         <div style={{ position: 'relative' }} ref={notifRef}>
-          <button onClick={() => { setNotifOpen(!notifOpen); if (!notifOpen) markNotifsRead() }}
-            style={{ position: 'relative', width: '36px', height: '36px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '16px' }}>
-            🔔
+          <button onClick={() => { setNotifOpen(!notifOpen); if (!notifOpen) markNotifsRead() }} className="icon-btn-modern"
+            style={{ position: 'relative', width: '36px', height: '36px', background: 'transparent', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}>
+            <BellIcon size={17} />
             {unreadNotifs > 0 && (
-              <div style={{ position: 'absolute', top: '-3px', right: '-3px', width: '16px', height: '16px', background: '#e05252', borderRadius: '50%', fontSize: '9px', fontWeight: 500, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #1a3a6e' }}>
-                {unreadNotifs}
-              </div>
+              <div className="icon-badge-modern" style={{ position: 'absolute', top: '2px', right: '2px', width: '8px', height: '8px', background: '#e05252', borderRadius: '50%', border: '2px solid #1a3a6e' }} />
             )}
           </button>
           {notifOpen && (
-            <div style={{ position: 'fixed', top: '58px', right: '8px', width: 'min(320px, calc(100vw - 16px))', background: '#fff', border: '1px solid #e0dcd4', borderRadius: '10px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden' }}>
-              <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0ece4' }}>
-                <span style={{ fontSize: '14px', fontWeight: 500, color: '#1a3a6e' }}>Benachrichtigungen</span>
+            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: 'min(320px, calc(100vw - 16px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: '0 12px 28px rgba(0,0,0,0.14)', zIndex: 100, overflow: 'hidden' }}>
+              <div style={{ padding: '13px 16px', borderBottom: '1px solid var(--border-light)' }}>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Benachrichtigungen</span>
               </div>
-              {notifications.length === 0 && (
-                <div style={{ padding: '20px', textAlign: 'center', color: '#aaa', fontSize: '13px' }}>Keine Benachrichtigungen</div>
-              )}
-              {notifications.map(notif => (
-                <div key={notif.id} onClick={() => { if (notif.link) router.push(notif.link); setNotifOpen(false) }}
-                  style={{ padding: '12px 16px', borderBottom: '1px solid #f7f5f0', cursor: notif.link ? 'pointer' : 'default', background: notif.read ? '#fff' : '#fafbff' }}>
-                  <p style={{ fontSize: '13px', color: '#1a2040', lineHeight: 1.5 }}>{notif.message}</p>
-                  <p style={{ fontSize: '11px', color: '#bbb', marginTop: '4px' }}>{formatTime(notif.created_at)}</p>
-                </div>
-              ))}
+              <div style={{ maxHeight: '360px', overflowY: 'auto' }}>
+                {notifications.length === 0 && (
+                  <div style={{ padding: '28px 16px', textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px' }}>Keine Benachrichtigungen</div>
+                )}
+                {notifications.map(notif => (
+                  <div key={notif.id} onClick={() => { if (notif.link) router.push(notif.link); setNotifOpen(false) }} className="nav-menu-item"
+                    style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-light)', cursor: notif.link ? 'pointer' : 'default', background: notif.read ? 'transparent' : 'var(--bg-page)' }}>
+                    <p style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.5, margin: 0 }}>{notif.message}</p>
+                    <p style={{ fontSize: '11px', color: 'var(--text-faint)', marginTop: '4px', margin: 0 }}>{formatTime(notif.created_at)}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
 
         <div style={{ position: 'relative' }} ref={chatRef}>
-          <button onClick={() => setChatOpen(!chatOpen)}
-            style={{ position: 'relative', width: '36px', height: '36px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '16px' }}>
-            💬
+          <button onClick={() => setChatOpen(!chatOpen)} className="icon-btn-modern"
+            style={{ position: 'relative', width: '36px', height: '36px', background: 'transparent', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}>
+            <ChatIcon size={17} />
             {unread > 0 && (
-              <div style={{ position: 'absolute', top: '-3px', right: '-3px', width: '16px', height: '16px', background: '#e05252', borderRadius: '50%', fontSize: '9px', fontWeight: 500, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #1a3a6e' }}>
-                {unread}
-              </div>
+              <div className="icon-badge-modern" style={{ position: 'absolute', top: '2px', right: '2px', width: '8px', height: '8px', background: '#e05252', borderRadius: '50%', border: '2px solid #1a3a6e' }} />
             )}
           </button>
           {chatOpen && (
-            <div style={{ position: 'fixed', top: '58px', right: '8px', width: 'min(300px, calc(100vw - 16px))', background: '#fff', border: '1px solid #e0dcd4', borderRadius: '10px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden' }}>
-              <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0ece4', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '14px', fontWeight: 500, color: '#1a3a6e' }}>Nachrichten</span>
-                {unread > 0 && <span style={{ background: '#eef2f8', color: '#1a3a6e', fontSize: '11px', padding: '2px 8px', borderRadius: '3px' }}>{unread} neu</span>}
+            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: 'min(300px, calc(100vw - 16px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: '0 12px 28px rgba(0,0,0,0.14)', zIndex: 100, overflow: 'hidden' }}>
+              <div style={{ padding: '13px 16px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Nachrichten</span>
+                {unread > 0 && <span style={{ background: '#eef2f8', color: '#1a3a6e', fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '999px' }}>{unread} neu</span>}
               </div>
-              {chats.length === 0 && (
-                <div style={{ padding: '20px', textAlign: 'center', color: '#aaa', fontSize: '13px' }}>Noch keine Nachrichten</div>
-              )}
-              {chats.map(chat => (
-                <div key={chat.otherId} onClick={() => openChat(chat.otherId)}
-                  style={{ padding: '11px 16px', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', borderBottom: '1px solid #f7f5f0', background: chat.unread > 0 ? '#fafbff' : '#fff' }}>
-                  <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#eef2f8', border: '1px solid #c8d4e8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 500, color: '#1a3a6e', flexShrink: 0 }}>
-                    {chat.otherName?.[0]?.toUpperCase()}
+              <div style={{ maxHeight: '360px', overflowY: 'auto' }}>
+                {chats.length === 0 && (
+                  <div style={{ padding: '28px 16px', textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px' }}>Noch keine Nachrichten</div>
+                )}
+                {chats.map(chat => (
+                  <div key={chat.otherId} onClick={() => openChat(chat.otherId)} className="nav-menu-item"
+                    style={{ padding: '11px 16px', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', borderBottom: '1px solid var(--border-light)', background: chat.unread > 0 ? 'var(--bg-page)' : 'transparent' }}>
+                    <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#eef2f8', border: '1px solid #c8d4e8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600, color: '#1a3a6e', flexShrink: 0 }}>
+                      {chat.otherName?.[0]?.toUpperCase()}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '2px' }}>{chat.otherName}</div>
+                      <div style={{ fontSize: '11px', color: 'var(--text-faint)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{chat.lastMsg}</div>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontSize: '10px', color: 'var(--text-faint)', marginBottom: '3px' }}>{formatTime(chat.time)}</div>
+                      {chat.unread > 0 && (
+                        <div style={{ width: '18px', height: '18px', background: '#1a3a6e', borderRadius: '50%', fontSize: '10px', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 'auto' }}>
+                          {chat.unread}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '13px', fontWeight: 500, color: '#1a2040', marginBottom: '2px' }}>{chat.otherName}</div>
-                    <div style={{ fontSize: '11px', color: '#aaa', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{chat.lastMsg}</div>
-                  </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontSize: '10px', color: '#ccc', marginBottom: '3px' }}>{formatTime(chat.time)}</div>
-                    {chat.unread > 0 && (
-                      <div style={{ width: '18px', height: '18px', background: '#1a3a6e', borderRadius: '50%', fontSize: '10px', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 'auto' }}>
-                        {chat.unread}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-              <div style={{ padding: '10px 16px', borderTop: '1px solid #f0ece4' }}>
+                ))}
+              </div>
+              <div style={{ padding: '10px 16px', borderTop: '1px solid var(--border-light)' }}>
                 <Link href="/my-posts" onClick={() => setChatOpen(false)}
-                  style={{ display: 'block', textAlign: 'center', fontSize: '12px', color: '#1a3a6e', textDecoration: 'none', fontWeight: 500 }}>
+                  style={{ display: 'block', textAlign: 'center', fontSize: '12px', color: '#1a3a6e', textDecoration: 'none', fontWeight: 600 }}>
                   Meine Inserate ansehen
                 </Link>
               </div>
@@ -218,31 +250,45 @@ export default function Navbar({ username }: { username?: string }) {
         </div>
 
         <div style={{ position: 'relative' }} ref={menuRef}>
-          <button onClick={() => setMenuOpen(!menuOpen)}
-            style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#f0c040', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 500, color: '#1a3a6e', cursor: 'pointer' }}>
-            {username?.[0]?.toUpperCase()}
+          <button onClick={() => setMenuOpen(!menuOpen)} className="icon-btn-modern burger-btn" aria-label="Menü"
+            style={{ width: '36px', height: '36px', borderRadius: '50%', background: menuOpen ? 'rgba(255,255,255,0.18)' : 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            <span className={`burger-icon${menuOpen ? ' open' : ''}`}>
+              <span /><span /><span />
+            </span>
           </button>
           {menuOpen && (
-            <div style={{ position: 'fixed', top: '58px', right: '8px', width: '180px', background: '#fff', border: '1px solid #e0dcd4', borderRadius: '10px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 100, overflow: 'hidden' }}>
-              <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0ece4' }}>
-                <p style={{ fontSize: '13px', fontWeight: 500, color: '#1a2040' }}>{username}</p>
+            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: '210px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: '0 12px 28px rgba(0,0,0,0.14)', zIndex: 100, overflow: 'hidden' }}>
+              <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#f0c040', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600, color: '#1a3a6e', flexShrink: 0 }}>
+                  {username?.[0]?.toUpperCase()}
+                </span>
+                <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{username}</p>
               </div>
-              <Link href="/profile" onClick={() => setMenuOpen(false)}
-                style={{ display: 'block', padding: '11px 16px', fontSize: '13px', color: '#1a2040', textDecoration: 'none', borderBottom: '1px solid #f7f5f0' }}>
+              <Link href="/profile" onClick={() => setMenuOpen(false)} className="nav-menu-item"
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', fontSize: '13px', color: 'var(--text-primary)', textDecoration: 'none' }}>
+                <MenuLineIcon d={navIcons.profile} color="var(--text-faint)" />
                 Mein Profil
               </Link>
-              <Link href="/my-posts" onClick={() => setMenuOpen(false)}
-                style={{ display: 'block', padding: '11px 16px', fontSize: '13px', color: '#1a2040', textDecoration: 'none', borderBottom: '1px solid #f7f5f0' }}>
+              <Link href="/favorites" onClick={() => setMenuOpen(false)} className="nav-menu-item"
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', fontSize: '13px', color: 'var(--text-primary)', textDecoration: 'none' }}>
+                <MenuLineIcon d={navIcons.heart} color="var(--text-faint)" />
+                Favoriten
+              </Link>
+              <Link href="/my-posts" onClick={() => setMenuOpen(false)} className="nav-menu-item"
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', fontSize: '13px', color: 'var(--text-primary)', textDecoration: 'none' }}>
+                <MenuLineIcon d={navIcons.list} color="var(--text-faint)" />
                 Meine Inserate
               </Link>
               {isAdmin && (
-                <Link href="/admin" onClick={() => setMenuOpen(false)}
-                  style={{ display: 'block', padding: '11px 16px', fontSize: '13px', color: '#f0c040', textDecoration: 'none', borderBottom: '1px solid #f7f5f0', background: '#1a3a6e' }}>
-                  Admin
+                <Link href="/admin" onClick={() => setMenuOpen(false)} className="nav-menu-item"
+                  style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', fontSize: '13px', color: '#1a3a6e', fontWeight: 600, textDecoration: 'none' }}>
+                  <MenuLineIcon d={navIcons.admin} color="#1a3a6e" />
+                  Admin-Bereich
                 </Link>
               )}
-              <button onClick={logout}
-                style={{ width: '100%', padding: '11px 16px', fontSize: '13px', color: '#b91c1c', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer' }}>
+              <button onClick={logout} className="nav-menu-item"
+                style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', fontSize: '13px', color: '#b91c1c', background: 'none', border: 'none', borderTop: '1px solid var(--border-light)', textAlign: 'left', cursor: 'pointer' }}>
+                <MenuLineIcon d={navIcons.logout} color="#b91c1c" />
                 Abmelden
               </button>
             </div>

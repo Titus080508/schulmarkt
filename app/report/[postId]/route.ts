@@ -18,11 +18,15 @@ export async function POST(
   const { data: post } = await supabase
     .from('posts').select('title, seller_id').eq('id', postId).single()
 
-  await supabase.from('reports').insert({
+  const { error: insertError } = await supabase.from('reports').insert({
     post_id: postId,
     reporter_id: user.id,
     reason
   })
+
+  if (insertError) {
+    return NextResponse.json({ error: insertError.message }, { status: 400 })
+  }
 
   const { data: admins } = await supabase
     .from('profiles').select('id').eq('is_admin', true)

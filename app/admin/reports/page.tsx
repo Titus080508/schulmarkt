@@ -29,14 +29,14 @@ export default async function AdminReportsPage() {
   return (
     <>
       <Navbar username={profile?.display_name || profile?.username} />
-      <main style={{ background: '#f7f5f0', minHeight: '100vh', padding: '24px 20px' }}>
+      <main style={{ background: 'var(--bg-page)', minHeight: '100vh', padding: '24px 20px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
             <Link href="/admin" style={{ fontSize: '13px', color: '#1a3a6e', textDecoration: 'none' }}>← Admin</Link>
             <div>
               <h1 style={{ fontSize: '20px', fontWeight: 500, color: '#1a3a6e' }}>Alle Meldungen</h1>
-              <p style={{ fontSize: '13px', color: '#888', marginTop: '2px' }}>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
                 {openReports?.length || 0} offen · {resolvedReports?.length || 0} erledigt
               </p>
             </div>
@@ -47,35 +47,35 @@ export default async function AdminReportsPage() {
           )}
 
           {openReports?.length === 0 && (
-            <div style={{ background: '#fff', border: '1px solid #e0dcd4', borderRadius: '10px', padding: '40px', textAlign: 'center', marginBottom: '20px' }}>
-              <p style={{ color: '#aaa', fontSize: '14px' }}>Keine offenen Meldungen.</p>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '40px', textAlign: 'center', marginBottom: '20px' }}>
+              <p style={{ color: 'var(--text-faint)', fontSize: '14px' }}>Keine offenen Meldungen.</p>
             </div>
           )}
 
           {resolvedReports && resolvedReports.length > 0 && (
-            <div style={{ background: '#fff', border: '1px solid #e0dcd4', borderRadius: '10px', overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid #e0dcd4', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <p style={{ fontSize: '14px', fontWeight: 500, color: '#888' }}>Erledigte Meldungen</p>
-                <span style={{ fontSize: '12px', color: '#aaa', background: '#f7f5f0', padding: '2px 8px', borderRadius: '3px' }}>{resolvedReports.length} gesamt</span>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-muted)' }}>Erledigte Meldungen</p>
+                <span style={{ fontSize: '12px', color: 'var(--text-faint)', background: 'var(--bg-page)', padding: '2px 8px', borderRadius: '3px' }}>{resolvedReports.length} gesamt</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '480px', overflowY: 'auto' }}>
                 {resolvedReports.map(report => (
-                  <div key={report.id} style={{ padding: '14px 20px', borderBottom: '1px solid #f0ece4', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', opacity: 0.7 }}>
+                  <div key={report.id} style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', opacity: 0.7 }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
                         <span style={{ fontSize: '11px', background: '#f0fdf4', color: '#1a6e3a', padding: '2px 8px', borderRadius: '3px', fontWeight: 500 }}>Erledigt</span>
-                        <span style={{ fontSize: '11px', color: '#aaa' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--text-faint)' }}>
                           {new Date(report.created_at).toLocaleDateString('de-DE')}
                         </span>
                       </div>
-                      <p style={{ fontSize: '13px', fontWeight: 500, color: '#1a2040', marginBottom: '3px' }}>
+                      <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '3px' }}>
                         Post: <Link href={`/post/${report.post_id}`} style={{ color: '#1a3a6e', textDecoration: 'none' }}>{report.post?.title}</Link>
                       </p>
-                      <p style={{ fontSize: '13px', color: '#666', marginBottom: '3px' }}>
+                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '3px' }}>
                         Gemeldet von: <strong>{report.reporter?.display_name || report.reporter?.username}</strong>
-                        <span style={{ color: '#aaa', fontSize: '11px' }}> (@{report.reporter?.username})</span>
+                        <span style={{ color: 'var(--text-faint)', fontSize: '11px' }}> (@{report.reporter?.username})</span>
                       </p>
-                      <p style={{ fontSize: '13px', color: '#888' }}>
+                      <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
                         Grund: {report.reason}
                       </p>
                     </div>

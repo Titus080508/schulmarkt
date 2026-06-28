@@ -61,42 +61,53 @@ export default function LoginPage() {
       <div style={{
         marginLeft: 'auto', width: '100%',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: '#f7f5f0', padding: '40px 20px', minHeight: '100vh'
+        background: 'var(--bg-page)', padding: '40px 20px', minHeight: '100vh'
       }}>
         <div className="desktop-only" style={{ width: '55%' }} />
         <div style={{ width: '100%', maxWidth: '420px' }}>
           <h1 style={{ fontSize: '22px', fontWeight: 500, color: '#1a3a6e', marginBottom: '6px' }}>Anmelden</h1>
-          <p style={{ fontSize: '13px', color: '#888', marginBottom: '28px' }}>Mit deinem Schulaccount einloggen</p>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '28px' }}>Mit deinem Schulaccount einloggen</p>
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ fontSize: '13px', color: '#444', display: 'block', marginBottom: '6px', fontWeight: 500 }}>Benutzername</label>
-            <input type="text" value={username} onChange={e => setUsername(e.target.value)}
-              style={{ width: '100%', background: '#fff', border: '1px solid #ddd', borderRadius: '6px', padding: '12px 14px', color: '#1a2040', fontSize: '16px', outline: 'none', boxSizing: 'border-box' }}
-              placeholder="max.mustermann" />
+            <input type="text" value={username} onChange={e => setUsername(e.target.value)} className="input-modern"
+              style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '12px 14px', color: 'var(--text-primary)', fontSize: '16px', outline: 'none', boxSizing: 'border-box' }}
+              placeholder="z.B. 26kut" />
           </div>
 
           <div style={{ marginBottom: '20px' }}>
             <label style={{ fontSize: '13px', color: '#444', display: 'block', marginBottom: '6px', fontWeight: 500 }}>Passwort</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleLogin()}
-              style={{ width: '100%', background: '#fff', border: '1px solid #ddd', borderRadius: '6px', padding: '12px 14px', color: '#1a2040', fontSize: '16px', outline: 'none', boxSizing: 'border-box' }}
+              onKeyDown={e => e.key === 'Enter' && handleLogin()} className="input-modern"
+              style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '12px 14px', color: 'var(--text-primary)', fontSize: '16px', outline: 'none', boxSizing: 'border-box' }}
               placeholder="••••••••" />
           </div>
 
           {error && (
-            <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', color: '#b91c1c', marginBottom: '16px' }}>
+            <div className="fade-in-up" style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', color: '#b91c1c', marginBottom: '16px' }}>
               {error}
             </div>
           )}
 
-          <button onClick={handleLogin} disabled={loading}
+          <button onClick={handleLogin} disabled={loading} className="btn-modern"
             style={{ width: '100%', background: loading ? '#7a9ab8' : '#1a3a6e', color: '#fff', fontSize: '15px', fontWeight: 500, border: 'none', borderRadius: '6px', padding: '14px', cursor: 'pointer' }}>
             {loading ? 'Anmelden...' : 'Anmelden'}
           </button>
 
-          <p style={{ textAlign: 'center', fontSize: '13px', color: '#888', marginTop: '16px' }}>
+          <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)', marginTop: '16px' }}>
             Noch kein Account?{' '}
-            <Link href="/register" style={{ color: '#1a3a6e', textDecoration: 'none', fontWeight: 500 }}>Registrieren</Link>
+            <Link href="/register" className="link-modern" style={{ color: '#1a3a6e', textDecoration: 'none', fontWeight: 500 }}>Registrieren</Link>
+          </p>
+
+          <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-faint)', marginTop: '28px' }}>
+            Probleme beim Anmelden?{' '}
+            <a href="mailto:tituskullmann@icloud.com" className="link-modern" style={{ color: 'var(--text-faint)', textDecoration: 'underline' }}>
+              tituskullmann@icloud.com
+            </a>
+          </p>
+
+          <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-faint)', marginTop: '6px' }}>
+            Erstellt von Titus Kullmann
           </p>
         </div>
       </div>

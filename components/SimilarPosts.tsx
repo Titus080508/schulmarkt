@@ -1,11 +1,15 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
+import CategoryIcon from './CategoryIcon'
 
 const categoryBg: Record<string, string> = {
-  calculator: '#edf2ff', shirt: '#fdf0f7', book: '#f0fdf4', other: '#fdf8f0'
-}
-const categoryEmoji: Record<string, string> = {
-  calculator: '🔢', shirt: '👕', book: '📚', other: '📦'
+  calculator: '#edf2ff',
+  lfs_shirt: '#fdf0f7',
+  clothing: '#fdf0f7',
+  notebook: '#f0fdf4',
+  lecture: '#f0fdf4',
+  supplies: '#fdf8f0',
+  other: '#f7f5f0'
 }
 
 export default async function SimilarPosts({ postId, category }: { postId: string, category: string }) {
@@ -16,6 +20,7 @@ export default async function SimilarPosts({ postId, category }: { postId: strin
     .select('*, profiles(username, display_name)')
     .eq('category', category)
     .eq('status', 'active')
+    .is('deleted_at', null)
     .neq('id', postId)
     .limit(4)
 
@@ -30,20 +35,23 @@ export default async function SimilarPosts({ postId, category }: { postId: strin
         <div style={{ flex: 1, height: '1px', background: '#e0dcd4' }} />
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '10px' }}>
-        {posts.map(post => (
-          <Link key={post.id} href={`/post/${post.id}`}
-            style={{ textDecoration: 'none', background: '#fff', border: '1px solid #e0dcd4', borderRadius: '8px', overflow: 'hidden', display: 'block' }}>
-            <div style={{ aspectRatio: '4/3', background: categoryBg[post.category] || '#f7f5f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px' }}>
+        {posts.map((post, i) => (
+          <Link key={post.id} href={`/post/${post.id}`} className="post-card-modern"
+            style={{ animationDelay: `${i * 60}ms`, textDecoration: 'none', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden', display: 'block' }}>
+            <div className="post-image-modern" style={{ aspectRatio: '4/3', background: categoryBg[post.category] || '#f7f5f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {post.image_url
                 ? <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                : categoryEmoji[post.category]
+                : <CategoryIcon category={post.category} size={28} color="#b8c4d4" />
               }
             </div>
             <div style={{ padding: '10px 12px' }}>
-              <p style={{ fontSize: '12px', fontWeight: 500, color: '#1a2040', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{post.title}</p>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
-                <span style={{ fontSize: '14px', fontWeight: 500, color: '#1a3a6e' }}>{post.price.toFixed(2)} €</span>
-                <span style={{ fontSize: '10px', color: '#bbb' }}>{post.profiles?.display_name || post.profiles?.username}</span>
+              <p style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{post.title}</p>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px', gap: '6px' }}>
+                {post.price === 0
+                  ? <span style={{ fontSize: '10px', fontWeight: 600, color: '#1a6e3a', background: '#f0fdf4', padding: '3px 7px', borderRadius: '4px', whiteSpace: 'nowrap', flexShrink: 0 }}>🎁 Verschenken</span>
+                  : <span style={{ fontSize: '14px', fontWeight: 500, color: '#1a3a6e', flexShrink: 0 }}>{post.price.toFixed(2)} €</span>
+                }
+                <span style={{ fontSize: '10px', color: 'var(--text-faint)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.profiles?.display_name || post.profiles?.username}</span>
               </div>
             </div>
           </Link>

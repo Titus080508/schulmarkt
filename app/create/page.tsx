@@ -3,16 +3,32 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import Navbar from '@/components/Navbar'
+import PostPreview from '@/components/PostPreview'
+import { compressImage } from '@/utils/compressImage'
+import CategoryIcon from '@/components/CategoryIcon'
 
-const inputStyle = { width: '100%', background: '#f7f5f0', border: '1px solid #ddd', borderRadius: '6px', padding: '10px 14px', color: '#1a2040', fontSize: '14px', outline: 'none', boxSizing: 'border-box' as const }
-const labelStyle = { fontSize: '13px', color: '#444', display: 'block', marginBottom: '6px', fontWeight: 500 as const }
-const selectStyle = { ...inputStyle, cursor: 'pointer' }
-const sectionStyle = { background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column' as const, gap: '12px' }
+const inputStyle = { width: '100%', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '10px 14px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none', boxSizing: 'border-box' as const }
+const labelStyle = { fontSize: '13px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 500 as const }
+const selectStyle = {
+  ...inputStyle,
+  cursor: 'pointer',
+  appearance: 'none' as const,
+  WebkitAppearance: 'none' as const,
+  MozAppearance: 'none' as const,
+  paddingRight: '34px',
+  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'right 12px center'
+}
+const sectionStyle = { background: 'var(--bg-page)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column' as const, gap: '12px' }
+const sectionTitleStyle = { fontSize: '11px', fontWeight: 700, color: '#1a3a6e', textTransform: 'uppercase' as const, letterSpacing: '0.06em', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }
 
 export default function CreatePostPage() {
   const [title, setTitle]           = useState('')
   const [desc, setDesc]             = useState('')
   const [price, setPrice]           = useState('')
+  const [isFree, setIsFree]         = useState(false)
+  const [showFreeHint, setShowFreeHint] = useState(false)
   const [category, setCategory]     = useState('calculator')
   const [images, setImages]         = useState<File[]>([])
   const [previews, setPreviews]     = useState<string[]>([])
@@ -56,11 +72,12 @@ export default function CreatePostPage() {
   const router = useRouter()
   const supabase = createClient()
 
-  function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleImages(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || [])
     if (files.length + images.length > 5) { setError('Maximal 5 Bilder erlaubt'); return }
-    setImages(prev => [...prev, ...files])
-    setPreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))])
+    const compressed = await Promise.all(files.map(f => compressImage(f)))
+    setImages(prev => [...prev, ...compressed])
+    setPreviews(prev => [...prev, ...compressed.map(f => URL.createObjectURL(f))])
   }
 
   function removeImage(index: number) {
@@ -68,8 +85,14 @@ export default function CreatePostPage() {
     setPreviews(prev => prev.filter((_, i) => i !== index))
   }
 
+  function handlePriceChange(value: string) {
+    setPrice(value)
+    const num = parseFloat(value)
+    setShowFreeHint(!isFree && value !== '' && !isNaN(num) && num > 0 && num < 0.5)
+  }
+
   async function handleCreate() {
-    if (!title || !price) { setError('Titel und Preis sind Pflichtfelder'); return }
+    if (!title || (!isFree && !price)) { setError('Titel und Preis sind Pflichtfelder'); return }
     setLoading(true); setError('')
 
     const { data: { user } } = await supabase.auth.getUser()
@@ -94,7 +117,7 @@ export default function CreatePostPage() {
       category === 'supplies'   ? { zubehoerTyp, zubehoerZustand } : {}
 
     const { data: post, error: insertError } = await supabase.from('posts').insert({
-      title, description: desc, price: parseFloat(price),
+      title, description: desc, price: isFree ? 0 : parseFloat(price),
       category, seller_id: user.id,
       image_url: uploadedUrls[0] || null,
       extras: JSON.stringify(extras)
@@ -112,12 +135,14 @@ export default function CreatePostPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f7f5f0' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-page)' }}>
       <Navbar />
-      <main style={{ maxWidth: '540px', margin: '0 auto', padding: '24px 20px' }}>
-        <h1 style={{ fontSize: '20px', fontWeight: 500, color: '#1a3a6e', marginBottom: '20px' }}>Artikel inserieren</h1>
+      <main style={{ maxWidth: '820px', margin: '0 auto', padding: '24px 20px' }}>
+        <h1 style={{ fontSize: '21px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>Artikel inserieren</h1>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>Fülle die Details aus — rechts siehst du eine Live-Vorschau.</p>
 
-        <div style={{ background: '#fff', border: '1px solid #e0dcd4', borderRadius: '10px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="create-layout" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, minWidth: 0 }}>
 
           <div>
             <label style={labelStyle}>Titel *</label>
@@ -139,7 +164,7 @@ export default function CreatePostPage() {
 
           {category === 'calculator' && (
             <div style={sectionStyle}>
-              <p style={{ fontSize: '12px', fontWeight: 500, color: '#1a3a6e', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Taschenrechner Details</p>
+              <p style={sectionTitleStyle}><CategoryIcon category="calculator" size={13} />Taschenrechner Details</p>
               <div><label style={labelStyle}>Akkukapazität</label>
                 <select value={akkuKap} onChange={e => setAkkuKap(e.target.value)} style={selectStyle}>
                   <option value="">Bitte wählen...</option>
@@ -178,7 +203,7 @@ export default function CreatePostPage() {
 
           {category === 'lfs_shirt' && (
             <div style={sectionStyle}>
-              <p style={{ fontSize: '12px', fontWeight: 500, color: '#1a3a6e', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>LFS Sportshirt Details</p>
+              <p style={sectionTitleStyle}><CategoryIcon category="lfs_shirt" size={13} />LFS Sportshirt Details</p>
               <div><label style={labelStyle}>Geschlecht</label>
                 <select value={geschlecht} onChange={e => setGeschlecht(e.target.value)} style={selectStyle}>
                   <option value="">Bitte wählen...</option>
@@ -202,7 +227,7 @@ export default function CreatePostPage() {
 
           {category === 'clothing' && (
             <div style={sectionStyle}>
-              <p style={{ fontSize: '12px', fontWeight: 500, color: '#1a3a6e', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Klamotten Details</p>
+              <p style={sectionTitleStyle}><CategoryIcon category="clothing" size={13} />Klamotten Details</p>
               <div><label style={labelStyle}>Art der Kleidung</label>
                 <select value={kleidungTyp} onChange={e => setKleidungTyp(e.target.value)} style={selectStyle}>
                   <option value="">Bitte wählen...</option>
@@ -235,7 +260,7 @@ export default function CreatePostPage() {
 
           {category === 'notebook' && (
             <div style={sectionStyle}>
-              <p style={{ fontSize: '12px', fontWeight: 500, color: '#1a3a6e', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Schulheft Details</p>
+              <p style={sectionTitleStyle}><CategoryIcon category="notebook" size={13} />Schulheft Details</p>
               <div><label style={labelStyle}>Fach</label>
                 <select value={heftFach} onChange={e => setHeftFach(e.target.value)} style={selectStyle}>
                   <option value="">Bitte wählen...</option>
@@ -261,7 +286,7 @@ export default function CreatePostPage() {
 
           {category === 'lecture' && (
             <div style={sectionStyle}>
-              <p style={{ fontSize: '12px', fontWeight: 500, color: '#1a3a6e', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Lektüre Details</p>
+              <p style={sectionTitleStyle}><CategoryIcon category="lecture" size={13} />Lektüre Details</p>
               <div><label style={labelStyle}>Titel des Buches</label>
                 <input type="text" value={lektuereTitel} onChange={e => setLektuereTitel(e.target.value)} style={inputStyle} placeholder="z.B. Der Vorleser" />
               </div>
@@ -289,7 +314,7 @@ export default function CreatePostPage() {
 
           {category === 'supplies' && (
             <div style={sectionStyle}>
-              <p style={{ fontSize: '12px', fontWeight: 500, color: '#1a3a6e', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Schulzubehör Details</p>
+              <p style={sectionTitleStyle}><CategoryIcon category="supplies" size={13} />Schulzubehör Details</p>
               <div><label style={labelStyle}>Art des Zubehörs</label>
                 <select value={zubehoerTyp} onChange={e => setZubehoerTyp(e.target.value)} style={selectStyle}>
                   <option value="">Bitte wählen...</option>
@@ -308,8 +333,28 @@ export default function CreatePostPage() {
           )}
 
           <div>
-            <label style={labelStyle}>Preis (€) *</label>
-            <input type="number" value={price} onChange={e => setPrice(e.target.value)} style={inputStyle} placeholder="5.00" min="0" step="0.50" />
+            <label style={labelStyle}>Preis (€) {!isFree && '*'}</label>
+            <input type="number" value={isFree ? '' : price} onChange={e => handlePriceChange(e.target.value)} disabled={isFree}
+              style={{ ...inputStyle, opacity: isFree ? 0.5 : 1, cursor: isFree ? 'not-allowed' : 'text' }}
+              placeholder={isFree ? 'Wird verschenkt' : '5.00'} min="0" step="0.50" />
+
+            {showFreeHint && (
+              <div className="fade-in-up" style={{ marginTop: '8px', background: '#fdf8f0', border: '1px solid #f0c040', borderRadius: '6px', padding: '10px 12px', fontSize: '12px', color: '#6e4e1a', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
+                <span>Preis unter 0,50 € — möchtest du den Artikel nicht einfach verschenken?</span>
+                <button type="button" onClick={() => { setIsFree(true); setShowFreeHint(false); setPrice('') }}
+                  className="btn-modern"
+                  style={{ background: '#f0c040', color: '#1a3a6e', border: 'none', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', fontWeight: 500, cursor: 'pointer' }}>
+                  Ja, verschenken
+                </button>
+              </div>
+            )}
+
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+              <input type="checkbox" checked={isFree}
+                onChange={e => { setIsFree(e.target.checked); setShowFreeHint(false); if (e.target.checked) setPrice('') }}
+                style={{ width: '16px', height: '16px', cursor: 'pointer' }} />
+              Artikel verschenken (kostenlos)
+            </label>
           </div>
 
           <div>
@@ -322,7 +367,7 @@ export default function CreatePostPage() {
             <label style={labelStyle}>Bilder (max. 5)</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px', marginBottom: '8px' }}>
               {previews.map((src, i) => (
-                <div key={i} style={{ position: 'relative', aspectRatio: '1', borderRadius: '6px', overflow: 'hidden', border: '1px solid #ddd' }}>
+                <div key={i} style={{ position: 'relative', aspectRatio: '1', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border-input)' }}>
                   <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   <button onClick={() => removeImage(i)}
                     style={{ position: 'absolute', top: '4px', right: '4px', background: '#b91c1c', border: 'none', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', cursor: 'pointer', color: '#fff' }}>
@@ -333,9 +378,9 @@ export default function CreatePostPage() {
               ))}
               {previews.length < 5 && (
                 <div onClick={() => document.getElementById('file-input')?.click()}
-                  style={{ aspectRatio: '1', border: '1px dashed #bbb', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: '#f7f5f0', flexDirection: 'column', gap: '4px' }}>
-                  <span style={{ fontSize: '20px', color: '#bbb' }}>+</span>
-                  <span style={{ fontSize: '10px', color: '#bbb' }}>Hinzufügen</span>
+                  style={{ aspectRatio: '1', border: '1px dashed #bbb', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--bg-page)', flexDirection: 'column', gap: '4px' }}>
+                  <span style={{ fontSize: '20px', color: 'var(--text-faint)' }}>+</span>
+                  <span style={{ fontSize: '10px', color: 'var(--text-faint)' }}>Hinzufügen</span>
                 </div>
               )}
             </div>
@@ -348,16 +393,29 @@ export default function CreatePostPage() {
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={() => router.back()}
-              style={{ flex: 1, background: '#f7f5f0', border: '1px solid #ddd', color: '#666', fontSize: '14px', fontWeight: 500, borderRadius: '6px', padding: '12px', cursor: 'pointer' }}>
+          <div style={{ display: 'flex', gap: '10px', paddingTop: '8px', borderTop: '1px solid var(--border-light)' }}>
+            <button onClick={() => router.back()} className="btn-modern"
+              style={{ flex: 1, background: 'var(--bg-page)', border: '1px solid var(--border-input)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 500, borderRadius: '6px', padding: '12px', cursor: 'pointer' }}>
               Abbrechen
             </button>
-            <button onClick={handleCreate} disabled={loading}
-              style={{ flex: 1, background: loading ? '#7a9ab8' : '#1a3a6e', color: '#fff', fontSize: '14px', fontWeight: 500, border: 'none', borderRadius: '6px', padding: '12px', cursor: 'pointer' }}>
+            <button onClick={handleCreate} disabled={loading} className="btn-modern"
+              style={{ flex: 1, background: loading ? '#7a9ab8' : '#1a3a6e', color: '#fff', fontSize: '14px', fontWeight: 600, border: 'none', borderRadius: '6px', padding: '12px', cursor: loading ? 'default' : 'pointer' }}>
               {loading ? 'Wird erstellt...' : 'Veröffentlichen'}
             </button>
           </div>
+        </div>
+
+        <div className="create-preview" style={{ position: 'sticky', top: '70px', flexShrink: 0 }}>
+          <PostPreview
+            title={title}
+            description={desc}
+            price={price}
+            isFree={isFree}
+            category={category}
+            imagePreview={previews[0]}
+            sellerName="Du"
+          />
+        </div>
         </div>
       </main>
     </div>
