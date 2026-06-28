@@ -165,9 +165,9 @@ export default function Navbar({ username }: { username?: string }) {
 
   return (
     <nav className={`navbar-modern${scrolled ? ' scrolled' : ''}`} style={{ background: '#1a3a6e', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', height: '56px', position: 'sticky', top: 0, zIndex: 50 }}>
-      <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
-        <span style={{ fontSize: '16px', fontWeight: 600, color: '#fff', letterSpacing: '0.01em' }}>LFS</span>
-        <span style={{ fontSize: '16px', fontWeight: 600, color: '#f0c040' }}>Markt</span>
+      <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '14px', textDecoration: 'none' }}>
+        <img src="https://www.lfs-koeln.de/wp-content/uploads/2019/01/cropped-logo-wei%C3%9F-gro%C3%9F-1-192x192.png" alt="LFS Logo" style={{ height: '26px', width: 'auto', filter: 'brightness(0) invert(1)' }} />
+        <span style={{ fontSize: '15px', fontWeight: 600, color: '#fff' }}>Kleinanzeigen</span>
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -259,7 +259,7 @@ export default function Navbar({ username }: { username?: string }) {
           {menuOpen && (
             <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: '210px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: '0 12px 28px rgba(0,0,0,0.14)', zIndex: 100, overflow: 'hidden' }}>
               <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#f0c040', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600, color: '#1a3a6e', flexShrink: 0 }}>
+                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1a3a6e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600, color: '#fff', flexShrink: 0 }}>
                   {username?.[0]?.toUpperCase()}
                 </span>
                 <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{username}</p>

@@ -160,7 +160,7 @@ export default function AdminMessagesPage() {
                         <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '70%', marginBottom: '12px', alignSelf: isA ? 'flex-start' : 'flex-end', alignItems: isA ? 'flex-start' : 'flex-end', marginLeft: isA ? 0 : 'auto' }}>
                           <span style={{ fontSize: '10px', color: 'var(--text-faint)', marginBottom: '2px' }}>{senderName}</span>
                           {msg.offer_amount != null ? (
-                            <div style={{ background: 'var(--bg-card)', border: '1px solid #f0c040', borderRadius: '12px', padding: '10px 14px', minWidth: '160px' }}>
+                            <div style={{ background: 'var(--bg-card)', border: '1px solid #c8d4e8', borderRadius: '12px', padding: '10px 14px', minWidth: '160px' }}>
                               <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: 0 }}>💰 Preisangebot</p>
                               <p style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{msg.offer_amount.toFixed(2)} €</p>
                               <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '4px 0 0' }}>Status: {msg.offer_status}</p>

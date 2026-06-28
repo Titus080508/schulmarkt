@@ -175,7 +175,7 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
             <FilterIcon size={14} />
             Filter
             {activeAdvancedCount > 0 && (
-              <span style={{ background: filterPanelOpen ? '#f0c040' : '#1a3a6e', color: filterPanelOpen ? '#1a3a6e' : '#fff', fontSize: '10px', fontWeight: 700, borderRadius: '999px', width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ background: filterPanelOpen ? '#fff' : '#1a3a6e', color: filterPanelOpen ? '#1a3a6e' : '#fff', fontSize: '10px', fontWeight: 700, borderRadius: '999px', width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {activeAdvancedCount}
               </span>
             )}
@@ -254,7 +254,7 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
                   {categoryLabel[post.category]}
                 </span>
                 <button onClick={e => toggleFavorite(e, post.id)} className="icon-btn-modern"
-                  style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isFav ? '#b91c1c' : '#999', zIndex: 10 }}>
+                  style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isFav ? '#d4a017' : '#999', zIndex: 10 }}>
                   <span className={poppedId === post.id ? 'icon-pop' : ''} style={{ display: 'flex' }}>
                     <HeartIcon size={14} filled={isFav} />
                   </span>

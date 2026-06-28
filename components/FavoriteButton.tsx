@@ -32,7 +32,7 @@ export default function FavoriteButton({ postId, userId, initialFavorite }: { po
 
   return (
     <button onClick={toggle} disabled={loading} className="icon-btn-modern"
-      style={{ width: '40px', height: '40px', borderRadius: '50%', background: isFav ? '#fef2f2' : 'var(--bg-card)', border: `1px solid ${isFav ? '#fecaca' : 'var(--border-color)'}`, color: isFav ? '#b91c1c' : '#999', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      style={{ width: '40px', height: '40px', borderRadius: '50%', background: isFav ? '#fdf8e8' : 'var(--bg-card)', border: `1px solid ${isFav ? '#f0c040' : 'var(--border-color)'}`, color: isFav ? '#d4a017' : '#999', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
       <span className={popped ? 'icon-pop' : ''} style={{ display: 'flex' }}>
         <HeartIcon size={17} filled={isFav} />
       </span>

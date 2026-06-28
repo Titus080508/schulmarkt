@@ -50,14 +50,14 @@ export default async function DashboardPage() {
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(10,25,60,0.92) 40%, rgba(10,25,60,0.6))' }} />
           <div style={{ position: 'relative', zIndex: 1, maxWidth: '1100px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
             <div className="fade-in-up" style={{ animationDelay: '0ms' }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(240,192,64,0.15)', border: '1px solid rgba(240,192,64,0.4)', color: '#f0c040', fontSize: '11px', padding: '3px 10px', borderRadius: '4px', marginBottom: '12px', letterSpacing: '0.04em' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.25)', color: '#fff', fontSize: '11px', padding: '3px 10px', borderRadius: '4px', marginBottom: '12px', letterSpacing: '0.04em' }}>
                 Erzb. Liebfrauenschule Köln
               </div>
               <h2 style={{ fontSize: '22px', fontWeight: 500, color: '#fff', marginBottom: '6px' }}>Hallo, {profile?.display_name || profile?.username}</h2>
               <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', marginBottom: '20px', maxWidth: '400px' }}>
                 Kaufe und verkaufe Artikel von Mitschülern.
               </p>
-              <a href="/create" className="hero-cta-modern" style={{ background: '#f0c040', color: '#1a3a6e', fontSize: '14px', fontWeight: 500, border: 'none', borderRadius: '4px', padding: '11px 22px', textDecoration: 'none', display: 'inline-block' }}>
+              <a href="/create" className="hero-cta-modern" style={{ background: '#f0c040', color: '#1a3a6e', fontSize: '14px', fontWeight: 600, border: 'none', borderRadius: '4px', padding: '11px 22px', textDecoration: 'none', display: 'inline-block' }}>
                 + Artikel inserieren
               </a>
             </div>
@@ -66,10 +66,10 @@ export default async function DashboardPage() {
                 { num: posts?.length || 0, label: 'Angebote' },
                 { num: 7, label: 'Kategorien' },
                 { num: totalSellers, label: 'Verkäufer' },
-                { num: `${verdient.toFixed(2)} €`, label: 'Verdient' },
+                { num: `${verdient.toFixed(2)} €`, label: 'Verdient', highlight: true },
               ].map((s, i) => (
                 <div key={s.label} className="stat-card-modern" style={{ animationDelay: `${i * 70}ms`, textAlign: 'center', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', padding: '12px 16px' }}>
-                  <div style={{ fontSize: '22px', fontWeight: 500, color: '#f0c040' }}>{s.num}</div>
+                  <div style={{ fontSize: '22px', fontWeight: 500, color: s.highlight ? '#f0c040' : 'rgba(255,255,255,0.92)' }}>{s.num}</div>
                   <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', marginTop: '2px' }}>{s.label}</div>
                 </div>
               ))}

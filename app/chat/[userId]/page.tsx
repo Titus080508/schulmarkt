@@ -366,7 +366,7 @@ export default function ChatPage() {
                     )}
                     <div className="chat-bubble-modern" style={{ display: 'flex', flexDirection: 'column', maxWidth: '70%', marginBottom: '12px', alignSelf: msg.sender_id === me?.id ? 'flex-end' : 'flex-start', alignItems: msg.sender_id === me?.id ? 'flex-end' : 'flex-start', marginLeft: msg.sender_id === me?.id ? 'auto' : 0 }}>
                       {msg.offer_amount != null ? (
-                        <div style={{ background: 'var(--bg-card)', border: '1px solid #f0c040', borderRadius: '12px', padding: '12px 16px', minWidth: '200px' }}>
+                        <div style={{ background: 'var(--bg-card)', border: '1px solid #c8d4e8', borderRadius: '12px', padding: '12px 16px', minWidth: '200px' }}>
                           <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, marginBottom: '4px' }}>💰 Preisangebot</p>
                           <p style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{msg.offer_amount.toFixed(2)} €</p>
                           {msg.offer_status === 'pending' && msg.receiver_id === me?.id && (
@@ -407,13 +407,13 @@ export default function ChatPage() {
             </div>
 
             {offerOpen && !blockedByMe && !blockedMe && (
-              <div className="fade-in-up" style={{ margin: '0 16px 12px', background: '#fdf8f0', border: '1px solid #f0c040', borderRadius: '8px', padding: '10px 14px', display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+              <div className="fade-in-up" style={{ margin: '0 16px 12px', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '8px', padding: '10px 14px', display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
                 <input type="number" value={offerAmount} onChange={e => setOfferAmount(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && sendOffer()}
                   placeholder="Preisvorschlag in €" min="0" step="0.5"
                   style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '8px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none' }} />
                 <button onClick={sendOffer} className={`btn-modern${offerSent ? ' flash-success' : ''}`}
-                  style={{ background: '#f0c040', color: '#1a3a6e', border: 'none', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
+                  style={{ background: '#1a3a6e', color: '#fff', border: 'none', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
                   {offerSent ? <span className="check-pop">✓ Gesendet</span> : 'Senden'}
                 </button>
               </div>
@@ -421,7 +421,7 @@ export default function ChatPage() {
 
             <div style={{ background: 'var(--bg-card)', borderTop: '1px solid var(--border-light)', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center', flexShrink: 0 }}>
               <button onClick={() => setOfferOpen(!offerOpen)} disabled={blockedByMe || blockedMe} className="icon-btn-modern desktop-only"
-                style={{ width: '38px', height: '38px', background: '#fdf8f0', border: '1px solid #f0c040', borderRadius: '50%', color: '#6e4e1a', fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: (blockedByMe || blockedMe) ? 0.5 : 1 }}>
+                style={{ width: '38px', height: '38px', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '50%', color: '#1a3a6e', fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: (blockedByMe || blockedMe) ? 0.5 : 1 }}>
                 💰
               </button>
               <input

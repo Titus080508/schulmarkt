@@ -402,11 +402,11 @@ export default function EditPostPage() {
               placeholder={isFree ? 'Wird verschenkt' : '5.00'} min="0" step="0.50" />
 
             {showFreeHint && (
-              <div className="fade-in-up" style={{ marginTop: '8px', background: '#fdf8f0', border: '1px solid #f0c040', borderRadius: '6px', padding: '10px 12px', fontSize: '12px', color: '#6e4e1a', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
+              <div className="fade-in-up" style={{ marginTop: '8px', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '6px', padding: '10px 12px', fontSize: '12px', color: '#1a3a6e', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
                 <span>Preis unter 0,50 € — möchtest du den Artikel nicht einfach verschenken?</span>
                 <button type="button" onClick={() => { setIsFree(true); setShowFreeHint(false); setPrice('') }}
                   className="btn-modern"
-                  style={{ background: '#f0c040', color: '#1a3a6e', border: 'none', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', fontWeight: 500, cursor: 'pointer' }}>
+                  style={{ background: '#1a3a6e', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', fontWeight: 500, cursor: 'pointer' }}>
                   Ja, verschenken
                 </button>
               </div>

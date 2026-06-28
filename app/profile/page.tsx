@@ -101,7 +101,7 @@ export default function ProfilePage() {
 
         <div className="fade-in-up card-modern" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '24px', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-            <div className="avatar-modern" style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#f0c040', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', fontWeight: 700, color: '#1a3a6e', flexShrink: 0 }}>
+            <div className="avatar-modern" style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#1a3a6e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>
               {(displayName || profile?.username)?.[0]?.toUpperCase()}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>

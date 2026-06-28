@@ -36,9 +36,9 @@ export default function LoginPage() {
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,25,60,0.85)' }} />
         <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '32px', fontWeight: 500, color: '#fff', marginBottom: '8px' }}>LFS Köln</div>
+            <img src="https://www.lfs-koeln.de/wp-content/uploads/2019/01/cropped-logo-wei%C3%9F-gro%C3%9F-1-192x192.png" alt="LFS Logo" style={{ height: '64px', width: 'auto', marginBottom: '16px', filter: 'brightness(0) invert(1)' }} />
             <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)', marginBottom: '24px' }}>Erzb. Liebfrauenschule Köln</div>
-            <div style={{ fontSize: '24px', fontWeight: 500, color: '#f0c040' }}>Markt</div>
+            <div style={{ fontSize: '24px', fontWeight: 500, color: '#fff' }}>Kleinanzeigen</div>
             <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginTop: '8px' }}>Der Schulmarktplatz</div>
           </div>
         </div>
@@ -53,8 +53,8 @@ export default function LoginPage() {
       }}>
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,25,60,0.85)' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <div style={{ fontSize: '24px', fontWeight: 500, color: '#fff', marginBottom: '4px' }}>LFS Köln</div>
-          <div style={{ fontSize: '16px', fontWeight: 500, color: '#f0c040' }}>Markt</div>
+          <img src="https://www.lfs-koeln.de/wp-content/uploads/2019/01/cropped-logo-wei%C3%9F-gro%C3%9F-1-192x192.png" alt="LFS Logo" style={{ height: '44px', width: 'auto', marginBottom: '8px', filter: 'brightness(0) invert(1)' }} />
+          <div style={{ fontSize: '16px', fontWeight: 500, color: '#fff' }}>Kleinanzeigen</div>
         </div>
       </div>
 

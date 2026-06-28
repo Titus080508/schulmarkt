@@ -104,7 +104,7 @@ export default async function AdminPage() {
                 <h1 style={{ fontSize: '20px', fontWeight: 500, color: '#fff', marginBottom: '4px' }}>Admin-Bereich</h1>
                 <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginBottom: '10px' }}>Verwaltung aller Inserate, Nutzer und Meldungen</p>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  <Link href="/admin/reports" style={{ fontSize: '12px', color: '#f0c040', textDecoration: 'none', border: '1px solid rgba(240,192,64,0.3)', borderRadius: '4px', padding: '6px 12px', display: 'inline-block' }}>
+                  <Link href="/admin/reports" style={{ fontSize: '12px', color: '#fff', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', padding: '6px 12px', display: 'inline-block' }}>
                     Alle Meldungen ansehen ({(reports?.length || 0) + (resolvedReports?.length || 0)})
                   </Link>
                   {isOwner && (
@@ -124,10 +124,10 @@ export default async function AdminPage() {
                   { num: posts?.length || 0, label: 'Inserate' },
                   { num: active.length, label: 'Aktiv' },
                   { num: users?.length || 0, label: 'Nutzer' },
-                  { num: reports?.length || 0, label: 'Offene Meldungen' },
+                  { num: reports?.length || 0, label: 'Offene Meldungen', highlight: true },
                 ].map((s, i) => (
                   <div key={s.label} className="fade-in-up" style={{ animationDelay: `${i * 60}ms`, textAlign: 'center', minWidth: '64px' }}>
-                    <div style={{ fontSize: '22px', fontWeight: 500, color: '#f0c040' }}>{s.num}</div>
+                    <div style={{ fontSize: '22px', fontWeight: 500, color: s.highlight && s.num > 0 ? '#f0c040' : 'rgba(255,255,255,0.92)' }}>{s.num}</div>
                     <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>{s.label}</div>
                   </div>
                 ))}
@@ -177,7 +177,7 @@ export default async function AdminPage() {
               <p style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Zeitverlauf (letzte {DAYS} Tage)</p>
               <div style={{ display: 'flex', gap: '14px', fontSize: '11px', color: 'var(--text-muted)' }}>
                 <span><span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '2px', background: '#1a3a6e', marginRight: '5px' }} />Neue Inserate</span>
-                <span><span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '2px', background: '#f0c040', marginRight: '5px' }} />Neue Nutzer</span>
+                <span><span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '2px', background: '#7da7d9', marginRight: '5px' }} />Neue Nutzer</span>
               </div>
             </div>
             <div style={{ overflowX: 'auto' }}>
@@ -185,7 +185,7 @@ export default async function AdminPage() {
                 {dayKeys.map(k => (
                   <div key={k} style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '2px', height: '100%' }} title={`${k}: ${postsPerDay[k]} Inserate, ${usersPerDay[k]} Nutzer`}>
                     <div style={{ width: '40%', height: `${(postsPerDay[k] / maxDayCount) * 100}%`, minHeight: postsPerDay[k] > 0 ? '3px' : 0, background: '#1a3a6e', borderRadius: '2px 2px 0 0' }} />
-                    <div style={{ width: '40%', height: `${(usersPerDay[k] / maxDayCount) * 100}%`, minHeight: usersPerDay[k] > 0 ? '3px' : 0, background: '#f0c040', borderRadius: '2px 2px 0 0' }} />
+                    <div style={{ width: '40%', height: `${(usersPerDay[k] / maxDayCount) * 100}%`, minHeight: usersPerDay[k] > 0 ? '3px' : 0, background: '#7da7d9', borderRadius: '2px 2px 0 0' }} />
                   </div>
                 ))}
               </div>
