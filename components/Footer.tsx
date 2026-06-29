@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Footer() {
   return (
     <footer style={{ background: '#1a3a6e', padding: '20px', textAlign: 'center', marginTop: 'auto' }}>
@@ -11,6 +13,19 @@ export default function Footer() {
           tituskullmann@icloud.com
         </a>{' '}
         schreiben.
+      </p>
+      <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginTop: '8px' }}>
+        <Link href="/impressum" className="link-modern" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>
+          Impressum
+        </Link>
+        {' · '}
+        <Link href="/datenschutz" className="link-modern" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>
+          Datenschutzerklärung
+        </Link>
+        {' · '}
+        <Link href="/nutzungsbedingungen" className="link-modern" style={{ color: 'rgba(255,255,255,0.6)', textDecoration: 'none' }}>
+          Nutzungsbedingungen
+        </Link>
       </p>
     </footer>
   )

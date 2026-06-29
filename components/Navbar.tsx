@@ -48,6 +48,9 @@ export default function Navbar({ username }: { username?: string }) {
   const [notifications, setNotifications] = useState<any[]>([])
   const [unreadNotifs, setUnreadNotifs] = useState(0)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [needsConsent, setNeedsConsent] = useState(false)
+  const [consentChecked, setConsentChecked] = useState(false)
+  const [consentSaving, setConsentSaving] = useState(false)
   const chatRef = useRef<HTMLDivElement>(null)
   const notifRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -75,6 +78,8 @@ export default function Navbar({ username }: { username?: string }) {
       router.push('/suspended')
       return
     }
+
+    if (profile && !profile.terms_accepted_at) setNeedsConsent(true)
 
     const { data: msgs } = await supabase
       .from('messages')
@@ -136,6 +141,16 @@ export default function Navbar({ username }: { username?: string }) {
     router.push('/login')
   }
 
+  async function acceptConsent() {
+    if (!consentChecked) return
+    setConsentSaving(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    await supabase.from('profiles').update({ terms_accepted_at: new Date().toISOString() }).eq('id', user.id)
+    setNeedsConsent(false)
+    setConsentSaving(false)
+  }
+
   async function markNotifsRead() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
@@ -164,8 +179,32 @@ export default function Navbar({ username }: { username?: string }) {
   }
 
   return (
-    <nav className={`navbar-modern${scrolled ? ' scrolled' : ''}`} style={{ background: '#1a3a6e', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', height: '56px', position: 'sticky', top: 0, zIndex: 50 }}>
-      <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '14px', textDecoration: 'none' }}>
+    <>
+      {needsConsent && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(10,25,60,0.7)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ maxWidth: '440px', width: '100%', background: 'var(--bg-card)', borderRadius: '10px', padding: '28px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1a3a6e', marginBottom: '12px' }}>Bevor es weitergeht</h2>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '16px' }}>
+              Um den Schulmarktplatz nutzen zu können, musst du den{' '}
+              <Link href="/nutzungsbedingungen" target="_blank" style={{ color: '#1a3a6e', fontWeight: 500 }}>Nutzungsbedingungen</Link>{' '}
+              und der{' '}
+              <Link href="/datenschutz" target="_blank" style={{ color: '#1a3a6e', fontWeight: 500 }}>Datenschutzerklärung</Link>{' '}
+              zustimmen.
+            </p>
+            <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: 'var(--text-primary)', cursor: 'pointer', marginBottom: '20px' }}>
+              <input type="checkbox" checked={consentChecked} onChange={e => setConsentChecked(e.target.checked)}
+                style={{ marginTop: '2px', width: '16px', height: '16px', flexShrink: 0 }} />
+              Ich habe die Nutzungsbedingungen und die Datenschutzerklärung gelesen und stimme ihnen zu.
+            </label>
+            <button onClick={acceptConsent} disabled={!consentChecked || consentSaving} className="btn-modern"
+              style={{ width: '100%', background: !consentChecked || consentSaving ? '#9fb0c8' : '#1a3a6e', color: '#fff', fontSize: '14px', fontWeight: 500, border: 'none', borderRadius: '6px', padding: '12px', cursor: !consentChecked || consentSaving ? 'not-allowed' : 'pointer' }}>
+              {consentSaving ? 'Wird gespeichert...' : 'Bestätigen und fortfahren'}
+            </button>
+          </div>
+        </div>
+      )}
+      <nav className={`navbar-modern${scrolled ? ' scrolled' : ''}`} style={{ background: '#1a3a6e', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', height: '56px', position: 'sticky', top: 0, zIndex: 50 }}>
+        <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '14px', textDecoration: 'none' }}>
         <img src="https://www.lfs-koeln.de/wp-content/uploads/2019/01/cropped-logo-wei%C3%9F-gro%C3%9F-1-192x192.png" alt="LFS Logo" style={{ height: '26px', width: 'auto', filter: 'brightness(0) invert(1)' }} />
         <span style={{ fontSize: '15px', fontWeight: 600, color: '#fff' }}>Kleinanzeigen</span>
       </Link>
@@ -295,6 +334,7 @@ export default function Navbar({ username }: { username?: string }) {
           )}
         </div>
       </div>
-    </nav>
+      </nav>
+    </>
   )
 }
