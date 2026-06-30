@@ -7,6 +7,7 @@ import AdminPostsTable from '@/components/AdminPostsTable'
 import AdminUsers from '@/components/AdminUsers'
 import AdminReports from '@/components/AdminReports'
 import AdminUserReports from '@/components/AdminUserReports'
+import AdminMessageReports from '@/components/AdminMessageReports'
 import AdminAnnouncements from '@/components/AdminAnnouncements'
 import Footer from '@/components/Footer'
 
@@ -49,7 +50,7 @@ export default async function AdminPage() {
 
   const { data: reports } = await supabase
     .from('reports')
-    .select('*, reporter:profiles!reporter_id(username, display_name), post:posts(id, title)')
+    .select('*, reporter:profiles!reporter_id(username, display_name), post:posts(id, title, profiles(id, username, display_name))')
     .eq('resolved', false)
     .order('created_at', { ascending: false })
 
@@ -62,6 +63,12 @@ export default async function AdminPage() {
   const { data: userReports } = await supabase
     .from('user_reports')
     .select('*, reporter:profiles!reporter_id(username, display_name), reported:profiles!reported_id(username, display_name)')
+    .eq('resolved', false)
+    .order('created_at', { ascending: false })
+
+  const { data: messageReports } = await supabase
+    .from('message_reports')
+    .select('*, reporter:profiles!reporter_id(username, display_name), reported:profiles!reported_id(username, display_name), message:messages(content)')
     .eq('resolved', false)
     .order('created_at', { ascending: false })
 
@@ -105,7 +112,7 @@ export default async function AdminPage() {
                 <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginBottom: '10px' }}>Verwaltung aller Inserate, Nutzer und Meldungen</p>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <Link href="/admin/reports" style={{ fontSize: '12px', color: '#fff', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', padding: '6px 12px', display: 'inline-block' }}>
-                    Alle Meldungen ansehen ({(reports?.length || 0) + (resolvedReports?.length || 0)})
+                    Alle Meldungen ansehen ({(reports?.length || 0) + (resolvedReports?.length || 0) + (messageReports?.length || 0)})
                   </Link>
                   {isOwner && (
                     <>
@@ -124,7 +131,7 @@ export default async function AdminPage() {
                   { num: posts?.length || 0, label: 'Inserate' },
                   { num: active.length, label: 'Aktiv' },
                   { num: users?.length || 0, label: 'Nutzer' },
-                  { num: reports?.length || 0, label: 'Offene Meldungen', highlight: true },
+                  { num: (reports?.length || 0) + (userReports?.length || 0) + (messageReports?.length || 0), label: 'Offene Meldungen', highlight: true },
                 ].map((s, i) => (
                   <div key={s.label} className="fade-in-up" style={{ animationDelay: `${i * 60}ms`, textAlign: 'center', minWidth: '64px' }}>
                     <div style={{ fontSize: '22px', fontWeight: 500, color: s.highlight && s.num > 0 ? '#f0c040' : 'rgba(255,255,255,0.92)' }}>{s.num}</div>
@@ -181,20 +188,30 @@ export default async function AdminPage() {
               </div>
             </div>
             <div style={{ overflowX: 'auto' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '100px', minWidth: '480px' }}>
-                {dayKeys.map(k => (
-                  <div key={k} style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '2px', height: '100%' }} title={`${k}: ${postsPerDay[k]} Inserate, ${usersPerDay[k]} Nutzer`}>
-                    <div style={{ width: '40%', height: `${(postsPerDay[k] / maxDayCount) * 100}%`, minHeight: postsPerDay[k] > 0 ? '3px' : 0, background: '#1a3a6e', borderRadius: '2px 2px 0 0' }} />
-                    <div style={{ width: '40%', height: `${(usersPerDay[k] / maxDayCount) * 100}%`, minHeight: usersPerDay[k] > 0 ? '3px' : 0, background: '#7da7d9', borderRadius: '2px 2px 0 0' }} />
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100px', paddingBottom: '0', flexShrink: 0, alignItems: 'flex-end' }}>
+                  <span style={{ fontSize: '9px', color: 'var(--text-faint)', lineHeight: 1 }}>{maxDayCount}</span>
+                  <span style={{ fontSize: '9px', color: 'var(--text-faint)', lineHeight: 1 }}>{Math.round(maxDayCount / 2)}</span>
+                  <span style={{ fontSize: '9px', color: 'var(--text-faint)', lineHeight: 1 }}>0</span>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '100px', minWidth: '480px', borderLeft: '1px solid var(--border-light)', borderBottom: '1px solid var(--border-light)', position: 'relative' }}>
+                    <div style={{ position: 'absolute', left: 0, right: 0, top: '50%', borderTop: '1px dashed var(--border-light)', pointerEvents: 'none' }} />
+                    {dayKeys.map(k => (
+                      <div key={k} style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '2px', height: '100%' }} title={`${k}: ${postsPerDay[k]} Inserate, ${usersPerDay[k]} Nutzer`}>
+                        <div style={{ width: '40%', height: `${(postsPerDay[k] / maxDayCount) * 100}%`, minHeight: postsPerDay[k] > 0 ? '3px' : 0, background: '#1a3a6e', borderRadius: '2px 2px 0 0' }} />
+                        <div style={{ width: '40%', height: `${(usersPerDay[k] / maxDayCount) * 100}%`, minHeight: usersPerDay[k] > 0 ? '3px' : 0, background: '#7da7d9', borderRadius: '2px 2px 0 0' }} />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <div style={{ display: 'flex', gap: '4px', marginTop: '6px', minWidth: '480px' }}>
-                {dayKeys.map(k => (
-                  <span key={k} style={{ flex: 1, textAlign: 'center', fontSize: '9px', color: 'var(--text-faint)' }}>
-                    {new Date(k).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })}
-                  </span>
-                ))}
+                  <div style={{ display: 'flex', gap: '4px', marginTop: '6px', minWidth: '480px' }}>
+                    {dayKeys.map(k => (
+                      <span key={k} style={{ flex: 1, textAlign: 'center', fontSize: '9px', color: 'var(--text-faint)' }}>
+                        {new Date(k).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -249,11 +266,15 @@ export default async function AdminPage() {
           )}
 
           {userReports && userReports.length > 0 && (
-            <AdminUserReports reports={userReports} />
+            <AdminUserReports reports={userReports} isOwner={isOwner} currentUserId={user.id} />
+          )}
+
+          {messageReports && messageReports.length > 0 && (
+            <AdminMessageReports reports={messageReports} isOwner={isOwner} currentUserId={user.id} />
           )}
 
           {reports && reports.length > 0 && (
-            <AdminReports reports={reports} title="Offene Meldungen" showResolve={true} />
+            <AdminReports reports={reports} title="Offene Meldungen" showResolve={true} isOwner={isOwner} currentUserId={user.id} />
           )}
 
           <AdminPostsTable posts={posts || []} />

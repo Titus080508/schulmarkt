@@ -13,7 +13,7 @@ function groupByReported(reports: any[]) {
   return Array.from(groups.values()).sort((a, b) => b.length - a.length)
 }
 
-export default function AdminUserReports({ reports, isOwner, currentUserId }: { reports: any[], isOwner?: boolean, currentUserId?: string }) {
+export default function AdminMessageReports({ reports, isOwner, currentUserId }: { reports: any[], isOwner?: boolean, currentUserId?: string }) {
   const [list, setList] = useState(reports)
   const [busyId, setBusyId] = useState<string | null>(null)
   const [noteDraft, setNoteDraft] = useState<Record<string, string>>({})
@@ -28,7 +28,7 @@ export default function AdminUserReports({ reports, isOwner, currentUserId }: { 
     setBusyId(groupKey)
     const note = noteDraft[groupKey] || null
     const { error } = await supabase
-      .from('user_reports')
+      .from('message_reports')
       .update({ resolved: true, resolved_at: new Date().toISOString(), status, admin_note: note })
       .in('id', ids)
 
@@ -40,7 +40,7 @@ export default function AdminUserReports({ reports, isOwner, currentUserId }: { 
         supabase.from('notifications').insert({
           user_id: reporterId,
           type: 'report',
-          message: `Deine Meldung gegen ${reportedName} wurde ${statusText}.${note ? ` Begründung: ${note}` : ''}`,
+          message: `Deine Meldung einer Nachricht von ${reportedName} wurde ${statusText}.${note ? ` Begründung: ${note}` : ''}`,
           link: '/dashboard'
         })
       ))
@@ -81,7 +81,7 @@ export default function AdminUserReports({ reports, isOwner, currentUserId }: { 
   return (
     <div style={{ background: '#fff8f8', border: '1px solid #fecaca', borderRadius: '10px', marginBottom: '20px', overflow: 'hidden' }}>
       <div style={{ padding: '16px 20px', borderBottom: '1px solid #fecaca', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-        <p style={{ fontSize: '14px', fontWeight: 500, color: '#b91c1c', margin: 0 }}>Gemeldete Nutzer</p>
+        <p style={{ fontSize: '14px', fontWeight: 500, color: '#b91c1c', margin: 0 }}>Gemeldete Nachrichten</p>
         <span style={{ fontSize: '12px', color: '#b91c1c', background: '#fee2e2', padding: '2px 8px', borderRadius: '3px' }}>{list.length} Meldungen · {groups.length} Nutzer</span>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '560px', overflowY: 'auto' }}>
@@ -92,27 +92,32 @@ export default function AdminUserReports({ reports, isOwner, currentUserId }: { 
 
           return (
             <div key={groupKey} style={{ padding: '14px 20px', borderBottom: '1px solid #fee2e2' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
-                <div style={{ flex: 1, minWidth: '200px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '11px', background: '#fee2e2', color: '#b91c1c', padding: '2px 8px', borderRadius: '3px', fontWeight: 500 }}>
-                      {group.length > 1 ? `${group.length}x gemeldet` : 'Nutzer-Meldung'}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '6px' }}>
-                    Gemeldet: <strong>{reportedName}</strong>
-                    <span style={{ color: 'var(--text-faint)', fontSize: '11px' }}> (@{first.reported?.username})</span>
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    {group.map((r: any) => (
-                      <p key={r.id} style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
+              <div style={{ flex: 1, minWidth: '200px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '11px', background: '#fee2e2', color: '#b91c1c', padding: '2px 8px', borderRadius: '3px', fontWeight: 500 }}>
+                    {group.length > 1 ? `${group.length}x gemeldet` : 'Nachrichten-Meldung'}
+                  </span>
+                </div>
+                <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '6px' }}>
+                  Gemeldet: <strong>{reportedName}</strong>
+                  <span style={{ color: 'var(--text-faint)', fontSize: '11px' }}> (@{first.reported?.username})</span>
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {group.map((r: any) => (
+                    <div key={r.id} style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                      <p style={{ margin: 0 }}>
                         Von <strong>{r.reporter?.display_name || r.reporter?.username}</strong>
                         <span style={{ color: 'var(--text-faint)' }}> (@{r.reporter?.username}) – </span>
                         <span style={{ color: '#b91c1c' }}>{r.reason}</span>
                         <span style={{ color: 'var(--text-faint)' }}> · {new Date(r.created_at).toLocaleDateString('de-DE')} {new Date(r.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</span>
                       </p>
-                    ))}
-                  </div>
+                      {r.message?.content && (
+                        <p style={{ margin: '2px 0 0', padding: '6px 10px', background: 'var(--bg-page)', borderRadius: '4px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                          „{r.message.content}"
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
 

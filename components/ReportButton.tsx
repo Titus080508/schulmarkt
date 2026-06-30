@@ -4,18 +4,21 @@ import { useState } from 'react'
 export default function ReportButton({ postId }: { postId: string }) {
   const [open, setOpen] = useState(false)
   const [reason, setReason] = useState('')
+  const [other, setOther] = useState('')
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
   const [error, setError] = useState('')
 
   async function handleReport() {
     if (!reason) return
+    if (reason === 'Sonstiges' && !other.trim()) return
     setLoading(true)
     setError('')
+    const finalReason = reason === 'Sonstiges' ? `Sonstiges: ${other.trim()}` : reason
     const res = await fetch(`/report/${postId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reason })
+      body: JSON.stringify({ reason: finalReason })
     })
     setLoading(false)
     if (!res.ok) {
@@ -58,6 +61,15 @@ export default function ReportButton({ postId }: { postId: string }) {
             <option>Bereits verkauft</option>
             <option>Sonstiges</option>
           </select>
+          {reason === 'Sonstiges' && (
+            <textarea
+              value={other}
+              onChange={e => setOther(e.target.value)}
+              placeholder="Grund kurz beschreiben..."
+              rows={2}
+              style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: '#444', outline: 'none', marginBottom: '10px', boxSizing: 'border-box', resize: 'vertical' }}
+            />
+          )}
           {error && (
             <p style={{ fontSize: '12px', color: '#b91c1c', marginBottom: '10px' }}>{error}</p>
           )}
@@ -70,7 +82,7 @@ export default function ReportButton({ postId }: { postId: string }) {
             </button>
             <button
               onClick={handleReport}
-              disabled={loading || !reason}
+              disabled={loading || !reason || (reason === 'Sonstiges' && !other.trim())}
               style={{ flex: 1, background: '#b91c1c', border: 'none', color: '#fff', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '8px', cursor: 'pointer' }}
             >
               {loading ? 'Wird gesendet...' : 'Melden'}

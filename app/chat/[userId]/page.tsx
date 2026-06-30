@@ -38,12 +38,20 @@ export default function ChatPage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [reportOpen, setReportOpen] = useState(false)
   const [reportReason, setReportReason] = useState('')
+  const [reportOther, setReportOther] = useState('')
   const [reportDone, setReportDone] = useState(false)
   const [reportError, setReportError] = useState('')
+  const [reportingMsgId, setReportingMsgId] = useState<string | null>(null)
+  const [msgReportReason, setMsgReportReason] = useState('')
+  const [msgReportOther, setMsgReportOther] = useState('')
+  const [msgReportError, setMsgReportError] = useState('')
+  const [reportedMsgIds, setReportedMsgIds] = useState<Set<string>>(new Set())
   const [offerOpen, setOfferOpen] = useState(false)
   const [offerAmount, setOfferAmount] = useState('')
   const [sendPop, setSendPop] = useState(false)
   const [offerSent, setOfferSent] = useState(false)
+  const [counterOfferId, setCounterOfferId] = useState<string | null>(null)
+  const [counterAmount, setCounterAmount] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
@@ -71,22 +79,49 @@ export default function ChatPage() {
 
   async function submitReport() {
     if (!reportReason || !me) return
+    if (reportReason === 'Sonstiges' && !reportOther.trim()) return
     setReportError('')
-    const { error } = await supabase.from('user_reports').insert({ reporter_id: me.id, reported_id: userId, reason: reportReason })
+    const reason = reportReason === 'Sonstiges' ? `Sonstiges: ${reportOther.trim()}` : reportReason
+    const { error } = await supabase.from('user_reports').insert({ reporter_id: me.id, reported_id: userId, reason })
     if (error) { setReportError(error.message); return }
     setReportDone(true)
   }
 
-  async function sendOffer() {
-    const amount = parseFloat(offerAmount)
+  async function submitMessageReport(messageId: string) {
+    if (!msgReportReason) return
+    if (msgReportReason === 'Sonstiges' && !msgReportOther.trim()) return
+    setMsgReportError('')
+    const reason = msgReportReason === 'Sonstiges' ? `Sonstiges: ${msgReportOther.trim()}` : msgReportReason
+    const res = await fetch(`/report/message/${messageId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason })
+    })
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setMsgReportError(data.error || 'Meldung konnte nicht gesendet werden.')
+      return
+    }
+    setReportedMsgIds(prev => new Set(prev).add(messageId))
+    setReportingMsgId(null)
+    setMsgReportReason('')
+    setMsgReportOther('')
+  }
+
+  const hasPendingOffer = messages.some(m => m.offer_status === 'pending')
+
+  async function sendOffer(customAmount?: number) {
+    const amount = customAmount ?? parseFloat(offerAmount)
     if (isNaN(amount) || amount < 0 || !me) return
+    const offer_expires_at = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
     await supabase.from('messages').insert({
       sender_id: me.id,
       receiver_id: userId,
       post_id: postId || null,
       content: `Angebot: ${amount.toFixed(2)} €`,
       offer_amount: amount,
-      offer_status: 'pending'
+      offer_status: 'pending',
+      offer_expires_at
     })
     setOfferAmount('')
     setOfferOpen(false)
@@ -97,6 +132,15 @@ export default function ChatPage() {
   async function respondOffer(messageId: string, status: 'accepted' | 'declined') {
     await supabase.from('messages').update({ offer_status: status }).eq('id', messageId)
     setMessages(prev => prev.map(m => m.id === messageId ? { ...m, offer_status: status } : m))
+  }
+
+  async function sendCounterOffer(originalId: string) {
+    const amount = parseFloat(counterAmount)
+    if (isNaN(amount) || amount < 0) return
+    await respondOffer(originalId, 'declined')
+    await sendOffer(amount)
+    setCounterOfferId(null)
+    setCounterAmount('')
   }
 
   async function loadConversations(currentUserId: string) {
@@ -311,6 +355,11 @@ export default function ChatPage() {
                       <option>Unangemessenes Verhalten</option>
                       <option>Sonstiges</option>
                     </select>
+                    {reportReason === 'Sonstiges' && (
+                      <textarea value={reportOther} onChange={e => setReportOther(e.target.value)}
+                        placeholder="Grund kurz beschreiben..." rows={2}
+                        style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: '#444', outline: 'none', marginBottom: '10px', boxSizing: 'border-box', resize: 'vertical' }} />
+                    )}
                     {reportError && (
                       <p style={{ fontSize: '12px', color: '#b91c1c', marginBottom: '10px' }}>{reportError}</p>
                     )}
@@ -319,7 +368,7 @@ export default function ChatPage() {
                         style={{ flex: 1, background: 'var(--bg-page)', border: '1px solid var(--border-input)', color: 'var(--text-secondary)', fontSize: '13px', borderRadius: '6px', padding: '8px', cursor: 'pointer' }}>
                         Abbrechen
                       </button>
-                      <button onClick={submitReport} disabled={!reportReason}
+                      <button onClick={submitReport} disabled={!reportReason || (reportReason === 'Sonstiges' && !reportOther.trim())}
                         style={{ flex: 1, background: '#b91c1c', border: 'none', color: '#fff', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '8px', cursor: 'pointer' }}>
                         Melden
                       </button>
@@ -365,40 +414,115 @@ export default function ChatPage() {
                       <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--text-faint)', margin: '14px 0' }}>{day}</p>
                     )}
                     <div className="chat-bubble-modern" style={{ display: 'flex', flexDirection: 'column', maxWidth: '70%', marginBottom: '12px', alignSelf: msg.sender_id === me?.id ? 'flex-end' : 'flex-start', alignItems: msg.sender_id === me?.id ? 'flex-end' : 'flex-start', marginLeft: msg.sender_id === me?.id ? 'auto' : 0 }}>
-                      {msg.offer_amount != null ? (
-                        <div style={{ background: 'var(--bg-card)', border: '1px solid #c8d4e8', borderRadius: '12px', padding: '12px 16px', minWidth: '200px' }}>
+                      {msg.offer_amount != null ? (() => {
+                        const isExpired = msg.offer_status === 'pending' && msg.offer_expires_at && new Date(msg.offer_expires_at) < new Date()
+                        return (
+                        <div style={{ background: 'var(--bg-card)', border: `1px solid ${isExpired ? 'var(--border-color)' : '#c8d4e8'}`, borderRadius: '12px', padding: '12px 16px', minWidth: '220px', opacity: isExpired ? 0.65 : 1 }}>
                           <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, marginBottom: '4px' }}>💰 Preisangebot</p>
                           <p style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{msg.offer_amount.toFixed(2)} €</p>
-                          {msg.offer_status === 'pending' && msg.receiver_id === me?.id && (
-                            <div style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
-                              <button onClick={() => respondOffer(msg.id, 'declined')}
-                                style={{ flex: 1, background: 'var(--bg-page)', border: '1px solid var(--border-input)', color: 'var(--text-secondary)', fontSize: '12px', borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
-                                Ablehnen
-                              </button>
-                              <button onClick={() => respondOffer(msg.id, 'accepted')}
-                                style={{ flex: 1, background: '#1a6e3a', border: 'none', color: '#fff', fontSize: '12px', fontWeight: 500, borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
-                                Annehmen
-                              </button>
-                            </div>
+                          {msg.offer_expires_at && msg.offer_status === 'pending' && !isExpired && (
+                            <p style={{ fontSize: '10px', color: 'var(--text-faint)', marginTop: '2px', marginBottom: 0 }}>
+                              Läuft ab: {new Date(msg.offer_expires_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr
+                            </p>
                           )}
-                          {msg.offer_status === 'pending' && msg.receiver_id !== me?.id && (
+                          {isExpired && (
+                            <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', marginTop: '8px', marginBottom: 0 }}>⏱ Abgelaufen</p>
+                          )}
+                          {!isExpired && msg.offer_status === 'pending' && msg.receiver_id === me?.id && (
+                            counterOfferId === msg.id ? (
+                              <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                <input type="number" value={counterAmount} onChange={e => setCounterAmount(e.target.value)}
+                                  placeholder="Gegenpreis in €" min="0" step="0.5" autoFocus
+                                  style={{ width: '100%', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '7px 10px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
+                                <div style={{ display: 'flex', gap: '6px' }}>
+                                  <button onClick={() => { setCounterOfferId(null); setCounterAmount('') }}
+                                    style={{ flex: 1, background: 'var(--bg-page)', border: '1px solid var(--border-input)', color: 'var(--text-secondary)', fontSize: '12px', borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
+                                    Abbrechen
+                                  </button>
+                                  <button onClick={() => sendCounterOffer(msg.id)} disabled={!counterAmount || isNaN(parseFloat(counterAmount))}
+                                    style={{ flex: 1, background: '#1a3a6e', border: 'none', color: '#fff', fontSize: '12px', fontWeight: 500, borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
+                                    Senden
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div style={{ display: 'flex', gap: '6px', marginTop: '10px' }}>
+                                <button onClick={() => respondOffer(msg.id, 'declined')}
+                                  style={{ flex: 1, background: 'var(--bg-page)', border: '1px solid var(--border-input)', color: 'var(--text-secondary)', fontSize: '12px', borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
+                                  Ablehnen
+                                </button>
+                                <button onClick={() => { setCounterOfferId(msg.id); setCounterAmount('') }}
+                                  style={{ flex: 1, background: '#eef2f8', border: '1px solid #c8d4e8', color: '#1a3a6e', fontSize: '12px', borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
+                                  Gegenangebot
+                                </button>
+                                <button onClick={() => respondOffer(msg.id, 'accepted')}
+                                  style={{ flex: 1, background: '#1a6e3a', border: 'none', color: '#fff', fontSize: '12px', fontWeight: 500, borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
+                                  Annehmen
+                                </button>
+                              </div>
+                            )
+                          )}
+                          {!isExpired && msg.offer_status === 'pending' && msg.receiver_id !== me?.id && (
                             <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px', marginBottom: 0 }}>Wartet auf Antwort...</p>
                           )}
                           {msg.offer_status === 'accepted' && (
                             <p style={{ fontSize: '12px', fontWeight: 600, color: '#1a6e3a', marginTop: '8px', marginBottom: 0 }}>✓ Angenommen</p>
                           )}
-                          {msg.offer_status === 'declined' && (
+                          {msg.offer_status === 'declined' && !isExpired && (
                             <p style={{ fontSize: '12px', fontWeight: 600, color: '#b91c1c', marginTop: '8px', marginBottom: 0 }}>✕ Abgelehnt</p>
                           )}
                         </div>
-                      ) : (
+                        )
+                      })() : (
                         <div style={{ padding: '10px 14px', borderRadius: msg.sender_id === me?.id ? '14px 14px 4px 14px' : '14px 14px 14px 4px', fontSize: '14px', lineHeight: 1.5, background: msg.sender_id === me?.id ? '#1a6e3a' : '#fff', color: msg.sender_id === me?.id ? '#fff' : '#1a2040', border: msg.sender_id === me?.id ? 'none' : '1px solid #e0dcd4' }}>
                           {msg.content}
                         </div>
                       )}
-                      <span style={{ fontSize: '10px', color: 'var(--text-faint)', marginTop: '3px' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--text-faint)', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         {new Date(msg.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+                        {msg.sender_id !== me?.id && msg.offer_amount == null && (
+                          reportedMsgIds.has(msg.id) ? (
+                            <span style={{ color: 'var(--text-faint)' }}>gemeldet</span>
+                          ) : (
+                            <button onClick={() => { setReportingMsgId(reportingMsgId === msg.id ? null : msg.id); setMsgReportReason(''); setMsgReportOther(''); setMsgReportError('') }}
+                              title="Nachricht melden"
+                              style={{ background: 'none', border: 'none', color: 'var(--text-faint)', fontSize: '11px', cursor: 'pointer', padding: 0 }}>
+                              melden
+                            </button>
+                          )
+                        )}
                       </span>
+                      {reportingMsgId === msg.id && (
+                        <div className="fade-in-up" style={{ marginTop: '6px', width: '220px', background: '#fff8f8', border: '1px solid #fecaca', borderRadius: '8px', padding: '10px' }}>
+                          <select value={msgReportReason} onChange={e => setMsgReportReason(e.target.value)}
+                            style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '7px 10px', fontSize: '12px', color: '#444', outline: 'none', marginBottom: '8px', boxSizing: 'border-box' }}>
+                            <option value="">Grund auswählen...</option>
+                            <option>Belästigung / Beleidigung</option>
+                            <option>Betrug / Täuschung</option>
+                            <option>Spam</option>
+                            <option>Unangemessenes Verhalten</option>
+                            <option>Sonstiges</option>
+                          </select>
+                          {msgReportReason === 'Sonstiges' && (
+                            <textarea value={msgReportOther} onChange={e => setMsgReportOther(e.target.value)}
+                              placeholder="Grund kurz beschreiben..." rows={2}
+                              style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '7px 10px', fontSize: '12px', color: '#444', outline: 'none', marginBottom: '8px', boxSizing: 'border-box', resize: 'vertical' }} />
+                          )}
+                          {msgReportError && (
+                            <p style={{ fontSize: '11px', color: '#b91c1c', marginBottom: '8px' }}>{msgReportError}</p>
+                          )}
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            <button onClick={() => setReportingMsgId(null)}
+                              style={{ flex: 1, background: 'var(--bg-page)', border: '1px solid var(--border-input)', color: 'var(--text-secondary)', fontSize: '12px', borderRadius: '6px', padding: '6px', cursor: 'pointer' }}>
+                              Abbrechen
+                            </button>
+                            <button onClick={() => submitMessageReport(msg.id)} disabled={!msgReportReason || (msgReportReason === 'Sonstiges' && !msgReportOther.trim())}
+                              style={{ flex: 1, background: '#b91c1c', border: 'none', color: '#fff', fontSize: '12px', fontWeight: 500, borderRadius: '6px', padding: '6px', cursor: 'pointer' }}>
+                              Melden
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )
@@ -412,7 +536,7 @@ export default function ChatPage() {
                   onKeyDown={e => e.key === 'Enter' && sendOffer()}
                   placeholder="Preisvorschlag in €" min="0" step="0.5"
                   style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '8px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none' }} />
-                <button onClick={sendOffer} className={`btn-modern${offerSent ? ' flash-success' : ''}`}
+                <button onClick={() => sendOffer()} className={`btn-modern${offerSent ? ' flash-success' : ''}`}
                   style={{ background: '#1a3a6e', color: '#fff', border: 'none', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
                   {offerSent ? <span className="check-pop">✓ Gesendet</span> : 'Senden'}
                 </button>
@@ -420,8 +544,9 @@ export default function ChatPage() {
             )}
 
             <div style={{ background: 'var(--bg-card)', borderTop: '1px solid var(--border-light)', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center', flexShrink: 0 }}>
-              <button onClick={() => setOfferOpen(!offerOpen)} disabled={blockedByMe || blockedMe} className="icon-btn-modern desktop-only"
-                style={{ width: '38px', height: '38px', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '50%', color: '#1a3a6e', fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: (blockedByMe || blockedMe) ? 0.5 : 1 }}>
+              <button onClick={() => setOfferOpen(!offerOpen)} disabled={blockedByMe || blockedMe || hasPendingOffer} className="icon-btn-modern desktop-only"
+                title={hasPendingOffer ? 'Es gibt bereits ein offenes Angebot' : 'Preisangebot senden'}
+                style={{ width: '38px', height: '38px', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '50%', color: '#1a3a6e', fontSize: '15px', cursor: hasPendingOffer ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: (blockedByMe || blockedMe || hasPendingOffer) ? 0.4 : 1 }}>
                 💰
               </button>
               <input

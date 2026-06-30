@@ -227,13 +227,27 @@ export default function Navbar({ username }: { username?: string }) {
                 {notifications.length === 0 && (
                   <div style={{ padding: '28px 16px', textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px' }}>Keine Benachrichtigungen</div>
                 )}
-                {notifications.map(notif => (
-                  <div key={notif.id} onClick={() => { if (notif.link) router.push(notif.link); setNotifOpen(false) }} className="nav-menu-item"
-                    style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-light)', cursor: notif.link ? 'pointer' : 'default', background: notif.read ? 'transparent' : 'var(--bg-page)' }}>
-                    <p style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.5, margin: 0 }}>{notif.message}</p>
-                    <p style={{ fontSize: '11px', color: 'var(--text-faint)', marginTop: '4px', margin: 0 }}>{formatTime(notif.created_at)}</p>
-                  </div>
-                ))}
+                {notifications.map(notif => {
+                  const typeStyle: Record<string, { icon: string; color: string; bg: string; border: string }> = {
+                    warning:  { icon: '⚠️', color: '#92400e', bg: '#fffbeb', border: '#fde68a' },
+                    report:   { icon: '🔔', color: '#1a3a6e', bg: '#eef2f8', border: '#c8d4e8' },
+                    offer:    { icon: '💬', color: '#1a6e3a', bg: '#f0fdf4', border: '#86efac' },
+                    sold:     { icon: '✅', color: '#1a6e3a', bg: '#f0fdf4', border: '#86efac' },
+                    delete:   { icon: '🗑️', color: '#b91c1c', bg: '#fff8f8', border: '#fecaca' },
+                    announce: { icon: '📢', color: '#1a3a6e', bg: '#eef2f8', border: '#c8d4e8' },
+                  }
+                  const ts = typeStyle[notif.type] || { icon: '•', color: 'var(--text-secondary)', bg: 'transparent', border: 'transparent' }
+                  return (
+                    <div key={notif.id} onClick={() => { if (notif.link) router.push(notif.link); setNotifOpen(false) }} className="nav-menu-item"
+                      style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-light)', cursor: notif.link ? 'pointer' : 'default', background: notif.read ? 'transparent' : 'var(--bg-page)', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                      <span style={{ flexShrink: 0, width: '28px', height: '28px', borderRadius: '6px', background: ts.bg, border: `1px solid ${ts.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', marginTop: '1px' }}>{ts.icon}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: '13px', color: ts.color, lineHeight: 1.5, margin: 0 }}>{notif.message}</p>
+                        <p style={{ fontSize: '11px', color: 'var(--text-faint)', marginTop: '3px', margin: 0 }}>{formatTime(notif.created_at)}</p>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           )}
