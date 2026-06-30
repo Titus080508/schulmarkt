@@ -177,7 +177,7 @@ export default function CreatePostPage() {
                   <option>Makellos</option><option>Leichte Gebrauchsspuren</option><option>Starke Gebrauchsspuren</option>
                 </select>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div><label style={labelStyle}>Gravur?</label>
                   <select value={gravur} onChange={e => setGravur(e.target.value)} style={selectStyle}>
                     <option value="">Bitte wählen...</option><option>Ja</option><option>Nein</option>

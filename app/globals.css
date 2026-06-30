@@ -380,13 +380,22 @@ main img {
   .mobile-only { display: flex !important; }
   .grid-mobile { grid-template-columns: repeat(2, 1fr) !important; }
   .detail-grid { grid-template-columns: 1fr !important; }
-  .hero-stats { display: none !important; }
-  .hero-padding { padding: 28px 16px !important; }
-  .main-padding { padding: 16px !important; }
+  .hero-stats { display: flex !important; overflow-x: auto; gap: 8px !important; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .hero-stats::-webkit-scrollbar { display: none; }
+  .hero-padding { padding: 20px 16px !important; }
+  .main-padding { padding: 12px !important; }
   .create-layout { flex-direction: column !important; }
   .create-preview { position: static !important; width: 100% !important; order: -1; }
   .postgrid-toolbar-row { flex-wrap: wrap; }
   .postgrid-toolbar-row > select, .postgrid-toolbar-row > button { flex: 1; }
+  .two-col-grid { grid-template-columns: 1fr !important; }
+  .chat-main { padding: 0 !important; }
+  .chat-back { display: none !important; }
+  .hero-stats .stat-card-modern { min-width: 80px; flex-shrink: 0; padding: 8px 12px !important; }
+  .hero-stats .stat-card-modern > div:first-child { font-size: 18px !important; }
+  .hero-padding h2 { font-size: 18px !important; }
+  .hero-padding p { font-size: 13px !important; }
+  .hero-inner { flex-direction: column !important; align-items: flex-start !important; }
 }
 
 @media (min-width: 641px) {

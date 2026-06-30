@@ -219,36 +219,38 @@ export default function Navbar({ username }: { username?: string }) {
             )}
           </button>
           {notifOpen && (
-            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: 'min(320px, calc(100vw - 16px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: '0 12px 28px rgba(0,0,0,0.14)', zIndex: 100, overflow: 'hidden' }}>
-              <div style={{ padding: '13px 16px', borderBottom: '1px solid var(--border-light)' }}>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Benachrichtigungen</span>
+            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: 'min(280px, calc(100vw - 16px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: '0 12px 28px rgba(0,0,0,0.14)', zIndex: 100, overflow: 'hidden' }}>
+              <div style={{ padding: '11px 14px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Benachrichtigungen</span>
+                {unreadNotifs > 0 && <span style={{ fontSize: '11px', background: '#fee2e2', color: '#b91c1c', padding: '1px 7px', borderRadius: '999px', fontWeight: 600 }}>{unreadNotifs} neu</span>}
               </div>
-              <div style={{ maxHeight: '360px', overflowY: 'auto' }}>
-                {notifications.length === 0 && (
-                  <div style={{ padding: '28px 16px', textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px' }}>Keine Benachrichtigungen</div>
-                )}
-                {notifications.map(notif => {
-                  const typeStyle: Record<string, { icon: string; color: string; bg: string; border: string }> = {
-                    warning:  { icon: '⚠️', color: '#92400e', bg: '#fffbeb', border: '#fde68a' },
-                    report:   { icon: '🔔', color: '#1a3a6e', bg: '#eef2f8', border: '#c8d4e8' },
-                    offer:    { icon: '💬', color: '#1a6e3a', bg: '#f0fdf4', border: '#86efac' },
-                    sold:     { icon: '✅', color: '#1a6e3a', bg: '#f0fdf4', border: '#86efac' },
-                    delete:   { icon: '🗑️', color: '#b91c1c', bg: '#fff8f8', border: '#fecaca' },
-                    announce: { icon: '📢', color: '#1a3a6e', bg: '#eef2f8', border: '#c8d4e8' },
-                  }
-                  const ts = typeStyle[notif.type] || { icon: '•', color: 'var(--text-secondary)', bg: 'transparent', border: 'transparent' }
-                  return (
-                    <div key={notif.id} onClick={() => { if (notif.link) router.push(notif.link); setNotifOpen(false) }} className="nav-menu-item"
-                      style={{ padding: '12px 16px', borderBottom: '1px solid var(--border-light)', cursor: notif.link ? 'pointer' : 'default', background: notif.read ? 'transparent' : 'var(--bg-page)', display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-                      <span style={{ flexShrink: 0, width: '28px', height: '28px', borderRadius: '6px', background: ts.bg, border: `1px solid ${ts.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', marginTop: '1px' }}>{ts.icon}</span>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontSize: '13px', color: ts.color, lineHeight: 1.5, margin: 0 }}>{notif.message}</p>
-                        <p style={{ fontSize: '11px', color: 'var(--text-faint)', marginTop: '3px', margin: 0 }}>{formatTime(notif.created_at)}</p>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
+              {notifications.length === 0 ? (
+                <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px' }}>Keine Benachrichtigungen</div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px', padding: '12px', maxHeight: '220px', overflowY: 'auto' }}>
+                  {notifications.map(notif => {
+                    const typeStyle: Record<string, { icon: string; bg: string; border: string }> = {
+                      warning:  { icon: '⚠️', bg: '#fffbeb', border: '#fde68a' },
+                      report:   { icon: '🔔', bg: '#eef2f8', border: '#c8d4e8' },
+                      offer:    { icon: '💬', bg: '#f0fdf4', border: '#86efac' },
+                      sold:     { icon: '✅', bg: '#f0fdf4', border: '#86efac' },
+                      delete:   { icon: '🗑️', bg: '#fff8f8', border: '#fecaca' },
+                      announce: { icon: '📢', bg: '#eef2f8', border: '#c8d4e8' },
+                    }
+                    const ts = typeStyle[notif.type] || { icon: '🔵', bg: 'var(--bg-page)', border: 'var(--border-light)' }
+                    return (
+                      <button key={notif.id} onClick={() => { if (notif.link) router.push(notif.link); setNotifOpen(false) }}
+                        title={notif.message}
+                        style={{ position: 'relative', background: ts.bg, border: `1px solid ${ts.border}`, borderRadius: '10px', width: '100%', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', cursor: notif.link ? 'pointer' : 'default', padding: 0 }}>
+                        {ts.icon}
+                        {!notif.read && (
+                          <span style={{ position: 'absolute', top: '3px', right: '3px', width: '7px', height: '7px', background: '#e05252', borderRadius: '50%', border: '1px solid var(--bg-card)' }} />
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           )}
         </div>

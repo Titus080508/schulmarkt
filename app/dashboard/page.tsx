@@ -48,7 +48,7 @@ export default async function DashboardPage() {
           padding: '44px 24px', position: 'relative', overflow: 'hidden'
         }}>
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(10,25,60,0.92) 40%, rgba(10,25,60,0.6))' }} />
-          <div style={{ position: 'relative', zIndex: 1, maxWidth: '1100px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div className="hero-inner" style={{ position: 'relative', zIndex: 1, maxWidth: '1100px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
             <div className="fade-in-up" style={{ animationDelay: '0ms' }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.25)', color: '#fff', fontSize: '11px', padding: '3px 10px', borderRadius: '4px', marginBottom: '12px', letterSpacing: '0.04em' }}>
                 Erzb. Liebfrauenschule Köln
@@ -61,7 +61,7 @@ export default async function DashboardPage() {
                 + Artikel inserieren
               </a>
             </div>
-            <div className="hero-stats" style={{ display: 'flex', gap: '12px' }}>
+            <div className="hero-stats" style={{ display: 'flex', gap: '12px', flexShrink: 0 }}>
               {[
                 { num: posts?.length || 0, label: 'Angebote' },
                 { num: 7, label: 'Kategorien' },

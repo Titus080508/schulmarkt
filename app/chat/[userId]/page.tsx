@@ -265,8 +265,8 @@ export default function ChatPage() {
   return (
     <div style={{ height: '100vh', background: 'var(--bg-page)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <Navbar username={myDisplayName} />
-      <main style={{ maxWidth: '1100px', margin: '0 auto', width: '100%', padding: '24px 20px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
-        <Link href="/dashboard" className="link-modern" style={{ fontSize: '13px', color: '#1a3a6e', textDecoration: 'none', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+      <main className="chat-main" style={{ maxWidth: '1100px', margin: '0 auto', width: '100%', padding: '24px 20px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+        <Link href="/dashboard" className="chat-back link-modern" style={{ fontSize: '13px', color: '#1a3a6e', textDecoration: 'none', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
           ← Zurück
         </Link>
 
@@ -544,7 +544,7 @@ export default function ChatPage() {
             )}
 
             <div style={{ background: 'var(--bg-card)', borderTop: '1px solid var(--border-light)', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center', flexShrink: 0 }}>
-              <button onClick={() => setOfferOpen(!offerOpen)} disabled={blockedByMe || blockedMe || hasPendingOffer} className="icon-btn-modern desktop-only"
+              <button onClick={() => setOfferOpen(!offerOpen)} disabled={blockedByMe || blockedMe || hasPendingOffer} className="icon-btn-modern"
                 title={hasPendingOffer ? 'Es gibt bereits ein offenes Angebot' : 'Preisangebot senden'}
                 style={{ width: '38px', height: '38px', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '50%', color: '#1a3a6e', fontSize: '15px', cursor: hasPendingOffer ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: (blockedByMe || blockedMe || hasPendingOffer) ? 0.4 : 1 }}>
                 💰
