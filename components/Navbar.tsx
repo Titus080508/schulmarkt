@@ -227,26 +227,29 @@ export default function Navbar({ username }: { username?: string }) {
               {notifications.length === 0 ? (
                 <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px' }}>Keine Benachrichtigungen</div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px', padding: '12px', maxHeight: '220px', overflowY: 'auto' }}>
+                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                   {notifications.map(notif => {
-                    const typeStyle: Record<string, { icon: string; bg: string; border: string }> = {
-                      warning:  { icon: '⚠️', bg: '#fffbeb', border: '#fde68a' },
-                      report:   { icon: '🔔', bg: '#eef2f8', border: '#c8d4e8' },
-                      offer:    { icon: '💬', bg: '#f0fdf4', border: '#86efac' },
-                      sold:     { icon: '✅', bg: '#f0fdf4', border: '#86efac' },
-                      delete:   { icon: '🗑️', bg: '#fff8f8', border: '#fecaca' },
-                      announce: { icon: '📢', bg: '#eef2f8', border: '#c8d4e8' },
+                    const typeStyle: Record<string, { icon: string; bg: string; border: string; color: string }> = {
+                      warning:  { icon: '⚠️', bg: '#fffbeb', border: '#fde68a', color: '#92400e' },
+                      report:   { icon: '🔔', bg: '#eef2f8', border: '#c8d4e8', color: '#1a3a6e' },
+                      offer:    { icon: '💬', bg: '#f0fdf4', border: '#86efac', color: '#1a6e3a' },
+                      sold:     { icon: '✅', bg: '#f0fdf4', border: '#86efac', color: '#1a6e3a' },
+                      delete:   { icon: '🗑️', bg: '#fff8f8', border: '#fecaca', color: '#b91c1c' },
+                      announce: { icon: '📢', bg: '#eef2f8', border: '#c8d4e8', color: '#1a3a6e' },
                     }
-                    const ts = typeStyle[notif.type] || { icon: '🔵', bg: 'var(--bg-page)', border: 'var(--border-light)' }
+                    const ts = typeStyle[notif.type] || { icon: '•', bg: 'var(--bg-page)', border: 'var(--border-light)', color: 'var(--text-secondary)' }
                     return (
-                      <button key={notif.id} onClick={() => { if (notif.link) router.push(notif.link); setNotifOpen(false) }}
-                        title={notif.message}
-                        style={{ position: 'relative', background: ts.bg, border: `1px solid ${ts.border}`, borderRadius: '10px', width: '100%', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', cursor: notif.link ? 'pointer' : 'default', padding: 0 }}>
-                        {ts.icon}
-                        {!notif.read && (
-                          <span style={{ position: 'absolute', top: '3px', right: '3px', width: '7px', height: '7px', background: '#e05252', borderRadius: '50%', border: '1px solid var(--bg-card)' }} />
-                        )}
-                      </button>
+                      <div key={notif.id} onClick={() => { if (notif.link) router.push(notif.link); setNotifOpen(false) }} className="nav-menu-item"
+                        style={{ padding: '9px 14px', borderBottom: '1px solid var(--border-light)', cursor: notif.link ? 'pointer' : 'default', background: notif.read ? 'transparent' : 'var(--bg-page)', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <span style={{ position: 'relative', flexShrink: 0, width: '32px', height: '32px', borderRadius: '8px', background: ts.bg, border: `1px solid ${ts.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>
+                          {ts.icon}
+                          {!notif.read && <span style={{ position: 'absolute', top: '2px', right: '2px', width: '6px', height: '6px', background: '#e05252', borderRadius: '50%', border: '1px solid var(--bg-card)' }} />}
+                        </span>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: '12px', color: ts.color, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: notif.read ? 400 : 500 }}>{notif.message}</p>
+                          <p style={{ fontSize: '10px', color: 'var(--text-faint)', margin: 0, marginTop: '1px' }}>{formatTime(notif.created_at)}</p>
+                        </div>
+                      </div>
                     )
                   })}
                 </div>
