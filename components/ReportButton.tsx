@@ -47,12 +47,12 @@ export default function ReportButton({ postId }: { postId: string }) {
         </button>
       )}
       {open && (
-        <div style={{ background: '#fff8f8', border: '1px solid #fecaca', borderRadius: '8px', padding: '14px' }}>
-          <p style={{ fontSize: '13px', fontWeight: 500, color: '#b91c1c', marginBottom: '10px' }}>Post melden</p>
+        <div style={{ background: 'var(--state-danger-bg)', border: '1px solid var(--state-danger-border)', borderRadius: '8px', padding: '14px' }}>
+          <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--state-danger)', marginBottom: '10px' }}>Post melden</p>
           <select
             value={reason}
             onChange={e => setReason(e.target.value)}
-            style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: '#444', outline: 'none', marginBottom: '10px', boxSizing: 'border-box' }}
+            style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', marginBottom: '10px', boxSizing: 'border-box' }}
           >
             <option value="">Grund auswählen...</option>
             <option>Unangemessener Inhalt</option>
@@ -67,11 +67,11 @@ export default function ReportButton({ postId }: { postId: string }) {
               onChange={e => setOther(e.target.value)}
               placeholder="Grund kurz beschreiben..."
               rows={2}
-              style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: '#444', outline: 'none', marginBottom: '10px', boxSizing: 'border-box', resize: 'vertical' }}
+              style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', marginBottom: '10px', boxSizing: 'border-box', resize: 'vertical' }}
             />
           )}
           {error && (
-            <p style={{ fontSize: '12px', color: '#b91c1c', marginBottom: '10px' }}>{error}</p>
+            <p style={{ fontSize: '12px', color: 'var(--state-danger)', marginBottom: '10px' }}>{error}</p>
           )}
           <div style={{ display: 'flex', gap: '8px' }}>
             <button
@@ -83,7 +83,7 @@ export default function ReportButton({ postId }: { postId: string }) {
             <button
               onClick={handleReport}
               disabled={loading || !reason || (reason === 'Sonstiges' && !other.trim())}
-              style={{ flex: 1, background: '#b91c1c', border: 'none', color: '#fff', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '8px', cursor: 'pointer' }}
+              style={{ flex: 1, background: 'var(--state-danger)', border: 'none', color: 'var(--text-on-dark)', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '8px', cursor: 'pointer' }}
             >
               {loading ? 'Wird gesendet...' : 'Melden'}
             </button>

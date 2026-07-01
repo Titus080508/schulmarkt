@@ -43,12 +43,12 @@ export default function AdminPostsTable({ posts }: { posts: any[] }) {
   return (
     <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', marginBottom: '20px', overflow: 'hidden' }}>
       <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-        <p style={{ fontSize: '14px', fontWeight: 500, color: '#1a3a6e', margin: 0 }}>Alle Inserate</p>
+        <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-primary)', margin: 0 }}>Alle Inserate</p>
         {selected.size > 0 ? (
           <div className="fade-in-up" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{selected.size} ausgewählt</span>
             <button onClick={bulkDelete} disabled={busy} className="btn-modern"
-              style={{ fontSize: '12px', fontWeight: 600, color: '#fff', background: '#b91c1c', border: 'none', borderRadius: '4px', padding: '6px 12px', cursor: 'pointer' }}>
+              style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-on-dark)', background: 'var(--state-danger)', border: 'none', borderRadius: '4px', padding: '6px 12px', cursor: 'pointer' }}>
               {busy ? 'Wird gelöscht...' : 'Löschen'}
             </button>
             <button onClick={() => setSelected(new Set())}
@@ -80,16 +80,16 @@ export default function AdminPostsTable({ posts }: { posts: any[] }) {
                 </td>
                 <td style={{ padding: '12px 16px', fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500, maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</td>
                 <td style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--text-secondary)' }}>{categoryLabel[post.category]}</td>
-                <td style={{ padding: '12px 16px', fontSize: '13px', color: post.price === 0 ? '#1a6e3a' : '#1a3a6e', fontWeight: 500 }}>{post.price === 0 ? 'Verschenkt' : `${post.price.toFixed(2)} €`}</td>
+                <td style={{ padding: '12px 16px', fontSize: '13px', color: post.price === 0 ? 'var(--state-success)' : 'var(--color-primary)', fontWeight: 500 }}>{post.price === 0 ? 'Verschenkt' : `${post.price.toFixed(2)} €`}</td>
                 <td style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--text-secondary)' }}>{post.profiles?.display_name || post.profiles?.username}</td>
                 <td style={{ padding: '12px 16px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 500, padding: '3px 8px', borderRadius: '3px', background: post.status === 'active' ? '#f0fdf4' : '#f7f5f0', color: post.status === 'active' ? '#1a6e3a' : '#888' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 500, padding: '3px 8px', borderRadius: '3px', background: post.status === 'active' ? 'var(--state-success-bg)' : 'var(--color-bg)', color: post.status === 'active' ? 'var(--state-success)' : 'var(--text-muted)' }}>
                     {post.status === 'active' ? 'Aktiv' : 'Verkauft'}
                   </span>
                 </td>
                 <td style={{ padding: '12px 16px' }}>
                   <div style={{ display: 'flex', gap: '6px' }}>
-                    <Link href={`/post/${post.id}`} style={{ fontSize: '12px', color: '#1a3a6e', textDecoration: 'none', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '4px', padding: '4px 10px' }}>Ansehen</Link>
+                    <Link href={`/post/${post.id}`} style={{ fontSize: '12px', color: 'var(--color-primary)', textDecoration: 'none', background: 'var(--border-light)', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '4px 10px' }}>Ansehen</Link>
                     <Link href={`/post/${post.id}/edit`} style={{ fontSize: '12px', color: 'var(--text-secondary)', textDecoration: 'none', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '4px', padding: '4px 10px' }}>Bearbeiten</Link>
                     <DeleteButton postId={post.id} />
                   </div>

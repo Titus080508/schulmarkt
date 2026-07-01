@@ -5,15 +5,72 @@
 }
 
 :root {
-  --bg-page: #f7f5f0;
-  --bg-card: #ffffff;
-  --border-color: #e0dcd4;
-  --border-light: #f0ece4;
-  --border-input: #dddddd;
-  --text-primary: #1a2040;
-  --text-secondary: #666666;
-  --text-muted: #888888;
-  --text-faint: #aaaaaa;
+  /* Basis 60/30/10 - als Hex UND als "r,g,b"-Tripel, damit rgba()-Overlays
+     beim Austausch der Farbe automatisch mitziehen */
+  --color-bg: #F4F4F4;
+  --color-bg-rgb: 244,244,244;
+  --color-primary: #0C2B4E;
+  --color-primary-rgb: 12,43,78;
+  --color-secondary: #1A3D64;
+  --color-secondary-rgb: 26,61,100;
+  --color-accent: #1D546C;
+  --color-accent-rgb: 29,84,108;
+
+  /* Einzige erlaubte Ausnahme zum 4-Farben-Schema: Rot für Fehler/Gefahr */
+  --color-error: #B91C1C;
+  --color-error-rgb: 185,28,28;
+
+  --bg-page: var(--color-bg);
+  --bg-card: var(--color-bg);
+  --border-color: rgba(var(--color-primary-rgb),0.16);
+  --border-light: rgba(var(--color-primary-rgb),0.08);
+  --border-input: rgba(var(--color-primary-rgb),0.22);
+
+  /* Text-Abstufungen, Alpha-Werte auf WCAG-AA-Kontrast (>=4.5:1 auf --bg-page)
+     geprüft/kalibriert; --text-faint ist bewusst nur für rein dekorative
+     Mikro-Texte (>=3:1) gedacht, nie für Fließtext. */
+  --text-primary: var(--color-primary);
+  --text-secondary: rgba(var(--color-primary-rgb),0.72);
+  --text-muted: rgba(var(--color-primary-rgb),0.66);
+  --text-faint: rgba(var(--color-primary-rgb),0.55);
+  --text-on-dark: var(--color-bg);
+
+  --state-danger: var(--color-error);
+  --state-danger-bg: rgba(var(--color-error-rgb),0.08);
+  --state-danger-border: rgba(var(--color-error-rgb),0.24);
+
+  --state-success: var(--color-accent);
+  --state-success-bg: rgba(var(--color-accent-rgb),0.08);
+  --state-success-border: rgba(var(--color-accent-rgb),0.24);
+
+  --state-warning: var(--color-secondary);
+  --state-warning-bg: rgba(var(--color-secondary-rgb),0.08);
+  --state-warning-border: rgba(var(--color-secondary-rgb),0.24);
+
+  --state-hover-bg: rgba(var(--color-primary-rgb),0.04);
+  --state-disabled: rgba(var(--color-primary-rgb),0.35);
+
+  /* Deckende (nicht transparente) Varianten fuer Badges, die ueber Fotos liegen -
+     eine 8%-Alpha-Flaeche wuerde je nach Fotohelligkeit unlesbar */
+  --tag-bg: color-mix(in srgb, var(--color-accent) 12%, var(--color-bg) 88%);
+  --tag-border: color-mix(in srgb, var(--color-accent) 35%, var(--color-bg) 65%);
+  --tag-color: var(--color-accent);
+
+  /* Helle Varianten fuer Text/Links auf dunklen Flaechen (Navbar, Hero,
+     Cookie-Banner) - die vollen Farbtoene sind dort zu dunkel fuer 4.5:1 */
+  --color-accent-on-dark: color-mix(in srgb, var(--color-accent) 55%, var(--color-bg) 45%);
+  --color-error-on-dark: color-mix(in srgb, var(--color-error) 55%, var(--color-bg) 45%);
+
+  /* Elevation-Stufen - navy-getoente Schatten statt Standard-Grau/Schwarz,
+     durchgaengig fuer Tiefe genutzt statt vereinzelter Ad-hoc-Werte:
+     xs = ruhende kleine Flaechen (Suchfeld, Icon-Buttons, Inputs)
+     sm = ruhende Karten/Leisten, kleine Hover-Zustaende
+     md = Hover-Anhebung von Karten/Buttons, verankerte Dropdowns
+     lg = frei schwebende Overlays (Modals, grosse Panels) */
+  --shadow-xs: 0 1px 3px rgba(var(--color-primary-rgb), 0.08);
+  --shadow-sm: 0 4px 12px rgba(var(--color-primary-rgb), 0.14);
+  --shadow-md: 0 10px 24px rgba(var(--color-primary-rgb), 0.18);
+  --shadow-lg: 0 20px 40px rgba(var(--color-primary-rgb), 0.24);
 }
 
 body {
@@ -40,13 +97,13 @@ body {
 
 .navbar-modern {
   transition: background 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1), height 0.3s cubic-bezier(0.22, 1, 0.36, 1), backdrop-filter 0.3s ease-out;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .navbar-modern.scrolled {
-  background: rgba(26, 58, 110, 0.88) !important;
+  background: rgba(var(--color-primary-rgb), 0.88) !important;
   backdrop-filter: blur(12px);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+  box-shadow: var(--shadow-md);
   height: 50px !important;
 }
 
@@ -56,7 +113,7 @@ body {
 
 .icon-btn-modern:hover {
   transform: scale(1.08) translateY(-1px);
-  background: rgba(255, 255, 255, 0.18) !important;
+  background: rgba(var(--color-bg-rgb), 0.18) !important;
 }
 
 .icon-badge-modern {
@@ -85,7 +142,7 @@ body {
 }
 
 @keyframes successFlash {
-  0% { background-color: rgba(26, 110, 58, 0.18); }
+  0% { background-color: rgba(var(--color-accent-rgb), 0.18); }
   100% { background-color: transparent; }
 }
 
@@ -126,7 +183,7 @@ body {
   display: block;
   height: 2px;
   width: 100%;
-  background: #fff;
+  background: var(--text-on-dark);
   border-radius: 1px;
   transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease-out, width 0.2s ease-out;
   transform-origin: center;
@@ -161,8 +218,8 @@ body {
 
 .stat-card-modern:hover {
   transform: translateY(-4px) scale(1.03);
-  background: rgba(255, 255, 255, 0.13) !important;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  background: rgba(var(--color-bg-rgb), 0.13) !important;
+  box-shadow: 0 12px 28px rgba(var(--color-primary-rgb), 0.28);
 }
 
 .hero-cta-modern {
@@ -171,7 +228,7 @@ body {
 
 .hero-cta-modern:hover {
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 10px 26px rgba(240, 192, 64, 0.45);
+  box-shadow: 0 10px 26px rgba(var(--color-accent-rgb), 0.45);
 }
 
 .post-card-modern {
@@ -179,11 +236,12 @@ body {
   transform-style: preserve-3d;
   animation: fadeUp 0.5s ease-out backwards;
   will-change: transform;
+  box-shadow: var(--shadow-xs);
 }
 
 .post-card-modern:hover {
   transform: perspective(900px) rotateX(2deg) rotateY(-3deg) translateY(-4px) scale(1.015);
-  box-shadow: 0 20px 36px rgba(0, 0, 0, 0.16), 0 0 28px rgba(240, 192, 64, 0.12);
+  box-shadow: var(--shadow-lg), 0 0 28px rgba(var(--color-accent-rgb), 0.16);
   z-index: 2;
 }
 
@@ -196,7 +254,7 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(135deg, rgba(var(--color-bg-rgb),0) 0%, rgba(var(--color-bg-rgb),0.16) 50%, rgba(var(--color-bg-rgb),0) 100%);
   opacity: 0;
   transition: opacity 0.4s ease-out;
 }
@@ -229,7 +287,7 @@ body {
 
 .filter-btn-modern:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .fade-in-up {
@@ -242,7 +300,7 @@ body {
 
 .btn-modern:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--shadow-md);
   filter: brightness(1.05);
 }
 
@@ -261,11 +319,12 @@ body {
 
 .card-modern {
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: var(--shadow-xs);
 }
 
 .card-modern:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .thumb-modern {
@@ -286,8 +345,8 @@ body {
 }
 
 .input-modern:focus {
-  border-color: #1a3a6e !important;
-  box-shadow: 0 0 0 3px rgba(26, 58, 110, 0.12);
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.14);
   transform: translateY(-1px);
 }
 
@@ -296,7 +355,7 @@ body {
 }
 
 .row-modern:hover {
-  background: #fafbff !important;
+  background: var(--state-hover-bg) !important;
 }
 
 .avatar-modern {
@@ -317,7 +376,7 @@ body {
 
 .gallery-arrow-modern:hover {
   transform: translateY(-50%) scale(1.15);
-  background: #fff !important;
+  background: var(--text-on-dark) !important;
 }
 
 /* --- App-wide baseline interactivity (covers forms, tables, links, images everywhere) --- */
@@ -327,7 +386,7 @@ main input, main select, main textarea {
 }
 
 main input:not([disabled]):focus, main select:not([disabled]):focus, main textarea:not([disabled]):focus {
-  box-shadow: 0 0 0 3px rgba(26, 58, 110, 0.12);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.14);
   transform: translateY(-1px);
 }
 
@@ -357,7 +416,7 @@ main table tbody tr {
 }
 
 main table tbody tr:hover {
-  background: #fafbff;
+  background: var(--state-hover-bg);
 }
 
 main img {
@@ -386,8 +445,6 @@ main img {
   .main-padding { padding: 12px !important; }
   .create-layout { flex-direction: column !important; }
   .create-preview { position: static !important; width: 100% !important; order: -1; }
-  .postgrid-toolbar-row { flex-wrap: wrap; }
-  .postgrid-toolbar-row > select, .postgrid-toolbar-row > button { flex: 1; }
   .two-col-grid { grid-template-columns: 1fr !important; }
   .chat-main { padding: 0 !important; }
   .chat-back { display: none !important; }

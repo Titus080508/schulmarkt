@@ -4,7 +4,7 @@ export default function DatenschutzPage() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-page)', padding: '40px 20px' }}>
       <div style={{ maxWidth: '700px', margin: '0 auto', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '36px' }}>
-        <h1 style={{ fontSize: '22px', fontWeight: 600, color: '#1a3a6e', marginBottom: '8px' }}>Datenschutzerklärung</h1>
+        <h1 style={{ fontSize: '22px', fontWeight: 600, color: 'var(--color-primary)', marginBottom: '8px' }}>Datenschutzerklärung</h1>
         <p style={{ fontSize: '13px', color: 'var(--text-faint)', marginBottom: '24px' }}>Stand: Juni 2026</p>
 
         <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '24px', marginBottom: '8px' }}>1. Verantwortliche Stelle</h2>
@@ -67,12 +67,12 @@ export default function DatenschutzPage() {
         <h2 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '24px', marginBottom: '8px' }}>8. Kontakt</h2>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
           Bei Fragen zum Datenschutz wende dich an{' '}
-          <a href="mailto:tituskullmann@icloud.com" className="link-modern" style={{ color: '#1a3a6e' }}>
+          <a href="mailto:tituskullmann@icloud.com" className="link-modern" style={{ color: 'var(--color-primary)' }}>
             tituskullmann@icloud.com
           </a>.
         </p>
 
-        <Link href="/dashboard" className="link-modern" style={{ display: 'inline-block', marginTop: '28px', fontSize: '13px', color: '#1a3a6e', fontWeight: 500 }}>
+        <Link href="/dashboard" className="link-modern" style={{ display: 'inline-block', marginTop: '28px', fontSize: '13px', color: 'var(--color-primary)', fontWeight: 500 }}>
           ← Zurück
         </Link>
       </div>

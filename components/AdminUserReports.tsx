@@ -79,10 +79,10 @@ export default function AdminUserReports({ reports, isOwner, currentUserId }: { 
   const groups = groupByReported(list)
 
   return (
-    <div style={{ background: '#fff8f8', border: '1px solid #fecaca', borderRadius: '10px', marginBottom: '20px', overflow: 'hidden' }}>
-      <div style={{ padding: '16px 20px', borderBottom: '1px solid #fecaca', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-        <p style={{ fontSize: '14px', fontWeight: 500, color: '#b91c1c', margin: 0 }}>Gemeldete Nutzer</p>
-        <span style={{ fontSize: '12px', color: '#b91c1c', background: '#fee2e2', padding: '2px 8px', borderRadius: '3px' }}>{list.length} Meldungen · {groups.length} Nutzer</span>
+    <div style={{ background: 'var(--state-danger-bg)', border: '1px solid var(--state-danger-border)', borderRadius: '10px', marginBottom: '20px', overflow: 'hidden' }}>
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--state-danger-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+        <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--state-danger)', margin: 0 }}>Gemeldete Nutzer</p>
+        <span style={{ fontSize: '12px', color: 'var(--state-danger)', background: 'var(--state-danger-bg)', padding: '2px 8px', borderRadius: '3px' }}>{list.length} Meldungen · {groups.length} Nutzer</span>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '560px', overflowY: 'auto' }}>
         {groups.map(group => {
@@ -91,11 +91,11 @@ export default function AdminUserReports({ reports, isOwner, currentUserId }: { 
           const reportedName = first.reported?.display_name || first.reported?.username
 
           return (
-            <div key={groupKey} style={{ padding: '14px 20px', borderBottom: '1px solid #fee2e2' }}>
+            <div key={groupKey} style={{ padding: '14px 20px', borderBottom: '1px solid var(--state-danger-bg)' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: '200px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '11px', background: '#fee2e2', color: '#b91c1c', padding: '2px 8px', borderRadius: '3px', fontWeight: 500 }}>
+                    <span style={{ fontSize: '11px', background: 'var(--state-danger-bg)', color: 'var(--state-danger)', padding: '2px 8px', borderRadius: '3px', fontWeight: 500 }}>
                       {group.length > 1 ? `${group.length}x gemeldet` : 'Nutzer-Meldung'}
                     </span>
                   </div>
@@ -108,7 +108,7 @@ export default function AdminUserReports({ reports, isOwner, currentUserId }: { 
                       <p key={r.id} style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
                         Von <strong>{r.reporter?.display_name || r.reporter?.username}</strong>
                         <span style={{ color: 'var(--text-faint)' }}> (@{r.reporter?.username}) – </span>
-                        <span style={{ color: '#b91c1c' }}>{r.reason}</span>
+                        <span style={{ color: 'var(--state-danger)' }}>{r.reason}</span>
                         <span style={{ color: 'var(--text-faint)' }}> · {new Date(r.created_at).toLocaleDateString('de-DE')} {new Date(r.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</span>
                       </p>
                     ))}
@@ -126,7 +126,7 @@ export default function AdminUserReports({ reports, isOwner, currentUserId }: { 
                 />
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <button onClick={() => resolveGroup(group, 'resolved')} disabled={busyId === groupKey}
-                    style={{ fontSize: '12px', color: '#1a6e3a', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '4px', padding: '6px 12px', cursor: 'pointer', opacity: busyId === groupKey ? 0.6 : 1 }}>
+                    style={{ fontSize: '12px', color: 'var(--state-success)', background: 'var(--state-success-bg)', border: '1px solid var(--state-success-border)', borderRadius: '4px', padding: '6px 12px', cursor: 'pointer', opacity: busyId === groupKey ? 0.6 : 1 }}>
                     {busyId === groupKey ? 'Wird gespeichert...' : 'Annehmen'}
                   </button>
                   <button onClick={() => resolveGroup(group, 'rejected')} disabled={busyId === groupKey}
@@ -141,11 +141,11 @@ export default function AdminUserReports({ reports, isOwner, currentUserId }: { 
                           placeholder="Grund (optional)"
                           style={{ fontSize: '12px', padding: '5px 8px', border: '1px solid var(--border-input)', borderRadius: '4px', width: '140px' }} />
                         <button onClick={() => warnUser(groupKey)} disabled={busyId === groupKey}
-                          style={{ fontSize: '12px', color: '#92400e', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', padding: '6px 10px', cursor: 'pointer' }}>
+                          style={{ fontSize: '12px', color: 'var(--state-warning)', background: 'var(--state-warning-bg)', border: '1px solid var(--state-warning-border)', borderRadius: '4px', padding: '6px 10px', cursor: 'pointer' }}>
                           Verwarnen
                         </button>
                         <button onClick={() => suspendUser(groupKey)} disabled={busyId === groupKey}
-                          style={{ fontSize: '12px', color: '#fff', background: '#b91c1c', border: 'none', borderRadius: '4px', padding: '6px 10px', cursor: 'pointer' }}>
+                          style={{ fontSize: '12px', color: 'var(--text-on-dark)', background: 'var(--state-danger)', border: 'none', borderRadius: '4px', padding: '6px 10px', cursor: 'pointer' }}>
                           Sperren
                         </button>
                         <button onClick={() => { setWarnTarget(null); setWarnText('') }}
@@ -155,7 +155,7 @@ export default function AdminUserReports({ reports, isOwner, currentUserId }: { 
                       </div>
                     ) : (
                       <button onClick={() => setWarnTarget(groupKey)}
-                        style={{ fontSize: '12px', color: '#92400e', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '4px', padding: '6px 12px', cursor: 'pointer' }}>
+                        style={{ fontSize: '12px', color: 'var(--state-warning)', background: 'var(--state-warning-bg)', border: '1px solid var(--state-warning-border)', borderRadius: '4px', padding: '6px 12px', cursor: 'pointer' }}>
                         Verwarnen/Sperren
                       </button>
                     )

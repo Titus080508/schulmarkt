@@ -17,7 +17,7 @@ export default function RestorePostButton({ postId }: { postId: string }) {
 
   return (
     <button onClick={handleRestore} disabled={loading} className="btn-modern"
-      style={{ fontSize: '12px', color: '#1a6e3a', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
+      style={{ fontSize: '12px', color: 'var(--state-success)', background: 'var(--state-success-bg)', border: '1px solid var(--state-success-border)', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
       {loading ? 'Wird wiederhergestellt...' : '↺ Wiederherstellen'}
     </button>
   )

@@ -5,11 +5,7 @@ import { createClient } from '@/utils/supabase/client'
 import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import CategoryIcon from '@/components/CategoryIcon'
-
-const categoryBg: Record<string, string> = {
-  calculator: '#edf2ff', lfs_shirt: '#fdf0f7', clothing: '#fdf0f7',
-  notebook: '#f0fdf4', lecture: '#f0fdf4', supplies: '#fdf8f0', other: '#f7f5f0'
-}
+import { CATEGORY_BG } from '@/utils/categoryStyle'
 
 function formatDay(ts: string) {
   const d = new Date(ts)
@@ -266,7 +262,7 @@ export default function ChatPage() {
     <div style={{ height: '100vh', background: 'var(--bg-page)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <Navbar username={myDisplayName} />
       <main className="chat-main" style={{ maxWidth: '1100px', margin: '0 auto', width: '100%', padding: '24px 20px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
-        <Link href="/dashboard" className="chat-back link-modern" style={{ fontSize: '13px', color: '#1a3a6e', textDecoration: 'none', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+        <Link href="/dashboard" className="chat-back link-modern" style={{ fontSize: '13px', color: 'var(--color-primary)', textDecoration: 'none', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
           ← Zurück
         </Link>
 
@@ -284,8 +280,8 @@ export default function ChatPage() {
                 const active = conv.otherId === userId
                 return (
                   <div key={conv.otherId} onClick={() => router.push(`/chat/${conv.otherId}`)} className="row-modern"
-                    style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 20px', cursor: 'pointer', background: active ? '#f0fdf4' : 'transparent', borderLeft: active ? '3px solid #1a6e3a' : '3px solid transparent' }}>
-                    <div className="avatar-modern" style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: '#eef2f8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 600, color: '#1a3a6e', flexShrink: 0 }}>
+                    style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 20px', cursor: 'pointer', background: active ? 'var(--state-success-bg)' : 'transparent', borderLeft: active ? '3px solid var(--state-success)' : '3px solid transparent' }}>
+                    <div className="avatar-modern" style={{ position: 'relative', width: '40px', height: '40px', borderRadius: '50%', background: 'var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 600, color: 'var(--color-primary)', flexShrink: 0 }}>
                       {conv.otherName?.[0]?.toUpperCase()}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -300,7 +296,7 @@ export default function ChatPage() {
                       </p>
                     </div>
                     {conv.unread > 0 && (
-                      <span style={{ background: '#1a6e3a', color: '#fff', fontSize: '11px', fontWeight: 600, borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ background: 'var(--state-success)', color: 'var(--text-on-dark)', fontSize: '11px', fontWeight: 600, borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                         {conv.unread}
                       </span>
                     )}
@@ -312,7 +308,7 @@ export default function ChatPage() {
 
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, minHeight: 0 }}>
             <div style={{ background: 'var(--bg-card)', padding: '14px 20px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-              <div className="avatar-modern" style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#eef2f8', border: '1px solid #c8d4e8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 600, color: '#1a3a6e' }}>
+              <div className="avatar-modern" style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--border-light)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 600, color: 'var(--color-primary)' }}>
                 {otherDisplayName?.[0]?.toUpperCase()}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -325,13 +321,13 @@ export default function ChatPage() {
                   ⋮
                 </button>
                 {menuOpen && (
-                  <div style={{ position: 'absolute', top: '40px', right: 0, width: '200px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)', zIndex: 50, overflow: 'hidden' }}>
+                  <div style={{ position: 'absolute', top: '40px', right: 0, width: '200px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px', boxShadow: 'var(--shadow-lg)', zIndex: 50, overflow: 'hidden' }}>
                     <button onClick={toggleBlock}
                       style={{ width: '100%', textAlign: 'left', padding: '11px 16px', fontSize: '13px', color: 'var(--text-primary)', background: 'none', border: 'none', borderBottom: '1px solid var(--border-light)', cursor: 'pointer' }}>
                       {blockedByMe ? 'Entblocken' : 'Nutzer blockieren'}
                     </button>
                     <button onClick={() => { setMenuOpen(false); setReportOpen(true) }}
-                      style={{ width: '100%', textAlign: 'left', padding: '11px 16px', fontSize: '13px', color: '#b91c1c', background: 'none', border: 'none', cursor: 'pointer' }}>
+                      style={{ width: '100%', textAlign: 'left', padding: '11px 16px', fontSize: '13px', color: 'var(--state-danger)', background: 'none', border: 'none', cursor: 'pointer' }}>
                       Nutzer melden
                     </button>
                   </div>
@@ -340,14 +336,14 @@ export default function ChatPage() {
             </div>
 
             {reportOpen && (
-              <div className="fade-in-up" style={{ margin: '12px 20px 0', background: '#fff8f8', border: '1px solid #fecaca', borderRadius: '10px', padding: '14px', flexShrink: 0 }}>
+              <div className="fade-in-up" style={{ margin: '12px 20px 0', background: 'var(--state-danger-bg)', border: '1px solid var(--state-danger-border)', borderRadius: '10px', padding: '14px', flexShrink: 0 }}>
                 {reportDone ? (
                   <p style={{ fontSize: '13px', color: 'var(--text-muted)', textAlign: 'center', margin: 0 }}>Meldung wurde übermittelt.</p>
                 ) : (
                   <>
-                    <p style={{ fontSize: '13px', fontWeight: 500, color: '#b91c1c', marginBottom: '10px' }}>{otherDisplayName} melden</p>
+                    <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--state-danger)', marginBottom: '10px' }}>{otherDisplayName} melden</p>
                     <select value={reportReason} onChange={e => setReportReason(e.target.value)}
-                      style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: '#444', outline: 'none', marginBottom: '10px', boxSizing: 'border-box' }}>
+                      style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', marginBottom: '10px', boxSizing: 'border-box' }}>
                       <option value="">Grund auswählen...</option>
                       <option>Belästigung / Beleidigung</option>
                       <option>Betrug / Täuschung</option>
@@ -358,10 +354,10 @@ export default function ChatPage() {
                     {reportReason === 'Sonstiges' && (
                       <textarea value={reportOther} onChange={e => setReportOther(e.target.value)}
                         placeholder="Grund kurz beschreiben..." rows={2}
-                        style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: '#444', outline: 'none', marginBottom: '10px', boxSizing: 'border-box', resize: 'vertical' }} />
+                        style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', marginBottom: '10px', boxSizing: 'border-box', resize: 'vertical' }} />
                     )}
                     {reportError && (
-                      <p style={{ fontSize: '12px', color: '#b91c1c', marginBottom: '10px' }}>{reportError}</p>
+                      <p style={{ fontSize: '12px', color: 'var(--state-danger)', marginBottom: '10px' }}>{reportError}</p>
                     )}
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <button onClick={() => setReportOpen(false)}
@@ -369,7 +365,7 @@ export default function ChatPage() {
                         Abbrechen
                       </button>
                       <button onClick={submitReport} disabled={!reportReason || (reportReason === 'Sonstiges' && !reportOther.trim())}
-                        style={{ flex: 1, background: '#b91c1c', border: 'none', color: '#fff', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '8px', cursor: 'pointer' }}>
+                        style={{ flex: 1, background: 'var(--state-danger)', border: 'none', color: 'var(--text-on-dark)', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '8px', cursor: 'pointer' }}>
                         Melden
                       </button>
                     </div>
@@ -386,21 +382,21 @@ export default function ChatPage() {
 
             {post && (
               <Link href={`/post/${post.id}`} className="card-modern" style={{ textDecoration: 'none', margin: '12px 20px 0', background: 'var(--bg-page)', borderRadius: '10px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-                <div className="thumb-modern" style={{ width: '44px', height: '44px', borderRadius: '6px', background: categoryBg[post.category] || '#f7f5f0', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                <div className="thumb-modern" style={{ width: '44px', height: '44px', borderRadius: '6px', background: CATEGORY_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
                   {post.image_url
                     ? <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : <CategoryIcon category={post.category} size={20} color="#b8c4d4" />
+                    : <CategoryIcon category={post.category} size={20} color="var(--text-faint)" />
                   }
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</p>
-                  <p style={{ fontSize: '13px', fontWeight: 700, color: '#1a6e3a', margin: 0 }}>{post.price === 0 ? 'Zu verschenken 🎁' : `${post.price.toFixed(2)} €`}</p>
+                  <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--state-success)', margin: 0 }}>{post.price === 0 ? 'Zu verschenken 🎁' : `${post.price.toFixed(2)} €`}</p>
                 </div>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: '#1a3a6e', flexShrink: 0 }}>Ansehen</span>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-primary)', flexShrink: 0 }}>Ansehen</span>
               </Link>
             )}
 
-            <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto', minHeight: 0, background: '#fafcf8' }}>
+            <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto', minHeight: 0, background: 'var(--bg-page)' }}>
               {messages.length === 0 && (
                 <p style={{ textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px', marginTop: '40px' }}>Noch keine Nachrichten.</p>
               )}
@@ -417,7 +413,7 @@ export default function ChatPage() {
                       {msg.offer_amount != null ? (() => {
                         const isExpired = msg.offer_status === 'pending' && msg.offer_expires_at && new Date(msg.offer_expires_at) < new Date()
                         return (
-                        <div style={{ background: 'var(--bg-card)', border: `1px solid ${isExpired ? 'var(--border-color)' : '#c8d4e8'}`, borderRadius: '12px', padding: '12px 16px', minWidth: '220px', opacity: isExpired ? 0.65 : 1 }}>
+                        <div style={{ background: 'var(--bg-card)', border: `1px solid ${isExpired ? 'var(--border-color)' : 'var(--border-color)'}`, borderRadius: '12px', padding: '12px 16px', minWidth: '220px', opacity: isExpired ? 0.65 : 1 }}>
                           <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0, marginBottom: '4px' }}>💰 Preisangebot</p>
                           <p style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{msg.offer_amount.toFixed(2)} €</p>
                           {msg.offer_expires_at && msg.offer_status === 'pending' && !isExpired && (
@@ -440,7 +436,7 @@ export default function ChatPage() {
                                     Abbrechen
                                   </button>
                                   <button onClick={() => sendCounterOffer(msg.id)} disabled={!counterAmount || isNaN(parseFloat(counterAmount))}
-                                    style={{ flex: 1, background: '#1a3a6e', border: 'none', color: '#fff', fontSize: '12px', fontWeight: 500, borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
+                                    style={{ flex: 1, background: 'var(--color-primary)', border: 'none', color: 'var(--text-on-dark)', fontSize: '12px', fontWeight: 500, borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
                                     Senden
                                   </button>
                                 </div>
@@ -452,11 +448,11 @@ export default function ChatPage() {
                                   Ablehnen
                                 </button>
                                 <button onClick={() => { setCounterOfferId(msg.id); setCounterAmount('') }}
-                                  style={{ flex: 1, background: '#eef2f8', border: '1px solid #c8d4e8', color: '#1a3a6e', fontSize: '12px', borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
+                                  style={{ flex: 1, background: 'var(--border-light)', border: '1px solid var(--border-color)', color: 'var(--color-primary)', fontSize: '12px', borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
                                   Gegenangebot
                                 </button>
                                 <button onClick={() => respondOffer(msg.id, 'accepted')}
-                                  style={{ flex: 1, background: '#1a6e3a', border: 'none', color: '#fff', fontSize: '12px', fontWeight: 500, borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
+                                  style={{ flex: 1, background: 'var(--state-success)', border: 'none', color: 'var(--text-on-dark)', fontSize: '12px', fontWeight: 500, borderRadius: '6px', padding: '7px', cursor: 'pointer' }}>
                                   Annehmen
                                 </button>
                               </div>
@@ -466,15 +462,15 @@ export default function ChatPage() {
                             <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px', marginBottom: 0 }}>Wartet auf Antwort...</p>
                           )}
                           {msg.offer_status === 'accepted' && (
-                            <p style={{ fontSize: '12px', fontWeight: 600, color: '#1a6e3a', marginTop: '8px', marginBottom: 0 }}>✓ Angenommen</p>
+                            <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--state-success)', marginTop: '8px', marginBottom: 0 }}>✓ Angenommen</p>
                           )}
                           {msg.offer_status === 'declined' && !isExpired && (
-                            <p style={{ fontSize: '12px', fontWeight: 600, color: '#b91c1c', marginTop: '8px', marginBottom: 0 }}>✕ Abgelehnt</p>
+                            <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--state-danger)', marginTop: '8px', marginBottom: 0 }}>✕ Abgelehnt</p>
                           )}
                         </div>
                         )
                       })() : (
-                        <div style={{ padding: '10px 14px', borderRadius: msg.sender_id === me?.id ? '14px 14px 4px 14px' : '14px 14px 14px 4px', fontSize: '14px', lineHeight: 1.5, background: msg.sender_id === me?.id ? '#1a6e3a' : '#fff', color: msg.sender_id === me?.id ? '#fff' : '#1a2040', border: msg.sender_id === me?.id ? 'none' : '1px solid #e0dcd4' }}>
+                        <div style={{ padding: '10px 14px', borderRadius: msg.sender_id === me?.id ? '14px 14px 4px 14px' : '14px 14px 14px 4px', fontSize: '14px', lineHeight: 1.5, background: msg.sender_id === me?.id ? 'var(--state-success)' : 'var(--text-on-dark)', color: msg.sender_id === me?.id ? 'var(--text-on-dark)' : 'var(--color-primary)', border: msg.sender_id === me?.id ? 'none' : '1px solid var(--border-color)' }}>
                           {msg.content}
                         </div>
                       )}
@@ -493,9 +489,9 @@ export default function ChatPage() {
                         )}
                       </span>
                       {reportingMsgId === msg.id && (
-                        <div className="fade-in-up" style={{ marginTop: '6px', width: '220px', background: '#fff8f8', border: '1px solid #fecaca', borderRadius: '8px', padding: '10px' }}>
+                        <div className="fade-in-up" style={{ marginTop: '6px', width: '220px', background: 'var(--state-danger-bg)', border: '1px solid var(--state-danger-border)', borderRadius: '8px', padding: '10px' }}>
                           <select value={msgReportReason} onChange={e => setMsgReportReason(e.target.value)}
-                            style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '7px 10px', fontSize: '12px', color: '#444', outline: 'none', marginBottom: '8px', boxSizing: 'border-box' }}>
+                            style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '7px 10px', fontSize: '12px', color: 'var(--text-primary)', outline: 'none', marginBottom: '8px', boxSizing: 'border-box' }}>
                             <option value="">Grund auswählen...</option>
                             <option>Belästigung / Beleidigung</option>
                             <option>Betrug / Täuschung</option>
@@ -506,10 +502,10 @@ export default function ChatPage() {
                           {msgReportReason === 'Sonstiges' && (
                             <textarea value={msgReportOther} onChange={e => setMsgReportOther(e.target.value)}
                               placeholder="Grund kurz beschreiben..." rows={2}
-                              style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '7px 10px', fontSize: '12px', color: '#444', outline: 'none', marginBottom: '8px', boxSizing: 'border-box', resize: 'vertical' }} />
+                              style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '7px 10px', fontSize: '12px', color: 'var(--text-primary)', outline: 'none', marginBottom: '8px', boxSizing: 'border-box', resize: 'vertical' }} />
                           )}
                           {msgReportError && (
-                            <p style={{ fontSize: '11px', color: '#b91c1c', marginBottom: '8px' }}>{msgReportError}</p>
+                            <p style={{ fontSize: '11px', color: 'var(--state-danger)', marginBottom: '8px' }}>{msgReportError}</p>
                           )}
                           <div style={{ display: 'flex', gap: '6px' }}>
                             <button onClick={() => setReportingMsgId(null)}
@@ -517,7 +513,7 @@ export default function ChatPage() {
                               Abbrechen
                             </button>
                             <button onClick={() => submitMessageReport(msg.id)} disabled={!msgReportReason || (msgReportReason === 'Sonstiges' && !msgReportOther.trim())}
-                              style={{ flex: 1, background: '#b91c1c', border: 'none', color: '#fff', fontSize: '12px', fontWeight: 500, borderRadius: '6px', padding: '6px', cursor: 'pointer' }}>
+                              style={{ flex: 1, background: 'var(--state-danger)', border: 'none', color: 'var(--text-on-dark)', fontSize: '12px', fontWeight: 500, borderRadius: '6px', padding: '6px', cursor: 'pointer' }}>
                               Melden
                             </button>
                           </div>
@@ -531,13 +527,13 @@ export default function ChatPage() {
             </div>
 
             {offerOpen && !blockedByMe && !blockedMe && (
-              <div className="fade-in-up" style={{ margin: '0 16px 12px', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '8px', padding: '10px 14px', display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+              <div className="fade-in-up" style={{ margin: '0 16px 12px', background: 'var(--border-light)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '10px 14px', display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
                 <input type="number" value={offerAmount} onChange={e => setOfferAmount(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && sendOffer()}
                   placeholder="Preisvorschlag in €" min="0" step="0.5"
                   style={{ flex: 1, background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '8px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none' }} />
                 <button onClick={() => sendOffer()} className={`btn-modern${offerSent ? ' flash-success' : ''}`}
-                  style={{ background: '#1a3a6e', color: '#fff', border: 'none', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
+                  style={{ background: 'var(--color-primary)', color: 'var(--text-on-dark)', border: 'none', borderRadius: '6px', padding: '8px 14px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>
                   {offerSent ? <span className="check-pop">✓ Gesendet</span> : 'Senden'}
                 </button>
               </div>
@@ -546,7 +542,7 @@ export default function ChatPage() {
             <div style={{ background: 'var(--bg-card)', borderTop: '1px solid var(--border-light)', padding: '12px 16px', display: 'flex', gap: '10px', alignItems: 'center', flexShrink: 0 }}>
               <button onClick={() => setOfferOpen(!offerOpen)} disabled={blockedByMe || blockedMe || hasPendingOffer} className="icon-btn-modern"
                 title={hasPendingOffer ? 'Es gibt bereits ein offenes Angebot' : 'Preisangebot senden'}
-                style={{ width: '38px', height: '38px', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '50%', color: '#1a3a6e', fontSize: '15px', cursor: hasPendingOffer ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: (blockedByMe || blockedMe || hasPendingOffer) ? 0.4 : 1 }}>
+                style={{ width: '38px', height: '38px', background: 'var(--border-light)', border: '1px solid var(--border-color)', borderRadius: '50%', color: 'var(--color-primary)', fontSize: '15px', cursor: hasPendingOffer ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: (blockedByMe || blockedMe || hasPendingOffer) ? 0.4 : 1 }}>
                 💰
               </button>
               <input
@@ -559,7 +555,7 @@ export default function ChatPage() {
                 placeholder={blockedByMe || blockedMe ? 'Nachrichten gesperrt' : 'Nachricht schreiben...'}
               />
               <button onClick={sendMessage} disabled={blockedByMe || blockedMe} className="btn-modern"
-                style={{ width: '38px', height: '38px', background: '#1a6e3a', border: 'none', borderRadius: '50%', color: '#fff', fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: (blockedByMe || blockedMe) ? 0.5 : 1 }}>
+                style={{ width: '38px', height: '38px', background: 'var(--state-success)', border: 'none', borderRadius: '50%', color: 'var(--text-on-dark)', fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: (blockedByMe || blockedMe) ? 0.5 : 1 }}>
                 <span className={sendPop ? 'icon-send' : ''} style={{ display: 'flex' }}>➤</span>
               </button>
             </div>

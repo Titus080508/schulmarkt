@@ -21,7 +21,7 @@ const selectStyle = {
   backgroundPosition: 'right 12px center'
 }
 const sectionStyle = { background: 'var(--bg-page)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column' as const, gap: '12px' }
-const sectionTitleStyle = { fontSize: '11px', fontWeight: 700, color: '#1a3a6e', textTransform: 'uppercase' as const, letterSpacing: '0.06em', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }
+const sectionTitleStyle = { fontSize: '11px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase' as const, letterSpacing: '0.06em', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }
 
 export default function EditPostPage() {
   const params = useParams()
@@ -402,11 +402,11 @@ export default function EditPostPage() {
               placeholder={isFree ? 'Wird verschenkt' : '5.00'} min="0" step="0.50" />
 
             {showFreeHint && (
-              <div className="fade-in-up" style={{ marginTop: '8px', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '6px', padding: '10px 12px', fontSize: '12px', color: '#1a3a6e', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
+              <div className="fade-in-up" style={{ marginTop: '8px', background: 'var(--border-light)', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '10px 12px', fontSize: '12px', color: 'var(--color-primary)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' }}>
                 <span>Preis unter 0,50 € — möchtest du den Artikel nicht einfach verschenken?</span>
                 <button type="button" onClick={() => { setIsFree(true); setShowFreeHint(false); setPrice('') }}
                   className="btn-modern"
-                  style={{ background: '#1a3a6e', color: '#fff', border: 'none', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', fontWeight: 500, cursor: 'pointer' }}>
+                  style={{ background: 'var(--color-primary)', color: 'var(--text-on-dark)', border: 'none', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', fontWeight: 500, cursor: 'pointer' }}>
                   Ja, verschenken
                 </button>
               </div>
@@ -433,20 +433,20 @@ export default function EditPostPage() {
                 <div key={`e-${i}`} style={{ position: 'relative', aspectRatio: '1', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border-input)' }}>
                   <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   <button onClick={() => setExistingImages(prev => prev.filter((_, j) => j !== i))}
-                    style={{ position: 'absolute', top: '4px', right: '4px', background: '#b91c1c', border: 'none', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', cursor: 'pointer', color: '#fff' }}>✕</button>
-                  {i === 0 && <span style={{ position: 'absolute', bottom: '4px', left: '4px', background: '#1a3a6e', color: '#fff', fontSize: '9px', padding: '2px 5px', borderRadius: '3px' }}>Titelbild</span>}
+                    style={{ position: 'absolute', top: '4px', right: '4px', background: 'var(--state-danger)', border: 'none', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', cursor: 'pointer', color: 'var(--text-on-dark)' }}>✕</button>
+                  {i === 0 && <span style={{ position: 'absolute', bottom: '4px', left: '4px', background: 'var(--color-primary)', color: 'var(--text-on-dark)', fontSize: '9px', padding: '2px 5px', borderRadius: '3px' }}>Titelbild</span>}
                 </div>
               ))}
               {newPreviews.map((src, i) => (
-                <div key={`n-${i}`} style={{ position: 'relative', aspectRatio: '1', borderRadius: '6px', overflow: 'hidden', border: '2px solid #1a3a6e' }}>
+                <div key={`n-${i}`} style={{ position: 'relative', aspectRatio: '1', borderRadius: '6px', overflow: 'hidden', border: '2px solid var(--color-primary)' }}>
                   <img src={src} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   <button onClick={() => { setNewImages(prev => prev.filter((_, j) => j !== i)); setNewPreviews(prev => prev.filter((_, j) => j !== i)) }}
-                    style={{ position: 'absolute', top: '4px', right: '4px', background: '#b91c1c', border: 'none', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', cursor: 'pointer', color: '#fff' }}>✕</button>
+                    style={{ position: 'absolute', top: '4px', right: '4px', background: 'var(--state-danger)', border: 'none', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', cursor: 'pointer', color: 'var(--text-on-dark)' }}>✕</button>
                 </div>
               ))}
               {existingImages.length + newImages.length < 5 && (
                 <div onClick={() => document.getElementById('edit-file-input')?.click()}
-                  style={{ aspectRatio: '1', border: '1px dashed #bbb', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--bg-page)', flexDirection: 'column', gap: '4px' }}>
+                  style={{ aspectRatio: '1', border: '1px dashed var(--text-faint)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--bg-page)', flexDirection: 'column', gap: '4px' }}>
                   <span style={{ fontSize: '20px', color: 'var(--text-faint)' }}>+</span>
                   <span style={{ fontSize: '10px', color: 'var(--text-faint)' }}>Hinzufügen</span>
                 </div>
@@ -456,7 +456,7 @@ export default function EditPostPage() {
           </div>
 
           {error && (
-            <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', color: '#b91c1c' }}>
+            <div style={{ background: 'var(--state-danger-bg)', border: '1px solid var(--state-danger-border)', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', color: 'var(--state-danger)' }}>
               {error}
             </div>
           )}
@@ -467,7 +467,7 @@ export default function EditPostPage() {
               Abbrechen
             </button>
             <button onClick={handleUpdate} disabled={loading} className="btn-modern"
-              style={{ flex: 1, background: loading ? '#7a9ab8' : '#1a3a6e', color: '#fff', fontSize: '14px', fontWeight: 600, border: 'none', borderRadius: '6px', padding: '12px', cursor: loading ? 'default' : 'pointer' }}>
+              style={{ flex: 1, background: loading ? 'var(--state-disabled)' : 'var(--color-primary)', color: 'var(--text-on-dark)', fontSize: '14px', fontWeight: 600, border: 'none', borderRadius: '6px', padding: '12px', cursor: loading ? 'default' : 'pointer' }}>
               {loading ? 'Wird gespeichert...' : 'Speichern'}
             </button>
           </div>

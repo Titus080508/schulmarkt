@@ -13,15 +13,15 @@ const actionLabel: Record<string, string> = {
   user_report_resolved: 'Nutzer-Meldung erledigt'
 }
 const actionColor: Record<string, string> = {
-  display_name_changed: '#1a3a6e',
-  role_changed: '#a0336e',
-  user_suspended: '#b91c1c',
-  user_unsuspended: '#1a6e3a',
-  post_deleted: '#888',
-  post_soft_deleted: '#b91c1c',
-  post_restored: '#1a6e3a',
-  report_resolved: '#1a6e3a',
-  user_report_resolved: '#1a6e3a'
+  display_name_changed: 'var(--color-primary)',
+  role_changed: 'var(--color-secondary)',
+  user_suspended: 'var(--state-danger)',
+  user_unsuspended: 'var(--state-success)',
+  post_deleted: 'var(--text-muted)',
+  post_soft_deleted: 'var(--state-danger)',
+  post_restored: 'var(--state-success)',
+  report_resolved: 'var(--state-success)',
+  user_report_resolved: 'var(--state-success)'
 }
 
 const inputStyle = { background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '8px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' as const }
@@ -103,7 +103,7 @@ export default function AuditLogList({ entries }: { entries: any[] }) {
             {filtered.map(entry => (
               <div key={entry.id} className="row-modern" style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-light)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 600, color: '#fff', background: actionColor[entry.action] || '#888', padding: '2px 8px', borderRadius: '3px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-on-dark)', background: actionColor[entry.action] || 'var(--text-muted)', padding: '2px 8px', borderRadius: '3px' }}>
                     {actionLabel[entry.action] || entry.action}
                   </span>
                   <span style={{ fontSize: '11px', color: 'var(--text-faint)' }}>

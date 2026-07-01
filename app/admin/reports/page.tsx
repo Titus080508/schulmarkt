@@ -68,9 +68,9 @@ export default async function AdminReportsPage() {
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-            <Link href="/admin" style={{ fontSize: '13px', color: '#1a3a6e', textDecoration: 'none' }}>← Admin</Link>
+            <Link href="/admin" style={{ fontSize: '13px', color: 'var(--color-primary)', textDecoration: 'none' }}>← Admin</Link>
             <div>
-              <h1 style={{ fontSize: '20px', fontWeight: 500, color: '#1a3a6e' }}>Alle Meldungen</h1>
+              <h1 style={{ fontSize: '20px', fontWeight: 500, color: 'var(--color-primary)' }}>Alle Meldungen</h1>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
                 {totalOpen} offen · {resolvedHistory.length} erledigt
               </p>
@@ -106,7 +106,7 @@ export default async function AdminReportsPage() {
                   <div key={`${report.kind}-${report.id}`} style={{ padding: '14px 20px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', opacity: 0.7 }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '11px', background: report.status === 'rejected' ? '#fee2e2' : '#f0fdf4', color: report.status === 'rejected' ? '#b91c1c' : '#1a6e3a', padding: '2px 8px', borderRadius: '3px', fontWeight: 500 }}>
+                        <span style={{ fontSize: '11px', background: report.status === 'rejected' ? 'var(--state-danger-bg)' : 'var(--state-success-bg)', color: report.status === 'rejected' ? 'var(--state-danger)' : 'var(--state-success)', padding: '2px 8px', borderRadius: '3px', fontWeight: 500 }}>
                           {report.status === 'rejected' ? 'Abgelehnt' : 'Erledigt'}
                         </span>
                         <span style={{ fontSize: '11px', background: 'var(--bg-page)', color: 'var(--text-muted)', padding: '2px 8px', borderRadius: '3px' }}>
@@ -118,7 +118,7 @@ export default async function AdminReportsPage() {
                       </div>
                       {report.kind === 'post' && (
                         <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '3px' }}>
-                          Post: <Link href={`/post/${report.post_id}`} style={{ color: '#1a3a6e', textDecoration: 'none' }}>{report.post?.title}</Link>
+                          Post: <Link href={`/post/${report.post_id}`} style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>{report.post?.title}</Link>
                         </p>
                       )}
                       {(report.kind === 'user' || report.kind === 'message') && (
@@ -147,7 +147,7 @@ export default async function AdminReportsPage() {
                     </div>
                     {report.kind === 'post' && (
                       <Link href={`/post/${report.post_id}`}
-                        style={{ fontSize: '12px', color: '#1a3a6e', textDecoration: 'none', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '4px', padding: '6px 12px', flexShrink: 0 }}>
+                        style={{ fontSize: '12px', color: 'var(--color-primary)', textDecoration: 'none', background: 'var(--border-light)', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '6px 12px', flexShrink: 0 }}>
                         Ansehen
                       </Link>
                     )}

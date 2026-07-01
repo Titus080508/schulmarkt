@@ -1,7 +1,8 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
+import { CATEGORY_TAG_STYLE, CATEGORY_BG } from '@/utils/categoryStyle'
 import CategoryIcon from './CategoryIcon'
 
 function SearchIcon({ size = 14, color = 'currentColor' }: { size?: number, color?: string }) {
@@ -38,25 +39,7 @@ const categoryLabel: Record<string, string> = {
   supplies: 'Schulzubehör',
   other: 'Sonstiges'
 }
-const categoryColor: Record<string, string> = {
-  calculator: 'background:#e8eef8;color:#1a3a6e',
-  lfs_shirt: 'background:#fce8f3;color:#a0336e',
-  clothing: 'background:#fce8f3;color:#a0336e',
-  notebook: 'background:#e8f3e8;color:#1a6e3a',
-  lecture: 'background:#e8f3e8;color:#1a6e3a',
-  supplies: 'background:#f3f0e8;color:#6e4e1a',
-  other: 'background:#f0f0f0;color:#666'
-}
-const categoryBg: Record<string, string> = {
-  calculator: '#edf2ff',
-  lfs_shirt: '#fdf0f7',
-  clothing: '#fdf0f7',
-  notebook: '#f0fdf4',
-  lecture: '#f0fdf4',
-  supplies: '#fdf8f0',
-  other: '#f7f5f0'
-}
-const PAGE_SIZE = 12
+const PAGE_SIZE = 15
 
 export default function PostGrid({ posts, currentUserId, initialFavoriteIds = [] }: { posts: any[], currentUserId: string, initialFavoriteIds?: string[] }) {
   const [filter, setFilter] = useState('all')
@@ -72,13 +55,23 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
   const [poppedId, setPoppedId] = useState<string | null>(null)
   const [searchFocused, setSearchFocused] = useState(false)
   const supabase = createClient()
+  const filterRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { setPage(1) }, [filter, sort, search, minPrice, maxPrice, onlyWithImage, onlyFree])
 
-  const activeAdvancedCount = [minPrice, maxPrice, onlyWithImage, onlyFree].filter(Boolean).length
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) setFilterPanelOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
 
-  function resetAdvancedFilters() {
-    setMinPrice(''); setMaxPrice(''); setOnlyWithImage(false); setOnlyFree(false)
+  const activeAdvancedCount = [minPrice, maxPrice, onlyWithImage, onlyFree].filter(Boolean).length
+  const activeFilterCount = activeAdvancedCount + (filter !== 'all' ? 1 : 0) + (sort !== 'newest' ? 1 : 0)
+
+  function resetAllFilters() {
+    setFilter('all'); setSort('newest'); setMinPrice(''); setMaxPrice(''); setOnlyWithImage(false); setOnlyFree(false)
   }
 
   async function toggleFavorite(e: React.MouseEvent, postId: string) {
@@ -119,114 +112,112 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
 
   return (
     <>
-      <div className="card-modern" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '14px 16px', marginBottom: '20px', position: 'relative', zIndex: 30 }}>
-        <div className="postgrid-toolbar-row" style={{ display: 'flex', gap: '8px' }}>
-          <div style={{ position: 'relative', flex: 1, minWidth: '140px' }}>
-            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', display: 'flex', color: 'var(--text-faint)', pointerEvents: 'none' }}>
-              <SearchIcon size={14} />
-            </span>
-            <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setTimeout(() => setSearchFocused(false), 120)}
-              placeholder="Artikel suchen..."
-              style={{ width: '100%', height: '38px', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '0 14px 0 34px', fontSize: '14px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
+      <div className="postgrid-toolbar-row" style={{ display: 'flex', gap: '8px', marginBottom: '20px', position: 'relative', zIndex: 30 }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: '140px' }}>
+          <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', display: 'flex', color: 'var(--text-faint)', pointerEvents: 'none' }}>
+            <SearchIcon size={15} />
+          </span>
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setTimeout(() => setSearchFocused(false), 120)}
+            placeholder="Artikel suchen..."
+            style={{ width: '100%', height: '44px', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '999px', padding: '0 16px 0 42px', fontSize: '14px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box', boxShadow: 'var(--shadow-xs)' }} />
 
-            {searchFocused && searchSuggestions.length > 0 && (
-              <div className="dropdown-pop" style={{ position: 'absolute', top: '44px', left: 0, right: 0, background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px', boxShadow: '0 12px 24px rgba(0,0,0,0.12)', zIndex: 1000, overflow: 'hidden' }}>
-                {searchSuggestions.map(s => (
-                  <div key={s.id} className="nav-menu-item" onMouseDown={() => setSearch(s.title)}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', padding: '9px 14px', cursor: 'pointer', borderBottom: '1px solid var(--border-light)' }}>
-                    <span style={{ fontSize: '13px', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.title}</span>
-                    <span style={{ fontSize: '12px', color: s.price === 0 ? '#1a6e3a' : 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}>
-                      {s.price === 0 ? 'Verschenkt' : `${s.price.toFixed(2)} €`}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div style={{ position: 'relative', flexShrink: 0 }}>
-            <select value={sort} onChange={e => setSort(e.target.value)}
-              style={{
-                height: '38px', width: '96px', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px',
-                padding: '0 18px', fontSize: '13px', color: 'var(--text-secondary)', outline: 'none', cursor: 'pointer', boxSizing: 'border-box',
-                textAlign: 'center', textAlignLast: 'center', appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none'
-              }}>
-              <option value="newest">Neueste</option>
-              <option value="price_asc">Preis ↑</option>
-              <option value="price_desc">Preis ↓</option>
-            </select>
-            <span style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-faint)' }}>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </span>
-          </div>
+          {searchFocused && searchSuggestions.length > 0 && (
+            <div className="dropdown-pop" style={{ position: 'absolute', top: '50px', left: 0, right: 0, background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--shadow-lg)', zIndex: 1000, overflow: 'hidden' }}>
+              {searchSuggestions.map(s => (
+                <div key={s.id} className="nav-menu-item" onMouseDown={() => setSearch(s.title)}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', padding: '9px 14px', cursor: 'pointer', borderBottom: '1px solid var(--border-light)' }}>
+                  <span style={{ fontSize: '13px', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.title}</span>
+                  <span style={{ fontSize: '12px', color: s.price === 0 ? 'var(--state-success)' : 'var(--text-muted)', fontWeight: 600, flexShrink: 0 }}>
+                    {s.price === 0 ? 'Verschenkt' : `${s.price.toFixed(2)} €`}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div ref={filterRef} style={{ position: 'relative', flexShrink: 0 }}>
           <button onClick={() => setFilterPanelOpen(!filterPanelOpen)} className="filter-btn-modern"
             style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flexShrink: 0,
-              height: '38px', boxSizing: 'border-box',
-              background: filterPanelOpen ? '#1a3a6e' : 'var(--bg-page)',
-              border: `1px solid ${filterPanelOpen ? '#1a3a6e' : 'var(--border-input)'}`,
-              color: filterPanelOpen ? '#fff' : 'var(--text-secondary)',
-              fontSize: '13px', fontWeight: 500, padding: '0 14px',
-              borderRadius: '6px', cursor: 'pointer'
+              position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '44px', height: '44px', boxSizing: 'border-box', flexShrink: 0,
+              background: filterPanelOpen ? 'var(--color-primary)' : 'var(--bg-card)',
+              border: `1px solid ${filterPanelOpen ? 'var(--color-primary)' : 'var(--border-light)'}`,
+              color: filterPanelOpen ? 'var(--text-on-dark)' : 'var(--text-secondary)',
+              borderRadius: '50%', cursor: 'pointer', boxShadow: 'var(--shadow-xs)'
             }}>
-            <FilterIcon size={14} />
-            Filter
-            {activeAdvancedCount > 0 && (
-              <span style={{ background: filterPanelOpen ? '#fff' : '#1a3a6e', color: filterPanelOpen ? '#1a3a6e' : '#fff', fontSize: '10px', fontWeight: 700, borderRadius: '999px', width: '16px', height: '16px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {activeAdvancedCount}
+            <FilterIcon size={16} />
+            {activeFilterCount > 0 && (
+              <span style={{ position: 'absolute', top: '-3px', right: '-3px', background: 'var(--color-accent)', color: 'var(--text-on-dark)', fontSize: '10px', fontWeight: 700, borderRadius: '999px', minWidth: '16px', height: '16px', padding: '0 3px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--bg-page)' }}>
+                {activeFilterCount}
               </span>
             )}
           </button>
-        </div>
 
-        {filterPanelOpen && (
-          <div className="fade-in-up" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '14px', alignItems: 'end', marginTop: '14px', paddingTop: '14px', borderTop: '1px solid var(--border-light)' }}>
-            <div>
-              <label style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginBottom: '5px' }}>Preis von</label>
-              <input type="number" value={minPrice} onChange={e => setMinPrice(e.target.value)}
-                placeholder="0 €" min="0" style={{ width: '100%', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '8px 10px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
-            </div>
-            <div>
-              <label style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginBottom: '5px' }}>Preis bis</label>
-              <input type="number" value={maxPrice} onChange={e => setMaxPrice(e.target.value)}
-                placeholder="∞" min="0" style={{ width: '100%', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '8px 10px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
-            </div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer', height: '36px' }}>
-              <input type="checkbox" checked={onlyWithImage} onChange={e => setOnlyWithImage(e.target.checked)} style={{ width: '15px', height: '15px', cursor: 'pointer' }} />
-              Nur mit Bild
-            </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '13px', color: '#1a6e3a', cursor: 'pointer', height: '36px' }}>
-              <input type="checkbox" checked={onlyFree} onChange={e => setOnlyFree(e.target.checked)} style={{ width: '15px', height: '15px', cursor: 'pointer' }} />
-              Nur zu verschenken
-            </label>
-            {activeAdvancedCount > 0 && (
-              <button onClick={resetAdvancedFilters}
-                style={{ justifySelf: 'start', fontSize: '12px', color: 'var(--text-muted)', background: 'none', border: 'none', textDecoration: 'underline', cursor: 'pointer', height: '36px' }}>
-                Filter zurücksetzen
-              </button>
-            )}
-          </div>
-        )}
+          {filterPanelOpen && (
+            <div className="dropdown-pop" style={{ position: 'absolute', top: '52px', right: 0, width: 'min(320px, calc(100vw - 32px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '14px', boxShadow: 'var(--shadow-lg)', zIndex: 100, padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '8px' }}>Sortierung</label>
+                <select value={sort} onChange={e => setSort(e.target.value)}
+                  style={{ width: '100%', height: '38px', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '0 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', cursor: 'pointer', boxSizing: 'border-box' }}>
+                  <option value="newest">Neueste</option>
+                  <option value="price_asc">Preis aufsteigend</option>
+                  <option value="price_desc">Preis absteigend</option>
+                </select>
+              </div>
 
-        <div style={{ display: 'flex', gap: '6px', marginTop: '14px', paddingTop: '14px', borderTop: '1px solid var(--border-light)', overflowX: 'auto' }}>
-          {['all', 'calculator', 'lfs_shirt', 'clothing', 'notebook', 'lecture', 'supplies', 'other'].map(cat => (
-            <button key={cat} onClick={() => setFilter(cat)} className="filter-btn-modern"
-              style={{
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flexShrink: 0,
-                height: '32px', boxSizing: 'border-box',
-                background: filter === cat ? '#1a3a6e' : 'var(--bg-page)',
-                border: `1px solid ${filter === cat ? '#1a3a6e' : 'var(--border-input)'}`,
-                color: filter === cat ? '#fff' : 'var(--text-secondary)',
-                fontSize: '12px', padding: '0 14px',
-                borderRadius: '999px', cursor: 'pointer', whiteSpace: 'nowrap'
-              }}>
-              {cat !== 'all' && <CategoryIcon category={cat} size={13} color={filter === cat ? '#fff' : 'var(--text-muted)'} />}
-              {cat === 'all' ? 'Alle' : categoryLabel[cat]}
-            </button>
-          ))}
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '8px' }}>Kategorie</label>
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                  {['all', 'calculator', 'lfs_shirt', 'clothing', 'notebook', 'lecture', 'supplies', 'other'].map(cat => (
+                    <button key={cat} onClick={() => setFilter(cat)} className="filter-btn-modern"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                        height: '30px', boxSizing: 'border-box',
+                        background: filter === cat ? 'var(--color-primary)' : 'var(--bg-page)',
+                        border: `1px solid ${filter === cat ? 'var(--color-primary)' : 'var(--border-input)'}`,
+                        color: filter === cat ? 'var(--text-on-dark)' : 'var(--text-secondary)',
+                        fontSize: '12px', padding: '0 12px',
+                        borderRadius: '999px', cursor: 'pointer', whiteSpace: 'nowrap'
+                      }}>
+                      {cat !== 'all' && <CategoryIcon category={cat} size={12} color={filter === cat ? 'var(--text-on-dark)' : 'var(--text-muted)'} />}
+                      {cat === 'all' ? 'Alle' : categoryLabel[cat]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '8px' }}>Preis</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input type="number" value={minPrice} onChange={e => setMinPrice(e.target.value)}
+                    placeholder="von €" min="0" style={{ width: '100%', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '8px 10px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
+                  <input type="number" value={maxPrice} onChange={e => setMaxPrice(e.target.value)}
+                    placeholder="bis €" min="0" style={{ width: '100%', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '8px 10px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={onlyWithImage} onChange={e => setOnlyWithImage(e.target.checked)} style={{ width: '15px', height: '15px', cursor: 'pointer' }} />
+                  Nur mit Bild
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '13px', color: 'var(--state-success)', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={onlyFree} onChange={e => setOnlyFree(e.target.checked)} style={{ width: '15px', height: '15px', cursor: 'pointer' }} />
+                  Nur zu verschenken
+                </label>
+              </div>
+
+              {activeFilterCount > 0 && (
+                <button onClick={resetAllFilters}
+                  style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'none', border: 'none', textDecoration: 'underline', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
+                  Alle Filter zurücksetzen
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -239,22 +230,22 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
       <div className="grid-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px' }}>
         {visible.map((post, i) => {
           const catStyle = Object.fromEntries(
-            (categoryColor[post.category] || 'background:#f0f0f0;color:#666').split(';').filter(Boolean).map(s => s.split(':'))
+            CATEGORY_TAG_STYLE.split(';').filter(Boolean).map(s => s.split(':'))
           )
           const isFav = favoriteIds.has(post.id)
           return (
             <Link key={post.id} href={`/post/${post.id}`} className="post-card-modern"
               style={{ animationDelay: `${Math.min(i, 12) * 60}ms`, textDecoration: 'none', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden', display: 'block' }}>
-              <div className="post-image-modern" style={{ aspectRatio: '4/3', background: categoryBg[post.category] || '#f7f5f0', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              <div className="post-image-modern" style={{ aspectRatio: '4/3', background: CATEGORY_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                 {post.image_url
                   ? <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : <CategoryIcon category={post.category} size={36} color="#b8c4d4" />
+                  : <CategoryIcon category={post.category} size={36} color="var(--text-faint)" />
                 }
                 <span style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '10px', fontWeight: 500, padding: '3px 8px', borderRadius: '3px', ...catStyle }}>
                   {categoryLabel[post.category]}
                 </span>
                 <button onClick={e => toggleFavorite(e, post.id)} className="icon-btn-modern"
-                  style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(255,255,255,0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isFav ? '#d4a017' : '#999', zIndex: 10 }}>
+                  style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(var(--color-bg-rgb),0.9)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: isFav ? 'var(--color-accent)' : 'var(--text-faint)', zIndex: 10 }}>
                   <span className={poppedId === post.id ? 'icon-pop' : ''} style={{ display: 'flex' }}>
                     <HeartIcon size={14} filled={isFav} />
                   </span>
@@ -265,8 +256,8 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
                 <p style={{ fontSize: '11px', color: 'var(--text-faint)', marginBottom: '6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{post.description}</p>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
                   {post.price === 0
-                    ? <span className="post-price-modern" style={{ fontSize: '11px', fontWeight: 600, color: '#1a6e3a', background: '#f0fdf4', padding: '3px 8px', borderRadius: '4px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>Verschenken</span>
-                    : <span className="post-price-modern" style={{ fontSize: '15px', fontWeight: 500, color: '#1a3a6e', flexShrink: 0 }}>{post.price.toFixed(2)} €</span>
+                    ? <span className="post-price-modern" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--state-success)', background: 'var(--state-success-bg)', padding: '3px 8px', borderRadius: '4px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>Verschenken</span>
+                    : <span className="post-price-modern" style={{ fontSize: '15px', fontWeight: 500, color: 'var(--color-primary)', flexShrink: 0 }}>{post.price.toFixed(2)} €</span>
                   }
                   <span style={{ fontSize: '10px', color: 'var(--text-faint)', background: 'var(--bg-page)', padding: '2px 7px', borderRadius: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.profiles?.display_name || post.profiles?.username}</span>
                 </div>
@@ -279,7 +270,7 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
       {hasMore && (
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <button onClick={() => setPage(p => p + 1)} className="btn-modern"
-            style={{ background: 'var(--bg-card)', border: '1px solid var(--border-input)', color: '#1a3a6e', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '10px 22px', cursor: 'pointer' }}>
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border-input)', color: 'var(--color-primary)', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '10px 22px', cursor: 'pointer' }}>
             Mehr laden ({filtered.length - visible.length} weitere)
           </button>
         </div>

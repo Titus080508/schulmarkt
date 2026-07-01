@@ -9,6 +9,7 @@ import SimilarPosts from '@/components/SimilarPosts'
 import Footer from '@/components/Footer'
 import SoldButton from '@/components/SoldButton'
 import FavoriteButton from '@/components/FavoriteButton'
+import { CATEGORY_TAG_STYLE, CATEGORY_BG } from '@/utils/categoryStyle'
 
 const categoryLabel: Record<string, string> = {
   calculator: 'Taschenrechner',
@@ -18,24 +19,6 @@ const categoryLabel: Record<string, string> = {
   lecture: 'Lektüren',
   supplies: 'Schulzubehör',
   other: 'Sonstiges'
-}
-const categoryColor: Record<string, string> = {
-  calculator: 'background:#e8eef8;color:#1a3a6e',
-  lfs_shirt: 'background:#fce8f3;color:#a0336e',
-  clothing: 'background:#fce8f3;color:#a0336e',
-  notebook: 'background:#e8f3e8;color:#1a6e3a',
-  lecture: 'background:#e8f3e8;color:#1a6e3a',
-  supplies: 'background:#f3f0e8;color:#6e4e1a',
-  other: 'background:#f0f0f0;color:#666'
-}
-const categoryBg: Record<string, string> = {
-  calculator: '#edf2ff',
-  lfs_shirt: '#fdf0f7',
-  clothing: '#fdf0f7',
-  notebook: '#f0fdf4',
-  lecture: '#f0fdf4',
-  supplies: '#fdf8f0',
-  other: '#f7f5f0'
 }
 const extrasLabel: Record<string, string> = {
   akkuKap: 'Akkukapazität',
@@ -93,7 +76,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
     : post.image_url ? [post.image_url] : []
 
   const catStyle = Object.fromEntries(
-    (categoryColor[post.category] || 'background:#f0f0f0;color:#666').split(';').filter(Boolean).map(s => s.split(':'))
+    CATEGORY_TAG_STYLE.split(';').filter(Boolean).map(s => s.split(':'))
   )
 
   return (
@@ -101,19 +84,19 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
       <Navbar username={profile?.display_name || profile?.username} />
       <main style={{ background: 'var(--bg-page)', minHeight: '100vh', padding: '16px' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <Link href="/dashboard" className="link-modern" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#1a3a6e', textDecoration: 'none', marginBottom: '16px' }}>
+          <Link href="/dashboard" className="link-modern" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--color-primary)', textDecoration: 'none', marginBottom: '16px' }}>
             ← Zurück
           </Link>
 
           <div className="detail-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
             <div className="fade-in-up">
-              <ImageGallery images={allImages} fallbackBg={categoryBg[post.category]} fallbackCategory={post.category} />
+              <ImageGallery images={allImages} fallbackBg={CATEGORY_BG} fallbackCategory={post.category} />
             </div>
 
             <div className="fade-in-up" style={{ animationDelay: '90ms', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
                 {post.price === 0
-                  ? <p style={{ fontSize: '34px', fontWeight: 700, color: '#1a6e3a', lineHeight: 1, margin: 0 }}>Zu verschenken 🎁</p>
+                  ? <p style={{ fontSize: '34px', fontWeight: 700, color: 'var(--state-success)', lineHeight: 1, margin: 0 }}>Zu verschenken 🎁</p>
                   : <p style={{ fontSize: '36px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1, margin: 0 }}>{post.price.toFixed(2)} €</p>
                 }
                 <FavoriteButton postId={id} userId={user.id} initialFavorite={!!favorite} />
@@ -121,7 +104,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {conditionEntry && (
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#1a6e3a', background: '#f0fdf4', border: '1px solid #bbf0c8', padding: '5px 12px', borderRadius: '999px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--state-success)', background: 'var(--state-success-bg)', border: '1px solid var(--state-success-border)', padding: '5px 12px', borderRadius: '999px' }}>
                     ✓ {conditionEntry[1] as string}
                   </span>
                 )}
@@ -133,11 +116,11 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
               <h1 style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2, margin: 0 }}>{post.title}</h1>
 
               {post.description && (
-                <p style={{ fontSize: '14px', color: '#777', lineHeight: 1.6, margin: 0 }}>{post.description}</p>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{post.description}</p>
               )}
 
               <div className="card-modern" style={{ background: 'var(--bg-page)', borderRadius: '12px', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div className="avatar-modern" style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#e2ecf8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: '#1a3a6e', flexShrink: 0 }}>
+                <div className="avatar-modern" style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 700, color: 'var(--color-primary)', flexShrink: 0 }}>
                   {sellerDisplayName?.[0]?.toUpperCase()}
                 </div>
                 <div style={{ minWidth: 0 }}>
@@ -161,7 +144,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
               {!isOwn && (
                 <Link href={`/chat/${post.profiles?.id}?post=${post.id}`} className="btn-modern"
-                  style={{ background: '#1a3a6e', color: '#fff', fontSize: '14px', fontWeight: 700, borderRadius: '8px', padding: '13px', textDecoration: 'none', textAlign: 'center' }}>
+                  style={{ background: 'var(--color-primary)', color: 'var(--text-on-dark)', fontSize: '14px', fontWeight: 700, borderRadius: '8px', padding: '13px', textDecoration: 'none', textAlign: 'center' }}>
                   Nachricht senden
                 </Link>
               )}
@@ -169,7 +152,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
               {isOwn && (
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <Link href={`/post/${id}/edit`} className="btn-modern"
-                    style={{ flex: 1, background: '#eef2f8', border: '1px solid #c8d4e8', color: '#1a3a6e', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '10px', textDecoration: 'none', textAlign: 'center' }}>
+                    style={{ flex: 1, background: 'var(--border-light)', border: '1px solid var(--border-color)', color: 'var(--color-primary)', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '10px', textDecoration: 'none', textAlign: 'center' }}>
                     Bearbeiten
                   </Link>
                   <DeleteButton postId={id} />

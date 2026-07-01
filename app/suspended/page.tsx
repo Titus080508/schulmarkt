@@ -15,9 +15,9 @@ export default function SuspendedPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-page)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-      <div style={{ maxWidth: '420px', background: 'var(--bg-card)', border: '1px solid #fecaca', borderRadius: '10px', padding: '32px', textAlign: 'center' }}>
+      <div style={{ maxWidth: '420px', background: 'var(--bg-card)', border: '1px solid var(--state-danger-border)', borderRadius: '10px', padding: '32px', textAlign: 'center' }}>
         <div style={{ fontSize: '40px', marginBottom: '12px' }}>🚫</div>
-        <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#b91c1c', marginBottom: '8px' }}>Account gesperrt</h1>
+        <h1 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--state-danger)', marginBottom: '8px' }}>Account gesperrt</h1>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: reason ? '12px' : '20px' }}>
           Dein Account wurde von einem Administrator gesperrt. Bei Fragen wende dich bitte an die Schulleitung.
         </p>
@@ -26,7 +26,7 @@ export default function SuspendedPage() {
             Grund: {reason}
           </p>
         )}
-        <Link href="/login" style={{ display: 'inline-block', background: '#1a3a6e', color: '#fff', fontSize: '14px', fontWeight: 500, borderRadius: '6px', padding: '11px 24px', textDecoration: 'none' }}>
+        <Link href="/login" style={{ display: 'inline-block', background: 'var(--color-primary)', color: 'var(--text-on-dark)', fontSize: '14px', fontWeight: 500, borderRadius: '6px', padding: '11px 24px', textDecoration: 'none' }}>
           Zur Anmeldung
         </Link>
       </div>

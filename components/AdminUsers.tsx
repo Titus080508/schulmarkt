@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 
 const roleLabel: Record<string, string> = { owner: 'Owner', moderator: 'Moderator', user: 'Nutzer' }
-const roleColor: Record<string, string> = { owner: '#b91c1c', moderator: '#1a3a6e', user: '#888' }
+const roleColor: Record<string, string> = { owner: 'var(--state-danger)', moderator: 'var(--color-primary)', user: 'var(--text-muted)' }
 
 export default function AdminUsers({ users, isOwner, currentUserId }: { users: any[], isOwner: boolean, currentUserId: string }) {
   const [search, setSearch] = useState('')
@@ -54,10 +54,23 @@ export default function AdminUsers({ users, isOwner, currentUserId }: { users: a
     setBusyId(null)
   }
 
+  async function deleteAllPosts(userId: string, postCount: number) {
+    if (postCount === 0) return
+    if (!confirm(`Wirklich alle ${postCount} Inserate dieses Nutzers löschen? (48h wiederherstellbar)`)) return
+    setBusyId(userId)
+    const { error } = await supabase.from('posts')
+      .update({ deleted_at: new Date().toISOString() }).eq('seller_id', userId).is('deleted_at', null)
+    if (!error) {
+      setList(prev => prev.map(u => u.id === userId ? { ...u, post_count: 0 } : u))
+      router.refresh()
+    }
+    setBusyId(null)
+  }
+
   return (
     <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', overflow: 'hidden', marginBottom: '20px' }}>
       <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-        <p style={{ fontSize: '14px', fontWeight: 500, color: '#1a3a6e' }}>Alle Nutzer</p>
+        <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-primary)' }}>Alle Nutzer</p>
         <input
           type="text"
           value={search}
@@ -85,7 +98,7 @@ export default function AdminUsers({ users, isOwner, currentUserId }: { users: a
             <tr key={u.id} style={{ borderTop: '1px solid var(--border-light)', opacity: u.suspended ? 0.6 : 1 }}>
               <td style={{ padding: '12px 16px', fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500 }}>
                 {u.display_name || <span style={{ color: 'var(--text-faint)', fontStyle: 'italic' }}>Nicht gesetzt</span>}
-                {u.suspended && <span style={{ marginLeft: '6px', fontSize: '10px', background: '#b91c1c', color: '#fff', padding: '2px 6px', borderRadius: '3px' }}>Gesperrt</span>}
+                {u.suspended && <span style={{ marginLeft: '6px', fontSize: '10px', background: 'var(--state-danger)', color: 'var(--text-on-dark)', padding: '2px 6px', borderRadius: '3px' }}>Gesperrt</span>}
               </td>
               <td style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--text-secondary)' }}>@{u.username}</td>
               <td style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--text-muted)' }}>
@@ -113,18 +126,13 @@ export default function AdminUsers({ users, isOwner, currentUserId }: { users: a
                 <td style={{ padding: '12px 16px' }}>
                   {u.id === currentUserId ? (
                     <span style={{ fontSize: '11px', color: 'var(--text-faint)' }}>—</span>
-                  ) : u.suspended ? (
-                    <button onClick={() => unsuspend(u.id)} disabled={busyId === u.id}
-                      style={{ fontSize: '12px', color: '#1a6e3a', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
-                      Entsperren
-                    </button>
                   ) : suspendTarget === u.id ? (
                     <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                       <input type="text" value={suspendReason} onChange={e => setSuspendReason(e.target.value)}
                         placeholder="Grund (optional)"
                         style={{ fontSize: '12px', padding: '5px 8px', border: '1px solid var(--border-input)', borderRadius: '4px', width: '120px' }} />
                       <button onClick={() => suspend(u.id)} disabled={busyId === u.id}
-                        style={{ fontSize: '12px', color: '#fff', background: '#b91c1c', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
+                        style={{ fontSize: '12px', color: 'var(--text-on-dark)', background: 'var(--state-danger)', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
                         Sperren
                       </button>
                       <button onClick={() => { setSuspendTarget(null); setSuspendReason('') }}
@@ -133,10 +141,25 @@ export default function AdminUsers({ users, isOwner, currentUserId }: { users: a
                       </button>
                     </div>
                   ) : (
-                    <button onClick={() => setSuspendTarget(u.id)}
-                      style={{ fontSize: '12px', color: '#b91c1c', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
-                      Sperren
-                    </button>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      {u.suspended ? (
+                        <button onClick={() => unsuspend(u.id)} disabled={busyId === u.id}
+                          style={{ fontSize: '12px', color: 'var(--state-success)', background: 'var(--state-success-bg)', border: '1px solid var(--state-success-border)', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
+                          Entsperren
+                        </button>
+                      ) : (
+                        <button onClick={() => setSuspendTarget(u.id)}
+                          style={{ fontSize: '12px', color: 'var(--state-danger)', background: 'var(--state-danger-bg)', border: '1px solid var(--state-danger-border)', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
+                          Sperren
+                        </button>
+                      )}
+                      {(u.post_count || 0) > 0 && (
+                        <button onClick={() => deleteAllPosts(u.id, u.post_count)} disabled={busyId === u.id}
+                          style={{ fontSize: '12px', color: 'var(--state-danger)', background: 'var(--state-danger-bg)', border: '1px solid var(--state-danger-border)', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
+                          Alle Inserate löschen
+                        </button>
+                      )}
+                    </div>
                   )}
                 </td>
               )}

@@ -6,17 +6,14 @@ import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import Footer from '@/components/Footer'
 import CategoryIcon from '@/components/CategoryIcon'
+import { CATEGORY_BG } from '@/utils/categoryStyle'
 
 const categoryLabel: Record<string, string> = {
   calculator: 'Taschenrechner', lfs_shirt: 'LFS Sportshirt', clothing: 'Klamotten',
   notebook: 'Schulhefte', lecture: 'Lektüren', supplies: 'Schulzubehör', other: 'Sonstiges'
 }
-const categoryBg: Record<string, string> = {
-  calculator: '#edf2ff', lfs_shirt: '#fdf0f7', clothing: '#fdf0f7',
-  notebook: '#f0fdf4', lecture: '#f0fdf4', supplies: '#fdf8f0', other: '#f7f5f0'
-}
 const roleLabel: Record<string, string> = { owner: 'Owner', moderator: 'Moderator' }
-const roleColor: Record<string, string> = { owner: '#b91c1c', moderator: '#1a3a6e' }
+const roleColor: Record<string, string> = { owner: 'var(--state-danger)', moderator: 'var(--color-primary)' }
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null)
@@ -93,7 +90,7 @@ export default function ProfilePage() {
     <div style={{ minHeight: '100vh', background: 'var(--bg-page)', display: 'flex', flexDirection: 'column' }}>
       <Navbar username={profile?.display_name || profile?.username} />
       <main style={{ flex: 1, maxWidth: '700px', margin: '0 auto', width: '100%', padding: '24px 20px' }}>
-        <Link href="/dashboard" className="link-modern" style={{ fontSize: '13px', color: '#1a3a6e', textDecoration: 'none', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+        <Link href="/dashboard" className="link-modern" style={{ fontSize: '13px', color: 'var(--color-primary)', textDecoration: 'none', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
           ← Zurück
         </Link>
 
@@ -101,14 +98,14 @@ export default function ProfilePage() {
 
         <div className="fade-in-up card-modern" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '24px', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-            <div className="avatar-modern" style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#1a3a6e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', fontWeight: 700, color: '#fff', flexShrink: 0 }}>
+            <div className="avatar-modern" style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', fontWeight: 700, color: 'var(--text-on-dark)', flexShrink: 0 }}>
               {(displayName || profile?.username)?.[0]?.toUpperCase()}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <p style={{ fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{displayName || profile?.username}</p>
                 {profile?.role && roleLabel[profile.role] && (
-                  <span style={{ fontSize: '10px', fontWeight: 700, color: '#fff', background: roleColor[profile.role], padding: '2px 8px', borderRadius: '999px' }}>
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-on-dark)', background: roleColor[profile.role], padding: '2px 8px', borderRadius: '999px' }}>
                     {roleLabel[profile.role]}
                   </span>
                 )}
@@ -133,7 +130,7 @@ export default function ProfilePage() {
               Favoriten
             </Link>
             {profile?.is_admin && (
-              <Link href="/admin" className="nav-menu-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', background: 'var(--bg-page)', borderRadius: '8px', textDecoration: 'none', fontSize: '13px', fontWeight: 600, color: '#1a3a6e' }}>
+              <Link href="/admin" className="nav-menu-item" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', background: 'var(--bg-page)', borderRadius: '8px', textDecoration: 'none', fontSize: '13px', fontWeight: 600, color: 'var(--color-primary)' }}>
                 Admin-Bereich
               </Link>
             )}
@@ -162,19 +159,19 @@ export default function ProfilePage() {
           </div>
 
           {error && (
-            <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', color: '#b91c1c' }}>
+            <div style={{ background: 'var(--state-danger-bg)', border: '1px solid var(--state-danger-border)', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', color: 'var(--state-danger)' }}>
               {error}
             </div>
           )}
 
           {success && (
-            <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', color: '#1a6e3a' }}>
+            <div style={{ background: 'var(--state-success-bg)', border: '1px solid var(--state-success-border)', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', color: 'var(--state-success)' }}>
               Anzeigename gespeichert!
             </div>
           )}
 
           <button onClick={handleSave} disabled={loading}
-            style={{ background: loading ? '#7a9ab8' : '#1a3a6e', color: '#fff', fontSize: '14px', fontWeight: 500, border: 'none', borderRadius: '6px', padding: '12px', cursor: 'pointer' }}>
+            style={{ background: loading ? 'var(--state-disabled)' : 'var(--color-primary)', color: 'var(--text-on-dark)', fontSize: '14px', fontWeight: 500, border: 'none', borderRadius: '6px', padding: '12px', cursor: 'pointer' }}>
             {loading ? 'Wird gespeichert...' : 'Speichern'}
           </button>
         </div>
@@ -192,15 +189,15 @@ export default function ProfilePage() {
                 { num: stats.favoriteCount, label: 'Favoriten' },
               ].map((s, i) => (
                 <div key={s.label} className="stat-card-modern" style={{ animationDelay: `${i * 50}ms`, textAlign: 'center', background: 'var(--bg-page)', borderRadius: '8px', padding: '14px 10px' }}>
-                  <div style={{ fontSize: '20px', fontWeight: 700, color: '#1a3a6e' }}>{s.num}</div>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--color-primary)' }}>{s.num}</div>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{s.label}</div>
                 </div>
               ))}
             </div>
 
             {stats.topCategory && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#eef2f8', border: '1px solid #c8d4e8', borderRadius: '8px', padding: '12px 16px' }}>
-                <CategoryIcon category={stats.topCategory} size={22} color="#1a3a6e" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--border-light)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '12px 16px' }}>
+                <CategoryIcon category={stats.topCategory} size={22} color="var(--color-primary)" />
                 <p style={{ fontSize: '13px', color: 'var(--text-primary)', margin: 0 }}>
                   Deine meistgenutzte Kategorie: <strong>{categoryLabel[stats.topCategory] || stats.topCategory}</strong>
                 </p>
@@ -213,24 +210,24 @@ export default function ProfilePage() {
           <div className="fade-in-up" style={{ animationDelay: '120ms', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
               <p style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Deine neuesten Inserate</p>
-              <Link href="/my-posts" className="link-modern" style={{ fontSize: '12px', color: '#1a3a6e', textDecoration: 'none', fontWeight: 500 }}>Alle ansehen</Link>
+              <Link href="/my-posts" className="link-modern" style={{ fontSize: '12px', color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 500 }}>Alle ansehen</Link>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
               {recentPosts.map(post => (
                 <Link key={post.id} href={`/post/${post.id}`} className="post-card-modern"
                   style={{ textDecoration: 'none', background: 'var(--bg-page)', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden', display: 'block' }}>
-                  <div className="post-image-modern" style={{ aspectRatio: '4/3', background: categoryBg[post.category] || 'var(--bg-page)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                  <div className="post-image-modern" style={{ aspectRatio: '4/3', background: CATEGORY_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                     {post.image_url
                       ? <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <CategoryIcon category={post.category} size={28} color="#b8c4d4" />
+                      : <CategoryIcon category={post.category} size={28} color="var(--text-faint)" />
                     }
                     {post.status === 'sold' && (
-                      <span style={{ position: 'absolute', top: '6px', right: '6px', background: '#1a6e3a', color: '#fff', fontSize: '9px', fontWeight: 600, padding: '2px 7px', borderRadius: '999px' }}>Verkauft</span>
+                      <span style={{ position: 'absolute', top: '6px', right: '6px', background: 'var(--state-success)', color: 'var(--text-on-dark)', fontSize: '9px', fontWeight: 600, padding: '2px 7px', borderRadius: '999px' }}>Verkauft</span>
                     )}
                   </div>
                   <div style={{ padding: '8px 10px' }}>
                     <p style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.title}</p>
-                    <p style={{ fontSize: '12px', fontWeight: 600, color: post.price === 0 ? '#1a6e3a' : '#1a3a6e', margin: '2px 0 0' }}>
+                    <p style={{ fontSize: '12px', fontWeight: 600, color: post.price === 0 ? 'var(--state-success)' : 'var(--color-primary)', margin: '2px 0 0' }}>
                       {post.price === 0 ? 'Verschenkt' : `${post.price.toFixed(2)} €`}
                     </p>
                   </div>

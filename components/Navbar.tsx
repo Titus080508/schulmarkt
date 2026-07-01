@@ -181,14 +181,14 @@ export default function Navbar({ username }: { username?: string }) {
   return (
     <>
       {needsConsent && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(10,25,60,0.7)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div style={{ maxWidth: '440px', width: '100%', background: 'var(--bg-card)', borderRadius: '10px', padding: '28px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1a3a6e', marginBottom: '12px' }}>Bevor es weitergeht</h2>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(var(--color-primary-rgb),0.7)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ maxWidth: '440px', width: '100%', background: 'var(--bg-card)', borderRadius: '10px', padding: '28px', boxShadow: 'var(--shadow-lg)' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-primary)', marginBottom: '12px' }}>Bevor es weitergeht</h2>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '16px' }}>
               Um den Schulmarktplatz nutzen zu können, musst du den{' '}
-              <Link href="/nutzungsbedingungen" target="_blank" style={{ color: '#1a3a6e', fontWeight: 500 }}>Nutzungsbedingungen</Link>{' '}
+              <Link href="/nutzungsbedingungen" target="_blank" style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Nutzungsbedingungen</Link>{' '}
               und der{' '}
-              <Link href="/datenschutz" target="_blank" style={{ color: '#1a3a6e', fontWeight: 500 }}>Datenschutzerklärung</Link>{' '}
+              <Link href="/datenschutz" target="_blank" style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Datenschutzerklärung</Link>{' '}
               zustimmen.
             </p>
             <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: 'var(--text-primary)', cursor: 'pointer', marginBottom: '20px' }}>
@@ -197,32 +197,32 @@ export default function Navbar({ username }: { username?: string }) {
               Ich habe die Nutzungsbedingungen und die Datenschutzerklärung gelesen und stimme ihnen zu.
             </label>
             <button onClick={acceptConsent} disabled={!consentChecked || consentSaving} className="btn-modern"
-              style={{ width: '100%', background: !consentChecked || consentSaving ? '#9fb0c8' : '#1a3a6e', color: '#fff', fontSize: '14px', fontWeight: 500, border: 'none', borderRadius: '6px', padding: '12px', cursor: !consentChecked || consentSaving ? 'not-allowed' : 'pointer' }}>
+              style={{ width: '100%', background: !consentChecked || consentSaving ? 'var(--state-disabled)' : 'var(--color-primary)', color: 'var(--text-on-dark)', fontSize: '14px', fontWeight: 500, border: 'none', borderRadius: '6px', padding: '12px', cursor: !consentChecked || consentSaving ? 'not-allowed' : 'pointer' }}>
               {consentSaving ? 'Wird gespeichert...' : 'Bestätigen und fortfahren'}
             </button>
           </div>
         </div>
       )}
-      <nav className={`navbar-modern${scrolled ? ' scrolled' : ''}`} style={{ background: '#1a3a6e', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', height: '56px', position: 'sticky', top: 0, zIndex: 50 }}>
+      <nav className={`navbar-modern${scrolled ? ' scrolled' : ''}`} style={{ background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', height: '56px', position: 'sticky', top: 0, zIndex: 50 }}>
         <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '14px', textDecoration: 'none' }}>
         <img src="https://www.lfs-koeln.de/wp-content/uploads/2019/01/cropped-logo-wei%C3%9F-gro%C3%9F-1-192x192.png" alt="LFS Logo" style={{ height: '26px', width: 'auto', filter: 'brightness(0) invert(1)' }} />
-        <span style={{ fontSize: '15px', fontWeight: 600, color: '#fff' }}>Kleinanzeigen</span>
+        <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-on-dark)' }}>Kleinanzeigen</span>
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <div style={{ position: 'relative' }} ref={notifRef}>
           <button onClick={() => { setNotifOpen(!notifOpen); if (!notifOpen) markNotifsRead() }} className="icon-btn-modern"
-            style={{ position: 'relative', width: '36px', height: '36px', background: 'transparent', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}>
+            style={{ position: 'relative', width: '36px', height: '36px', background: 'transparent', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-on-dark)' }}>
             <BellIcon size={17} />
             {unreadNotifs > 0 && (
-              <div className="icon-badge-modern" style={{ position: 'absolute', top: '2px', right: '2px', width: '8px', height: '8px', background: '#e05252', borderRadius: '50%', border: '2px solid #1a3a6e' }} />
+              <div className="icon-badge-modern" style={{ position: 'absolute', top: '2px', right: '2px', width: '8px', height: '8px', background: 'var(--color-accent)', borderRadius: '50%', border: '2px solid var(--color-primary)' }} />
             )}
           </button>
           {notifOpen && (
-            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: 'min(280px, calc(100vw - 16px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: '0 12px 28px rgba(0,0,0,0.14)', zIndex: 100, overflow: 'hidden' }}>
+            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: 'min(280px, calc(100vw - 16px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--shadow-lg)', zIndex: 100, overflow: 'hidden' }}>
               <div style={{ padding: '11px 14px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Benachrichtigungen</span>
-                {unreadNotifs > 0 && <span style={{ fontSize: '11px', background: '#fee2e2', color: '#b91c1c', padding: '1px 7px', borderRadius: '999px', fontWeight: 600 }}>{unreadNotifs} neu</span>}
+                {unreadNotifs > 0 && <span style={{ fontSize: '11px', background: 'var(--state-danger-bg)', color: 'var(--state-danger)', padding: '1px 7px', borderRadius: '999px', fontWeight: 600 }}>{unreadNotifs} neu</span>}
               </div>
               {notifications.length === 0 ? (
                 <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px' }}>Keine Benachrichtigungen</div>
@@ -230,12 +230,12 @@ export default function Navbar({ username }: { username?: string }) {
                 <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                   {notifications.map(notif => {
                     const typeStyle: Record<string, { icon: string; bg: string; border: string; color: string }> = {
-                      warning:  { icon: '⚠️', bg: '#fffbeb', border: '#fde68a', color: '#92400e' },
-                      report:   { icon: '🔔', bg: '#eef2f8', border: '#c8d4e8', color: '#1a3a6e' },
-                      offer:    { icon: '💬', bg: '#f0fdf4', border: '#86efac', color: '#1a6e3a' },
-                      sold:     { icon: '✅', bg: '#f0fdf4', border: '#86efac', color: '#1a6e3a' },
-                      delete:   { icon: '🗑️', bg: '#fff8f8', border: '#fecaca', color: '#b91c1c' },
-                      announce: { icon: '📢', bg: '#eef2f8', border: '#c8d4e8', color: '#1a3a6e' },
+                      warning:  { icon: '⚠️', bg: 'var(--state-warning-bg)', border: 'var(--state-warning-border)', color: 'var(--state-warning)' },
+                      report:   { icon: '🔔', bg: 'var(--border-light)', border: 'var(--border-color)', color: 'var(--color-primary)' },
+                      offer:    { icon: '💬', bg: 'var(--state-success-bg)', border: 'var(--state-success-border)', color: 'var(--state-success)' },
+                      sold:     { icon: '✅', bg: 'var(--state-success-bg)', border: 'var(--state-success-border)', color: 'var(--state-success)' },
+                      delete:   { icon: '🗑️', bg: 'var(--state-danger-bg)', border: 'var(--state-danger-border)', color: 'var(--state-danger)' },
+                      announce: { icon: '📢', bg: 'var(--border-light)', border: 'var(--border-color)', color: 'var(--color-primary)' },
                     }
                     const ts = typeStyle[notif.type] || { icon: '•', bg: 'var(--bg-page)', border: 'var(--border-light)', color: 'var(--text-secondary)' }
                     return (
@@ -243,7 +243,7 @@ export default function Navbar({ username }: { username?: string }) {
                         style={{ padding: '9px 14px', borderBottom: '1px solid var(--border-light)', cursor: notif.link ? 'pointer' : 'default', background: notif.read ? 'transparent' : 'var(--bg-page)', display: 'flex', gap: '10px', alignItems: 'center' }}>
                         <span style={{ position: 'relative', flexShrink: 0, width: '32px', height: '32px', borderRadius: '8px', background: ts.bg, border: `1px solid ${ts.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>
                           {ts.icon}
-                          {!notif.read && <span style={{ position: 'absolute', top: '2px', right: '2px', width: '6px', height: '6px', background: '#e05252', borderRadius: '50%', border: '1px solid var(--bg-card)' }} />}
+                          {!notif.read && <span style={{ position: 'absolute', top: '2px', right: '2px', width: '6px', height: '6px', background: 'var(--color-accent)', borderRadius: '50%', border: '1px solid var(--bg-card)' }} />}
                         </span>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{ fontSize: '12px', color: ts.color, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: notif.read ? 400 : 500 }}>{notif.message}</p>
@@ -260,17 +260,17 @@ export default function Navbar({ username }: { username?: string }) {
 
         <div style={{ position: 'relative' }} ref={chatRef}>
           <button onClick={() => setChatOpen(!chatOpen)} className="icon-btn-modern"
-            style={{ position: 'relative', width: '36px', height: '36px', background: 'transparent', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff' }}>
+            style={{ position: 'relative', width: '36px', height: '36px', background: 'transparent', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-on-dark)' }}>
             <ChatIcon size={17} />
             {unread > 0 && (
-              <div className="icon-badge-modern" style={{ position: 'absolute', top: '2px', right: '2px', width: '8px', height: '8px', background: '#e05252', borderRadius: '50%', border: '2px solid #1a3a6e' }} />
+              <div className="icon-badge-modern" style={{ position: 'absolute', top: '2px', right: '2px', width: '8px', height: '8px', background: 'var(--color-accent)', borderRadius: '50%', border: '2px solid var(--color-primary)' }} />
             )}
           </button>
           {chatOpen && (
-            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: 'min(300px, calc(100vw - 16px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: '0 12px 28px rgba(0,0,0,0.14)', zIndex: 100, overflow: 'hidden' }}>
+            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: 'min(300px, calc(100vw - 16px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--shadow-lg)', zIndex: 100, overflow: 'hidden' }}>
               <div style={{ padding: '13px 16px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>Nachrichten</span>
-                {unread > 0 && <span style={{ background: '#eef2f8', color: '#1a3a6e', fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '999px' }}>{unread} neu</span>}
+                {unread > 0 && <span style={{ background: 'var(--border-light)', color: 'var(--color-primary)', fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '999px' }}>{unread} neu</span>}
               </div>
               <div style={{ maxHeight: '360px', overflowY: 'auto' }}>
                 {chats.length === 0 && (
@@ -279,7 +279,7 @@ export default function Navbar({ username }: { username?: string }) {
                 {chats.map(chat => (
                   <div key={chat.otherId} onClick={() => openChat(chat.otherId)} className="nav-menu-item"
                     style={{ padding: '11px 16px', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', borderBottom: '1px solid var(--border-light)', background: chat.unread > 0 ? 'var(--bg-page)' : 'transparent' }}>
-                    <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#eef2f8', border: '1px solid #c8d4e8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600, color: '#1a3a6e', flexShrink: 0 }}>
+                    <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'var(--border-light)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600, color: 'var(--color-primary)', flexShrink: 0 }}>
                       {chat.otherName?.[0]?.toUpperCase()}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -289,7 +289,7 @@ export default function Navbar({ username }: { username?: string }) {
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       <div style={{ fontSize: '10px', color: 'var(--text-faint)', marginBottom: '3px' }}>{formatTime(chat.time)}</div>
                       {chat.unread > 0 && (
-                        <div style={{ width: '18px', height: '18px', background: '#1a3a6e', borderRadius: '50%', fontSize: '10px', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 'auto' }}>
+                        <div style={{ width: '18px', height: '18px', background: 'var(--color-primary)', borderRadius: '50%', fontSize: '10px', color: 'var(--text-on-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: 'auto' }}>
                           {chat.unread}
                         </div>
                       )}
@@ -299,7 +299,7 @@ export default function Navbar({ username }: { username?: string }) {
               </div>
               <div style={{ padding: '10px 16px', borderTop: '1px solid var(--border-light)' }}>
                 <Link href="/my-posts" onClick={() => setChatOpen(false)}
-                  style={{ display: 'block', textAlign: 'center', fontSize: '12px', color: '#1a3a6e', textDecoration: 'none', fontWeight: 600 }}>
+                  style={{ display: 'block', textAlign: 'center', fontSize: '12px', color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 600 }}>
                   Meine Inserate ansehen
                 </Link>
               </div>
@@ -309,15 +309,15 @@ export default function Navbar({ username }: { username?: string }) {
 
         <div style={{ position: 'relative' }} ref={menuRef}>
           <button onClick={() => setMenuOpen(!menuOpen)} className="icon-btn-modern burger-btn" aria-label="Menü"
-            style={{ width: '36px', height: '36px', borderRadius: '50%', background: menuOpen ? 'rgba(255,255,255,0.18)' : 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            style={{ width: '36px', height: '36px', borderRadius: '50%', background: menuOpen ? 'rgba(var(--color-bg-rgb),0.18)' : 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
             <span className={`burger-icon${menuOpen ? ' open' : ''}`}>
               <span /><span /><span />
             </span>
           </button>
           {menuOpen && (
-            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: '210px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: '0 12px 28px rgba(0,0,0,0.14)', zIndex: 100, overflow: 'hidden' }}>
+            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: '210px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--shadow-lg)', zIndex: 100, overflow: 'hidden' }}>
               <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#1a3a6e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600, color: '#fff', flexShrink: 0 }}>
+                <span style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 600, color: 'var(--text-on-dark)', flexShrink: 0 }}>
                   {username?.[0]?.toUpperCase()}
                 </span>
                 <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{username}</p>
@@ -339,14 +339,14 @@ export default function Navbar({ username }: { username?: string }) {
               </Link>
               {isAdmin && (
                 <Link href="/admin" onClick={() => setMenuOpen(false)} className="nav-menu-item"
-                  style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', fontSize: '13px', color: '#1a3a6e', fontWeight: 600, textDecoration: 'none' }}>
-                  <MenuLineIcon d={navIcons.admin} color="#1a3a6e" />
+                  style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', fontSize: '13px', color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>
+                  <MenuLineIcon d={navIcons.admin} color="var(--color-primary)" />
                   Admin-Bereich
                 </Link>
               )}
               <button onClick={logout} className="nav-menu-item"
-                style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', fontSize: '13px', color: '#b91c1c', background: 'none', border: 'none', borderTop: '1px solid var(--border-light)', textAlign: 'left', cursor: 'pointer' }}>
-                <MenuLineIcon d={navIcons.logout} color="#b91c1c" />
+                style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 16px', fontSize: '13px', color: 'var(--state-danger)', background: 'none', border: 'none', borderTop: '1px solid var(--border-light)', textAlign: 'left', cursor: 'pointer' }}>
+                <MenuLineIcon d={navIcons.logout} color="var(--state-danger)" />
                 Abmelden
               </button>
             </div>

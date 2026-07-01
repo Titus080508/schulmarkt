@@ -90,7 +90,7 @@ export default function AdminMessagesPage() {
     <div style={{ height: '100vh', background: 'var(--bg-page)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <Navbar username={myDisplayName} />
       <main style={{ maxWidth: '1100px', margin: '0 auto', width: '100%', padding: '24px 20px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
-        <Link href="/admin" className="link-modern" style={{ fontSize: '13px', color: '#1a3a6e', textDecoration: 'none', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+        <Link href="/admin" className="link-modern" style={{ fontSize: '13px', color: 'var(--color-primary)', textDecoration: 'none', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
           ← Admin
         </Link>
 
@@ -113,7 +113,7 @@ export default function AdminMessagesPage() {
                 const nameB = conv.userB?.display_name || conv.userB?.username
                 return (
                   <div key={conv.key} onClick={() => setSelectedKey(conv.key)} className="row-modern"
-                    style={{ padding: '12px 20px', cursor: 'pointer', background: active ? '#f0fdf4' : 'transparent', borderLeft: active ? '3px solid #1a6e3a' : '3px solid transparent' }}>
+                    style={{ padding: '12px 20px', cursor: 'pointer', background: active ? 'var(--state-success-bg)' : 'transparent', borderLeft: active ? '3px solid var(--state-success)' : '3px solid transparent' }}>
                     <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '6px' }}>
                       <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {nameA} ↔ {nameB}
@@ -145,7 +145,7 @@ export default function AdminMessagesPage() {
                   <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0 }}>Nur lesend · {threadMessages.length} Nachrichten</p>
                 </div>
 
-                <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto', minHeight: 0, background: '#fafcf8' }}>
+                <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto', minHeight: 0, background: 'var(--bg-page)' }}>
                   {threadMessages.map(msg => {
                     const day = formatDay(msg.created_at)
                     const showDivider = day !== lastDay
@@ -160,13 +160,13 @@ export default function AdminMessagesPage() {
                         <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '70%', marginBottom: '12px', alignSelf: isA ? 'flex-start' : 'flex-end', alignItems: isA ? 'flex-start' : 'flex-end', marginLeft: isA ? 0 : 'auto' }}>
                           <span style={{ fontSize: '10px', color: 'var(--text-faint)', marginBottom: '2px' }}>{senderName}</span>
                           {msg.offer_amount != null ? (
-                            <div style={{ background: 'var(--bg-card)', border: '1px solid #c8d4e8', borderRadius: '12px', padding: '10px 14px', minWidth: '160px' }}>
+                            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '10px 14px', minWidth: '160px' }}>
                               <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: 0 }}>💰 Preisangebot</p>
                               <p style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{msg.offer_amount.toFixed(2)} €</p>
                               <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '4px 0 0' }}>Status: {msg.offer_status}</p>
                             </div>
                           ) : (
-                            <div style={{ padding: '10px 14px', borderRadius: isA ? '14px 14px 14px 4px' : '14px 14px 4px 14px', fontSize: '14px', lineHeight: 1.5, background: isA ? '#fff' : '#1a6e3a', color: isA ? '#1a2040' : '#fff', border: isA ? '1px solid #e0dcd4' : 'none' }}>
+                            <div style={{ padding: '10px 14px', borderRadius: isA ? '14px 14px 14px 4px' : '14px 14px 4px 14px', fontSize: '14px', lineHeight: 1.5, background: isA ? 'var(--text-on-dark)' : 'var(--state-success)', color: isA ? 'var(--color-primary)' : 'var(--text-on-dark)', border: isA ? '1px solid var(--border-color)' : 'none' }}>
                               {msg.content}
                             </div>
                           )}

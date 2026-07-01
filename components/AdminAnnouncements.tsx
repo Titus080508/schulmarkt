@@ -52,9 +52,9 @@ export default function AdminAnnouncements({ announcements }: { announcements: a
   return (
     <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '10px', marginBottom: '20px', overflow: 'hidden' }}>
       <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <p style={{ fontSize: '14px', fontWeight: 500, color: '#1a3a6e', margin: 0 }}>Ankündigungen</p>
+        <p style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-primary)', margin: 0 }}>Ankündigungen</p>
         <button onClick={() => setOpen(!open)} className="btn-modern"
-          style={{ fontSize: '12px', fontWeight: 600, color: '#fff', background: '#1a3a6e', border: 'none', borderRadius: '4px', padding: '6px 12px', cursor: 'pointer' }}>
+          style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-on-dark)', background: 'var(--color-primary)', border: 'none', borderRadius: '4px', padding: '6px 12px', cursor: 'pointer' }}>
           {open ? 'Schließen' : '+ Neue Ankündigung'}
         </button>
       </div>
@@ -66,7 +66,7 @@ export default function AdminAnnouncements({ announcements }: { announcements: a
           <textarea value={message} onChange={e => setMessage(e.target.value)} rows={3} placeholder="Nachricht für alle Nutzer..."
             style={{ background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box', resize: 'none' }} />
           <button onClick={create} disabled={loading || !title.trim() || !message.trim()} className="btn-modern"
-            style={{ alignSelf: 'flex-start', fontSize: '13px', fontWeight: 600, color: '#fff', background: '#1a6e3a', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}>
+            style={{ alignSelf: 'flex-start', fontSize: '13px', fontWeight: 600, color: 'var(--text-on-dark)', background: 'var(--state-success)', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}>
             {loading ? 'Wird veröffentlicht...' : 'Veröffentlichen'}
           </button>
         </div>
@@ -81,7 +81,7 @@ export default function AdminAnnouncements({ announcements }: { announcements: a
               <div style={{ flex: 1, minWidth: '200px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
                   <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>{a.title}</p>
-                  <span style={{ fontSize: '10px', fontWeight: 600, padding: '2px 7px', borderRadius: '999px', background: a.active ? '#f0fdf4' : 'var(--bg-page)', color: a.active ? '#1a6e3a' : 'var(--text-faint)' }}>
+                  <span style={{ fontSize: '10px', fontWeight: 600, padding: '2px 7px', borderRadius: '999px', background: a.active ? 'var(--state-success-bg)' : 'var(--bg-page)', color: a.active ? 'var(--state-success)' : 'var(--text-faint)' }}>
                     {a.active ? 'Aktiv' : 'Inaktiv'}
                   </span>
                 </div>
@@ -90,11 +90,11 @@ export default function AdminAnnouncements({ announcements }: { announcements: a
               </div>
               <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
                 <button onClick={() => toggleActive(a.id, a.active)} disabled={busyId === a.id}
-                  style={{ fontSize: '12px', color: a.active ? 'var(--text-secondary)' : '#1a6e3a', background: a.active ? 'var(--bg-page)' : '#f0fdf4', border: `1px solid ${a.active ? 'var(--border-input)' : '#86efac'}`, borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
+                  style={{ fontSize: '12px', color: a.active ? 'var(--text-secondary)' : 'var(--state-success)', background: a.active ? 'var(--bg-page)' : 'var(--state-success-bg)', border: `1px solid ${a.active ? 'var(--border-input)' : 'var(--state-success-border)'}`, borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
                   {a.active ? 'Deaktivieren' : 'Aktivieren'}
                 </button>
                 <button onClick={() => remove(a.id)} disabled={busyId === a.id}
-                  style={{ fontSize: '12px', color: '#b91c1c', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
+                  style={{ fontSize: '12px', color: 'var(--state-danger)', background: 'var(--state-danger-bg)', border: '1px solid var(--state-danger-border)', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
                   Löschen
                 </button>
               </div>

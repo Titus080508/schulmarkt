@@ -29,32 +29,26 @@ export default function LoginPage() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <div className="desktop-only" style={{
         position: 'fixed', left: 0, top: 0, bottom: 0, width: '55%',
-        background: '#1a3a6e',
-        backgroundImage: 'url(https://www.lfs-koeln.de/wp-content/uploads/2023/04/bienenvoelker2.jpg)',
-        backgroundSize: 'cover', backgroundPosition: 'center',
+        background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 55%, var(--color-accent) 100%)',
       }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,25,60,0.85)' }} />
         <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
           <div style={{ textAlign: 'center' }}>
             <img src="https://www.lfs-koeln.de/wp-content/uploads/2019/01/cropped-logo-wei%C3%9F-gro%C3%9F-1-192x192.png" alt="LFS Logo" style={{ height: '64px', width: 'auto', marginBottom: '16px', filter: 'brightness(0) invert(1)' }} />
-            <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)', marginBottom: '24px' }}>Erzb. Liebfrauenschule Köln</div>
-            <div style={{ fontSize: '24px', fontWeight: 500, color: '#fff' }}>Kleinanzeigen</div>
-            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', marginTop: '8px' }}>Der Schulmarktplatz</div>
+            <div style={{ fontSize: '14px', color: 'rgba(var(--color-bg-rgb),0.6)', marginBottom: '24px' }}>Erzb. Liebfrauenschule Köln</div>
+            <div style={{ fontSize: '24px', fontWeight: 500, color: 'var(--text-on-dark)' }}>Kleinanzeigen</div>
+            <div style={{ fontSize: '13px', color: 'rgba(var(--color-bg-rgb),0.5)', marginTop: '8px' }}>Der Schulmarktplatz</div>
           </div>
         </div>
       </div>
 
       <div className="mobile-only" style={{
         display: 'none',
-        background: '#1a3a6e',
-        backgroundImage: 'url(https://www.lfs-koeln.de/wp-content/uploads/2023/04/bienenvoelker2.jpg)',
-        backgroundSize: 'cover', backgroundPosition: 'center',
+        background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 55%, var(--color-accent) 100%)',
         padding: '32px 20px', textAlign: 'center', position: 'relative'
       }}>
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(10,25,60,0.85)' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
           <img src="https://www.lfs-koeln.de/wp-content/uploads/2019/01/cropped-logo-wei%C3%9F-gro%C3%9F-1-192x192.png" alt="LFS Logo" style={{ height: '44px', width: 'auto', marginBottom: '8px', filter: 'brightness(0) invert(1)' }} />
-          <div style={{ fontSize: '16px', fontWeight: 500, color: '#fff' }}>Kleinanzeigen</div>
+          <div style={{ fontSize: '16px', fontWeight: 500, color: 'var(--text-on-dark)' }}>Kleinanzeigen</div>
         </div>
       </div>
 
@@ -65,18 +59,18 @@ export default function LoginPage() {
       }}>
         <div className="desktop-only" style={{ width: '55%' }} />
         <div style={{ width: '100%', maxWidth: '420px' }}>
-          <h1 style={{ fontSize: '22px', fontWeight: 500, color: '#1a3a6e', marginBottom: '6px' }}>Anmelden</h1>
+          <h1 style={{ fontSize: '22px', fontWeight: 500, color: 'var(--color-primary)', marginBottom: '6px' }}>Anmelden</h1>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '28px' }}>Mit deinem Schulaccount einloggen</p>
 
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '13px', color: '#444', display: 'block', marginBottom: '6px', fontWeight: 500 }}>Benutzername</label>
+            <label style={{ fontSize: '13px', color: 'var(--text-primary)', display: 'block', marginBottom: '6px', fontWeight: 500 }}>Benutzername</label>
             <input type="text" value={username} onChange={e => setUsername(e.target.value)} className="input-modern"
               style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '12px 14px', color: 'var(--text-primary)', fontSize: '16px', outline: 'none', boxSizing: 'border-box' }}
               placeholder="z.B. 26kut" />
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ fontSize: '13px', color: '#444', display: 'block', marginBottom: '6px', fontWeight: 500 }}>Passwort</label>
+            <label style={{ fontSize: '13px', color: 'var(--text-primary)', display: 'block', marginBottom: '6px', fontWeight: 500 }}>Passwort</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleLogin()} className="input-modern"
               style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '12px 14px', color: 'var(--text-primary)', fontSize: '16px', outline: 'none', boxSizing: 'border-box' }}
@@ -84,19 +78,19 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="fade-in-up" style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', color: '#b91c1c', marginBottom: '16px' }}>
+            <div className="fade-in-up" style={{ background: 'var(--state-danger-bg)', border: '1px solid var(--state-danger-border)', borderRadius: '6px', padding: '10px 14px', fontSize: '13px', color: 'var(--state-danger)', marginBottom: '16px' }}>
               {error}
             </div>
           )}
 
           <button onClick={handleLogin} disabled={loading} className="btn-modern"
-            style={{ width: '100%', background: loading ? '#7a9ab8' : '#1a3a6e', color: '#fff', fontSize: '15px', fontWeight: 500, border: 'none', borderRadius: '6px', padding: '14px', cursor: 'pointer' }}>
+            style={{ width: '100%', background: loading ? 'var(--state-disabled)' : 'var(--color-primary)', color: 'var(--text-on-dark)', fontSize: '15px', fontWeight: 500, border: 'none', borderRadius: '6px', padding: '14px', cursor: 'pointer' }}>
             {loading ? 'Anmelden...' : 'Anmelden'}
           </button>
 
           <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)', marginTop: '16px' }}>
             Noch kein Account?{' '}
-            <Link href="/register" className="link-modern" style={{ color: '#1a3a6e', textDecoration: 'none', fontWeight: 500 }}>Registrieren</Link>
+            <Link href="/register" className="link-modern" style={{ color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 500 }}>Registrieren</Link>
           </p>
 
           <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-faint)', marginTop: '28px' }}>

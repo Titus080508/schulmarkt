@@ -28,9 +28,9 @@ export default function DeleteButton({ postId }: { postId: string }) {
         disabled={loading}
         style={{
           width: '100%',
-          background: confirm ? '#b91c1c' : '#fef2f2',
-          border: `1px solid ${confirm ? '#b91c1c' : '#fecaca'}`,
-          color: confirm ? '#fff' : '#b91c1c',
+          background: confirm ? 'var(--state-danger)' : 'var(--state-danger-bg)',
+          border: `1px solid ${confirm ? 'var(--state-danger)' : 'var(--state-danger-border)'}`,
+          color: confirm ? 'var(--text-on-dark)' : 'var(--state-danger)',
           fontSize: '13px',
           fontWeight: 500,
           borderRadius: '10px',
@@ -41,7 +41,7 @@ export default function DeleteButton({ postId }: { postId: string }) {
         {loading ? 'Wird gelöscht...' : confirm ? 'Wirklich löschen? (48h wiederherstellbar)' : '🗑️ Löschen'}
       </button>
       {error && (
-        <p style={{ fontSize: '11px', color: '#b91c1c', marginTop: '4px' }}>{error}</p>
+        <p style={{ fontSize: '11px', color: 'var(--state-danger)', marginTop: '4px' }}>{error}</p>
       )}
     </div>
   )
