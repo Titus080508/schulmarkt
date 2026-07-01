@@ -21,7 +21,7 @@
   --color-error-rgb: 185,28,28;
 
   --bg-page: var(--color-bg);
-  --bg-card: #FFFFFF;
+  --bg-card: #FAFAFA;
   --border-color: rgba(var(--color-primary-rgb),0.16);
   --border-light: rgba(var(--color-primary-rgb),0.08);
   --border-input: rgba(var(--color-primary-rgb),0.22);
@@ -67,7 +67,7 @@
      sm = ruhende Karten/Leisten, kleine Hover-Zustaende
      md = Hover-Anhebung von Karten/Buttons, verankerte Dropdowns
      lg = frei schwebende Overlays (Modals, grosse Panels) */
-  --shadow-xs: 0 2px 8px rgba(var(--color-primary-rgb), 0.10);
+  --shadow-xs: 0 1px 5px rgba(var(--color-primary-rgb), 0.08);
   --shadow-sm: 0 4px 12px rgba(var(--color-primary-rgb), 0.14);
   --shadow-md: 0 10px 24px rgba(var(--color-primary-rgb), 0.18);
   --shadow-lg: 0 20px 40px rgba(var(--color-primary-rgb), 0.24);
