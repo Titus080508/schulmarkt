@@ -267,7 +267,7 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
               </div>
             )}
           </div>
-          <div ref={freeRowRef} className="hide-scrollbar" style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollSnapType: 'x proximity', paddingBottom: '2px' }}>
+          <div ref={freeRowRef} className="hide-scrollbar" style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollSnapType: 'x proximity', padding: '14px 4px 28px 4px', margin: '-14px -4px -28px -4px' }}>
             {freeItems.map(post => (
               <Link key={post.id} href={`/post/${post.id}`} className="post-card-modern"
                 style={{ flexShrink: 0, width: '150px', scrollSnapAlign: 'start', textDecoration: 'none', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden', display: 'block' }}>
