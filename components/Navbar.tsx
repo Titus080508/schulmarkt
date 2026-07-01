@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
+import PushNotificationManager from './PushNotificationManager'
 
 function BellIcon({ size = 17, color = 'currentColor' }: { size?: number, color?: string }) {
   return (
@@ -180,6 +181,7 @@ export default function Navbar({ username }: { username?: string }) {
 
   return (
     <>
+      <PushNotificationManager />
       {needsConsent && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(var(--color-primary-rgb),0.7)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ maxWidth: '440px', width: '100%', background: 'var(--bg-card)', borderRadius: '10px', padding: '28px', boxShadow: 'var(--shadow-lg)' }}>
@@ -229,20 +231,21 @@ export default function Navbar({ username }: { username?: string }) {
               ) : (
                 <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                   {notifications.map(notif => {
-                    const typeStyle: Record<string, { icon: string; bg: string; border: string; color: string }> = {
-                      warning:  { icon: '⚠️', bg: 'var(--state-warning-bg)', border: 'var(--state-warning-border)', color: 'var(--state-warning)' },
-                      report:   { icon: '🔔', bg: 'var(--border-light)', border: 'var(--border-color)', color: 'var(--color-primary)' },
-                      offer:    { icon: '💬', bg: 'var(--state-success-bg)', border: 'var(--state-success-border)', color: 'var(--state-success)' },
-                      sold:     { icon: '✅', bg: 'var(--state-success-bg)', border: 'var(--state-success-border)', color: 'var(--state-success)' },
-                      delete:   { icon: '🗑️', bg: 'var(--state-danger-bg)', border: 'var(--state-danger-border)', color: 'var(--state-danger)' },
-                      announce: { icon: '📢', bg: 'var(--border-light)', border: 'var(--border-color)', color: 'var(--color-primary)' },
+                    const adminTypes = ['warning', 'report', 'delete', 'announce']
+                    const typeStyle: Record<string, { bg: string; border: string; color: string }> = {
+                      warning:  { bg: 'var(--state-danger-bg)', border: 'var(--state-danger-border)', color: 'var(--state-danger)' },
+                      report:   { bg: 'var(--state-danger-bg)', border: 'var(--state-danger-border)', color: 'var(--state-danger)' },
+                      offer:    { bg: 'var(--state-success-bg)', border: 'var(--state-success-border)', color: 'var(--state-success)' },
+                      sold:     { bg: 'var(--state-success-bg)', border: 'var(--state-success-border)', color: 'var(--state-success)' },
+                      delete:   { bg: 'var(--state-danger-bg)', border: 'var(--state-danger-border)', color: 'var(--state-danger)' },
+                      announce: { bg: 'var(--state-danger-bg)', border: 'var(--state-danger-border)', color: 'var(--state-danger)' },
                     }
-                    const ts = typeStyle[notif.type] || { icon: '•', bg: 'var(--bg-page)', border: 'var(--border-light)', color: 'var(--text-secondary)' }
+                    const ts = typeStyle[notif.type] || { bg: 'var(--bg-page)', border: 'var(--border-light)', color: 'var(--text-secondary)' }
                     return (
                       <div key={notif.id} onClick={() => { if (notif.link) router.push(notif.link); setNotifOpen(false) }} className="nav-menu-item"
                         style={{ padding: '9px 14px', borderBottom: '1px solid var(--border-light)', cursor: notif.link ? 'pointer' : 'default', background: notif.read ? 'transparent' : 'var(--bg-page)', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                        <span style={{ position: 'relative', flexShrink: 0, width: '32px', height: '32px', borderRadius: '8px', background: ts.bg, border: `1px solid ${ts.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>
-                          {ts.icon}
+                        <span style={{ position: 'relative', flexShrink: 0, width: '32px', height: '32px', borderRadius: '8px', background: ts.bg, border: `1px solid ${ts.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: ts.color }} />
                           {!notif.read && <span style={{ position: 'absolute', top: '2px', right: '2px', width: '6px', height: '6px', background: 'var(--color-accent)', borderRadius: '50%', border: '1px solid var(--bg-card)' }} />}
                         </span>
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -263,7 +266,9 @@ export default function Navbar({ username }: { username?: string }) {
             style={{ position: 'relative', width: '36px', height: '36px', background: 'transparent', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-on-dark)' }}>
             <ChatIcon size={17} />
             {unread > 0 && (
-              <div className="icon-badge-modern" style={{ position: 'absolute', top: '2px', right: '2px', width: '8px', height: '8px', background: 'var(--color-accent)', borderRadius: '50%', border: '2px solid var(--color-primary)' }} />
+              <div className="icon-badge-modern" style={{ position: 'absolute', top: '-4px', right: '-4px', minWidth: '16px', height: '16px', padding: '0 3px', background: 'var(--state-danger)', color: '#fff', borderRadius: '999px', border: '2px solid var(--color-primary)', fontSize: '10px', fontWeight: 700, lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {unread > 9 ? '9+' : unread}
+              </div>
             )}
           </button>
           {chatOpen && (

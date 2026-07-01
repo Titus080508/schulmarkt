@@ -21,7 +21,7 @@
   --color-error-rgb: 185,28,28;
 
   --bg-page: var(--color-bg);
-  --bg-card: var(--color-bg);
+  --bg-card: #FFFFFF;
   --border-color: rgba(var(--color-primary-rgb),0.16);
   --border-light: rgba(var(--color-primary-rgb),0.08);
   --border-input: rgba(var(--color-primary-rgb),0.22);
@@ -67,10 +67,24 @@
      sm = ruhende Karten/Leisten, kleine Hover-Zustaende
      md = Hover-Anhebung von Karten/Buttons, verankerte Dropdowns
      lg = frei schwebende Overlays (Modals, grosse Panels) */
-  --shadow-xs: 0 1px 3px rgba(var(--color-primary-rgb), 0.08);
+  --shadow-xs: 0 2px 8px rgba(var(--color-primary-rgb), 0.10);
   --shadow-sm: 0 4px 12px rgba(var(--color-primary-rgb), 0.14);
   --shadow-md: 0 10px 24px rgba(var(--color-primary-rgb), 0.18);
   --shadow-lg: 0 20px 40px rgba(var(--color-primary-rgb), 0.24);
+
+  /* Breite der Grid-/Listen-Seiten (Dashboard, Favoriten, Admin, Chat) -
+     waechst auf grossen Bildschirmen mit, statt bei 1100px starr zu bleiben
+     und riesige leere Raender zu erzeugen. Formular-/Lese-Seiten (Profil,
+     Rechtstexte, Login) bleiben bewusst bei ihrer festen, schmaleren Breite. */
+  --content-max: 1100px;
+}
+
+@media (min-width: 1440px) {
+  :root { --content-max: 1360px; }
+}
+
+@media (min-width: 1800px) {
+  :root { --content-max: 1600px; }
 }
 
 body {
@@ -442,7 +456,8 @@ main img {
   .hero-stats { display: flex !important; overflow-x: auto; gap: 8px !important; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .hero-stats::-webkit-scrollbar { display: none; }
   .hero-padding { padding: 20px 16px !important; }
-  .main-padding { padding: 12px !important; }
+  .main-padding { padding: 16px !important; }
+  .announce-padding { padding: 16px 16px 0 !important; }
   .create-layout { flex-direction: column !important; }
   .create-preview { position: static !important; width: 100% !important; order: -1; }
   .two-col-grid { grid-template-columns: 1fr !important; }

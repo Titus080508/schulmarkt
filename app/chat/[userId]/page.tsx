@@ -29,6 +29,9 @@ export default function ChatPage() {
   const [post, setPost] = useState<any>(null)
   const [myProfile, setMyProfile] = useState<any>(null)
   const [conversations, setConversations] = useState<any[]>([])
+  const [userSearch, setUserSearch] = useState('')
+  const [userSearchResults, setUserSearchResults] = useState<any[]>([])
+  const [searchingUsers, setSearchingUsers] = useState(false)
   const [blockedByMe, setBlockedByMe] = useState(false)
   const [blockedMe, setBlockedMe] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -162,6 +165,20 @@ export default function ChatPage() {
     setConversations(grouped)
   }
 
+  async function searchUsers(query: string, currentUserId: string) {
+    if (query.trim().length < 2) { setUserSearchResults([]); return }
+    setSearchingUsers(true)
+    const q = query.trim().replace(/[%_]/g, '')
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, username, display_name')
+      .neq('id', currentUserId)
+      .or(`username.ilike.%${q}%,display_name.ilike.%${q}%`)
+      .limit(8)
+    setUserSearchResults(data || [])
+    setSearchingUsers(false)
+  }
+
   useEffect(() => {
     let channelRef: any = null
 
@@ -232,6 +249,12 @@ export default function ChatPage() {
   }, [messages])
 
   useEffect(() => {
+    if (!me) return
+    const timeout = setTimeout(() => searchUsers(userSearch, me.id), 300)
+    return () => clearTimeout(timeout)
+  }, [userSearch, me])
+
+  useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false)
     }
@@ -251,6 +274,17 @@ export default function ChatPage() {
       post_id: postId || null,
       content
     })
+
+    fetch('/api/push/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        receiverId: userId,
+        title: `Neue Nachricht von ${myProfile?.display_name || myProfile?.username}`,
+        body: content,
+        url: `/chat/${me.id}`
+      })
+    }).catch(() => {})
   }
 
   const myDisplayName = myProfile?.display_name || myProfile?.username
@@ -261,7 +295,7 @@ export default function ChatPage() {
   return (
     <div style={{ height: '100vh', background: 'var(--bg-page)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <Navbar username={myDisplayName} />
-      <main className="chat-main" style={{ maxWidth: '1100px', margin: '0 auto', width: '100%', padding: '24px 20px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+      <main className="chat-main" style={{ maxWidth: 'var(--content-max)', margin: '0 auto', width: '100%', padding: '24px 20px', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
         <Link href="/dashboard" className="chat-back link-modern" style={{ fontSize: '13px', color: 'var(--color-primary)', textDecoration: 'none', marginBottom: '16px', display: 'inline-flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
           ← Zurück
         </Link>
@@ -270,13 +304,42 @@ export default function ChatPage() {
 
           <div className="desktop-only" style={{ width: '280px', flexShrink: 0, borderRight: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', background: 'var(--bg-card)', minHeight: 0 }}>
             <div style={{ padding: '18px 20px', borderBottom: '1px solid var(--border-light)' }}>
-              <p style={{ fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>Nachrichten</p>
+              <p style={{ fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 10px' }}>Nachrichten</p>
+              <input type="text" value={userSearch} onChange={e => setUserSearch(e.target.value)}
+                placeholder="Nutzer suchen..."
+                style={{ width: '100%', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '999px', padding: '8px 14px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
             </div>
             <div style={{ overflowY: 'auto', flex: 1 }}>
-              {conversations.length === 0 && (
-                <p style={{ textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px', padding: '24px' }}>Noch keine Unterhaltungen.</p>
-              )}
-              {conversations.map(conv => {
+              {userSearch.trim().length >= 2 ? (
+                <>
+                  {searchingUsers && (
+                    <p style={{ textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px', padding: '24px' }}>Suche...</p>
+                  )}
+                  {!searchingUsers && userSearchResults.length === 0 && (
+                    <p style={{ textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px', padding: '24px' }}>Keine Nutzer gefunden.</p>
+                  )}
+                  {userSearchResults.map(result => {
+                    const name = result.display_name || result.username
+                    return (
+                      <div key={result.id} onClick={() => { router.push(`/chat/${result.id}`); setUserSearch(''); setUserSearchResults([]) }} className="row-modern"
+                        style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 20px', cursor: 'pointer' }}>
+                        <div className="avatar-modern" style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 600, color: 'var(--color-primary)', flexShrink: 0 }}>
+                          {name?.[0]?.toUpperCase()}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</p>
+                          <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>@{result.username}</p>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </>
+              ) : (
+                <>
+                  {conversations.length === 0 && (
+                    <p style={{ textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px', padding: '24px' }}>Noch keine Unterhaltungen.</p>
+                  )}
+                  {conversations.map(conv => {
                 const active = conv.otherId === userId
                 return (
                   <div key={conv.otherId} onClick={() => router.push(`/chat/${conv.otherId}`)} className="row-modern"
@@ -303,6 +366,8 @@ export default function ChatPage() {
                   </div>
                 )
               })}
+                </>
+              )}
             </div>
           </div>
 

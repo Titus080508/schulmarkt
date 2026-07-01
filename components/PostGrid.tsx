@@ -227,7 +227,7 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
         </div>
       )}
 
-      <div className="grid-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px' }}>
+      <div className="grid-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '18px' }}>
         {visible.map((post, i) => {
           const catStyle = Object.fromEntries(
             CATEGORY_TAG_STYLE.split(';').filter(Boolean).map(s => s.split(':'))

@@ -65,6 +65,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
     .from('favorites').select('post_id').eq('user_id', user.id).eq('post_id', id).maybeSingle()
 
   const isOwn = post.seller_id === user.id
+  const isAdmin = !!profile?.is_admin
   const sellerDisplayName = post.profiles?.display_name || post.profiles?.username
   const extras = post.extras ? JSON.parse(post.extras) : {}
   const extrasEntries = Object.entries(extras).filter(([_, v]) => v)
@@ -115,6 +116,10 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
               <h1 style={{ fontSize: '26px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2, margin: 0 }}>{post.title}</h1>
 
+              <p style={{ fontSize: '12px', color: 'var(--text-faint)', margin: 0 }}>
+                Eingestellt am {new Date(post.created_at).toLocaleDateString('de-DE')} um {new Date(post.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr
+              </p>
+
               {post.description && (
                 <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{post.description}</p>
               )}
@@ -160,6 +165,14 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
               )}
               {isOwn && post.status === 'active' && (
                 <SoldButton postId={id} />
+              )}
+              {!isOwn && isAdmin && (
+                <div>
+                  <p style={{ fontSize: '11px', fontWeight: 600, color: 'var(--state-danger)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
+                    Admin-Aktion
+                  </p>
+                  <DeleteButton postId={id} />
+                </div>
               )}
             </div>
           </div>

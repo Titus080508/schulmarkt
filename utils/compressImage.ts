@@ -1,7 +1,7 @@
 export async function compressImage(file: File, maxDim = 1280, quality = 0.82): Promise<File> {
   if (!file.type.startsWith('image/') || file.type === 'image/gif') return file
 
-  const bitmap = await createImageBitmap(file)
+  const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
   const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height))
   const width = Math.round(bitmap.width * scale)
   const height = Math.round(bitmap.height * scale)

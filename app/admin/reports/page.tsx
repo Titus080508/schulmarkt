@@ -65,7 +65,7 @@ export default async function AdminReportsPage() {
     <>
       <Navbar username={profile?.display_name || profile?.username} />
       <main style={{ background: 'var(--bg-page)', minHeight: '100vh', padding: '24px 20px' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
             <Link href="/admin" style={{ fontSize: '13px', color: 'var(--color-primary)', textDecoration: 'none' }}>← Admin</Link>

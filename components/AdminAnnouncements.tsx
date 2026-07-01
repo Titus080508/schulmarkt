@@ -8,6 +8,7 @@ export default function AdminAnnouncements({ announcements }: { announcements: a
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [message, setMessage] = useState('')
+  const [pinned, setPinned] = useState(false)
   const [loading, setLoading] = useState(false)
   const [busyId, setBusyId] = useState<string | null>(null)
   const supabase = createClient()
@@ -18,14 +19,24 @@ export default function AdminAnnouncements({ announcements }: { announcements: a
     setLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
     const { data, error } = await supabase.from('announcements').insert({
-      title: title.trim(), message: message.trim(), created_by: user?.id
+      title: title.trim(), message: message.trim(), created_by: user?.id, pinned
     }).select().single()
     if (!error && data) {
       setList(prev => [data, ...prev])
-      setTitle(''); setMessage(''); setOpen(false)
+      setTitle(''); setMessage(''); setPinned(false); setOpen(false)
       router.refresh()
     }
     setLoading(false)
+  }
+
+  async function togglePinned(id: string, currentlyPinned: boolean) {
+    setBusyId(id)
+    const { error } = await supabase.from('announcements').update({ pinned: !currentlyPinned }).eq('id', id)
+    if (!error) {
+      setList(prev => prev.map(a => a.id === id ? { ...a, pinned: !currentlyPinned } : a))
+      router.refresh()
+    }
+    setBusyId(null)
   }
 
   async function toggleActive(id: string, active: boolean) {
@@ -65,6 +76,10 @@ export default function AdminAnnouncements({ announcements }: { announcements: a
             style={{ background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
           <textarea value={message} onChange={e => setMessage(e.target.value)} rows={3} placeholder="Nachricht für alle Nutzer..."
             style={{ background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '9px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box', resize: 'none' }} />
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+            <input type="checkbox" checked={pinned} onChange={e => setPinned(e.target.checked)} style={{ width: '15px', height: '15px', cursor: 'pointer' }} />
+            Anpinnen (Nutzer können sie nicht wegklicken)
+          </label>
           <button onClick={create} disabled={loading || !title.trim() || !message.trim()} className="btn-modern"
             style={{ alignSelf: 'flex-start', fontSize: '13px', fontWeight: 600, color: 'var(--text-on-dark)', background: 'var(--state-success)', border: 'none', borderRadius: '6px', padding: '8px 16px', cursor: 'pointer' }}>
             {loading ? 'Wird veröffentlicht...' : 'Veröffentlichen'}
@@ -84,11 +99,20 @@ export default function AdminAnnouncements({ announcements }: { announcements: a
                   <span style={{ fontSize: '10px', fontWeight: 600, padding: '2px 7px', borderRadius: '999px', background: a.active ? 'var(--state-success-bg)' : 'var(--bg-page)', color: a.active ? 'var(--state-success)' : 'var(--text-faint)' }}>
                     {a.active ? 'Aktiv' : 'Inaktiv'}
                   </span>
+                  {a.pinned && (
+                    <span style={{ fontSize: '10px', fontWeight: 600, padding: '2px 7px', borderRadius: '999px', background: 'var(--state-danger-bg)', color: 'var(--state-danger)' }}>
+                      Angepinnt
+                    </span>
+                  )}
                 </div>
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>{a.message}</p>
                 <p style={{ fontSize: '11px', color: 'var(--text-faint)', margin: '4px 0 0' }}>{new Date(a.created_at).toLocaleDateString('de-DE')}</p>
               </div>
               <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                <button onClick={() => togglePinned(a.id, a.pinned)} disabled={busyId === a.id}
+                  style={{ fontSize: '12px', color: a.pinned ? 'var(--state-danger)' : 'var(--text-secondary)', background: a.pinned ? 'var(--state-danger-bg)' : 'var(--bg-page)', border: `1px solid ${a.pinned ? 'var(--state-danger-border)' : 'var(--border-input)'}`, borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
+                  {a.pinned ? 'Lösen' : 'Anpinnen'}
+                </button>
                 <button onClick={() => toggleActive(a.id, a.active)} disabled={busyId === a.id}
                   style={{ fontSize: '12px', color: a.active ? 'var(--text-secondary)' : 'var(--state-success)', background: a.active ? 'var(--bg-page)' : 'var(--state-success-bg)', border: `1px solid ${a.active ? 'var(--border-input)' : 'var(--state-success-border)'}`, borderRadius: '4px', padding: '5px 10px', cursor: 'pointer' }}>
                   {a.active ? 'Deaktivieren' : 'Aktivieren'}

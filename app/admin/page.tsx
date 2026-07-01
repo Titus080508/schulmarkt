@@ -103,7 +103,7 @@ export default async function AdminPage() {
     <>
       <Navbar username={profile?.display_name || profile?.username} />
       <main style={{ background: 'var(--bg-page)', minHeight: '100vh', padding: '24px 20px' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
 
           <div style={{ background: 'var(--color-primary)', borderRadius: '10px', padding: '20px 24px', marginBottom: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
@@ -184,7 +184,7 @@ export default async function AdminPage() {
               <p style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>Zeitverlauf (letzte {DAYS} Tage)</p>
               <div style={{ display: 'flex', gap: '14px', fontSize: '11px', color: 'var(--text-muted)' }}>
                 <span><span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '2px', background: 'var(--color-primary)', marginRight: '5px' }} />Neue Inserate</span>
-                <span><span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '2px', background: 'var(--color-secondary)', marginRight: '5px' }} />Neue Nutzer</span>
+                <span><span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '2px', background: 'rgba(var(--color-primary-rgb),0.45)', marginRight: '5px' }} />Neue Nutzer</span>
               </div>
             </div>
             <div style={{ overflowX: 'auto' }}>
@@ -200,7 +200,7 @@ export default async function AdminPage() {
                     {dayKeys.map(k => (
                       <div key={k} style={{ flex: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '2px', height: '100%' }} title={`${k}: ${postsPerDay[k]} Inserate, ${usersPerDay[k]} Nutzer`}>
                         <div style={{ width: '40%', height: `${(postsPerDay[k] / maxDayCount) * 100}%`, minHeight: postsPerDay[k] > 0 ? '3px' : 0, background: 'var(--color-primary)', borderRadius: '2px 2px 0 0' }} />
-                        <div style={{ width: '40%', height: `${(usersPerDay[k] / maxDayCount) * 100}%`, minHeight: usersPerDay[k] > 0 ? '3px' : 0, background: 'var(--color-secondary)', borderRadius: '2px 2px 0 0' }} />
+                        <div style={{ width: '40%', height: `${(usersPerDay[k] / maxDayCount) * 100}%`, minHeight: usersPerDay[k] > 0 ? '3px' : 0, background: 'rgba(var(--color-primary-rgb),0.45)', borderRadius: '2px 2px 0 0' }} />
                       </div>
                     ))}
                   </div>

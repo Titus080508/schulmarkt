@@ -13,10 +13,20 @@ const categoryLabel: Record<string, string> = {
 export default function AdminPostsTable({ posts }: { posts: any[] }) {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [busy, setBusy] = useState(false)
+  const [search, setSearch] = useState('')
   const supabase = createClient()
   const router = useRouter()
 
-  const allSelected = posts.length > 0 && selected.size === posts.length
+  const query = search.trim().toLowerCase()
+  const filteredPosts = query
+    ? posts.filter(p =>
+        p.title.toLowerCase().includes(query) ||
+        (p.profiles?.username || '').toLowerCase().includes(query) ||
+        (p.profiles?.display_name || '').toLowerCase().includes(query)
+      )
+    : posts
+
+  const allSelected = filteredPosts.length > 0 && filteredPosts.every(p => selected.has(p.id))
 
   function toggleOne(id: string) {
     setSelected(prev => {
@@ -27,7 +37,7 @@ export default function AdminPostsTable({ posts }: { posts: any[] }) {
   }
 
   function toggleAll() {
-    setSelected(allSelected ? new Set() : new Set(posts.map(p => p.id)))
+    setSelected(allSelected ? new Set() : new Set(filteredPosts.map(p => p.id)))
   }
 
   async function bulkDelete() {
@@ -57,8 +67,15 @@ export default function AdminPostsTable({ posts }: { posts: any[] }) {
             </button>
           </div>
         ) : (
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{posts.length} gesamt</span>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+            {query ? `${filteredPosts.length} von ${posts.length}` : `${posts.length} gesamt`}
+          </span>
         )}
+      </div>
+      <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--border-color)' }}>
+        <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+          placeholder="Inserate nach Titel oder Verkäufer suchen..."
+          style={{ width: '100%', background: 'var(--bg-page)', border: '1px solid var(--border-input)', borderRadius: '6px', padding: '8px 12px', fontSize: '13px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }} />
       </div>
       <div style={{ maxHeight: '480px', overflowY: 'auto', overflowX: 'auto' }}>
         <table style={{ width: '100%', minWidth: '680px', borderCollapse: 'collapse' }}>
@@ -73,7 +90,7 @@ export default function AdminPostsTable({ posts }: { posts: any[] }) {
             </tr>
           </thead>
           <tbody>
-            {posts.map(post => (
+            {filteredPosts.map(post => (
               <tr key={post.id} className="row-modern" style={{ borderTop: '1px solid var(--border-light)', background: selected.has(post.id) ? 'var(--bg-page)' : 'transparent' }}>
                 <td style={{ padding: '12px' }}>
                   <input type="checkbox" checked={selected.has(post.id)} onChange={() => toggleOne(post.id)} style={{ width: '15px', height: '15px', cursor: 'pointer' }} />

@@ -30,7 +30,7 @@ export default async function FavoritesPage() {
     <>
       <Navbar username={profile?.display_name || profile?.username} />
       <main style={{ background: 'var(--bg-page)', minHeight: '100vh', padding: '24px 20px' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+        <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
           <h1 style={{ fontSize: '22px', fontWeight: 500, color: 'var(--color-primary)', marginBottom: '4px' }}>Meine Favoriten</h1>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>{postIds.length} gespeicherte Artikel</p>
 

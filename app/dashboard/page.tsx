@@ -49,7 +49,7 @@ export default async function DashboardPage() {
           background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 55%, var(--color-accent) 100%)',
           padding: '30px 24px', position: 'relative', overflow: 'hidden'
         }}>
-          <div className="hero-inner" style={{ position: 'relative', zIndex: 1, maxWidth: '1100px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div className="hero-inner" style={{ position: 'relative', zIndex: 1, maxWidth: 'var(--content-max)', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
             <div className="fade-in-up" style={{ animationDelay: '0ms' }}>
               <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(var(--color-bg-rgb),0.1)', border: '1px solid rgba(var(--color-bg-rgb),0.25)', color: 'var(--text-on-dark)', fontSize: '11px', padding: '3px 10px', borderRadius: '4px', marginBottom: '10px', letterSpacing: '0.04em' }}>
                 Erzb. Liebfrauenschule Köln
@@ -80,8 +80,10 @@ export default async function DashboardPage() {
 
         <AnnouncementBanner announcements={announcements || []} />
 
-        <div className="main-padding" style={{ maxWidth: '1100px', margin: '0 auto', padding: '24px 20px' }}>
-          <PostGrid posts={posts || []} currentUserId={user.id} initialFavoriteIds={favorites?.map(f => f.post_id) || []} />
+        <div className="main-padding" style={{ padding: '24px' }}>
+          <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
+            <PostGrid posts={posts || []} currentUserId={user.id} initialFavoriteIds={favorites?.map(f => f.post_id) || []} />
+          </div>
         </div>
       </main>
       <Footer />
