@@ -13,8 +13,8 @@ export default function PushNotificationManager() {
   const supabase = createClient()
 
   useEffect(() => {
-    const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-    if (!vapidKey || !('serviceWorker' in navigator) || !('PushManager' in window)) return
+    if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || !('serviceWorker' in navigator) || !('PushManager' in window)) return
+    const vapidKey: string = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
 
     async function subscribe() {
       if (Notification.permission === 'denied') return
