@@ -6,7 +6,7 @@ import DeleteButton from '@/components/DeleteButton'
 import Footer from '@/components/Footer'
 import SoldButton from '@/components/SoldButton'
 import CategoryIcon from '@/components/CategoryIcon'
-import { CATEGORY_BG } from '@/utils/categoryStyle'
+import { categoryPlaceholderBg, CATEGORY_ICON_OPACITY } from '@/utils/categoryStyle'
 
 const categoryLabel: Record<string, string> = {
   calculator: 'Taschenrechner',
@@ -76,10 +76,10 @@ export default async function MyPostsPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px', marginBottom: '32px' }}>
                 {active.map((post, i) => (
                   <div key={post.id} className="card-modern fade-in-up" style={{ ...cardStyle(post.status), animationDelay: `${Math.min(i, 12) * 60}ms` }}>
-                    <div className="thumb-modern" style={{ aspectRatio: '4/3', background: CATEGORY_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                    <div className="thumb-modern" style={{ aspectRatio: '4/3', background: categoryPlaceholderBg(post.category), display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                       {post.image_url
                         ? <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        : <CategoryIcon category={post.category} size={32} color="var(--text-faint)" />
+                        : <span style={{ opacity: CATEGORY_ICON_OPACITY }}><CategoryIcon category={post.category} size={42} color="var(--tag-color)" /></span>
                       }
                       <span style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '10px', fontWeight: 500, padding: '2px 8px', borderRadius: '3px', background: 'var(--tag-bg)', color: 'var(--tag-color)' }}>
                         {categoryLabel[post.category]}

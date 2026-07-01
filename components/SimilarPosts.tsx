@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import CategoryIcon from './CategoryIcon'
-import { CATEGORY_BG } from '@/utils/categoryStyle'
+import { categoryPlaceholderBg, CATEGORY_ICON_OPACITY } from '@/utils/categoryStyle'
 
 export default async function SimilarPosts({ postId, category }: { postId: string, category: string }) {
   const supabase = await createClient()
@@ -29,10 +29,10 @@ export default async function SimilarPosts({ postId, category }: { postId: strin
         {posts.map((post, i) => (
           <Link key={post.id} href={`/post/${post.id}`} className="post-card-modern"
             style={{ animationDelay: `${i * 60}ms`, textDecoration: 'none', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden', display: 'block' }}>
-            <div className="post-image-modern" style={{ aspectRatio: '4/3', background: CATEGORY_BG, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="post-image-modern" style={{ aspectRatio: '4/3', background: categoryPlaceholderBg(post.category), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {post.image_url
                 ? <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                : <CategoryIcon category={post.category} size={28} color="var(--text-faint)" />
+                : <span style={{ opacity: CATEGORY_ICON_OPACITY }}><CategoryIcon category={post.category} size={38} color="var(--tag-color)" /></span>
               }
             </div>
             <div style={{ padding: '10px 12px' }}>

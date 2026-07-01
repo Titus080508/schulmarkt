@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import CategoryIcon from './CategoryIcon'
+import { CATEGORY_ICON_OPACITY } from '@/utils/categoryStyle'
 
 interface Props {
   images: string[]
@@ -14,7 +15,7 @@ export default function ImageGallery({ images, fallbackBg, fallbackCategory }: P
   if (images.length === 0) {
     return (
       <div style={{ background: fallbackBg || 'var(--color-bg)', border: '1px solid var(--border-color)', borderRadius: '10px', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <CategoryIcon category={fallbackCategory} size={64} color="var(--text-faint)" />
+        <span style={{ opacity: CATEGORY_ICON_OPACITY }}><CategoryIcon category={fallbackCategory} size={88} color="var(--tag-color)" /></span>
       </div>
     )
   }

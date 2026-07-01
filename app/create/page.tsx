@@ -34,6 +34,7 @@ export default function CreatePostPage() {
   const [previews, setPreviews]     = useState<string[]>([])
   const [loading, setLoading]       = useState(false)
   const [error, setError]           = useState('')
+  const [showNoImageConfirm, setShowNoImageConfirm] = useState(false)
 
   // Taschenrechner
   const [akkuKap, setAkkuKap]           = useState('')
@@ -91,7 +92,14 @@ export default function CreatePostPage() {
     setShowFreeHint(!isFree && value !== '' && !isNaN(num) && num > 0 && num < 0.5)
   }
 
+  function handleCreateClick() {
+    if (!title || (!isFree && !price)) { setError('Titel und Preis sind Pflichtfelder'); return }
+    if (images.length === 0) { setShowNoImageConfirm(true); return }
+    handleCreate()
+  }
+
   async function handleCreate() {
+    setShowNoImageConfirm(false)
     if (!title || (!isFree && !price)) { setError('Titel und Preis sind Pflichtfelder'); return }
     setLoading(true); setError('')
 
@@ -385,6 +393,9 @@ export default function CreatePostPage() {
               )}
             </div>
             <input id="file-input" type="file" accept="image/*" multiple onChange={handleImages} style={{ display: 'none' }} />
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px' }}>
+              Inserate mit Fotos werden deutlich häufiger angeklickt und schneller verkauft.
+            </p>
           </div>
 
           {error && (
@@ -398,7 +409,7 @@ export default function CreatePostPage() {
               style={{ flex: 1, background: 'var(--bg-page)', border: '1px solid var(--border-input)', color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 500, borderRadius: '6px', padding: '12px', cursor: 'pointer' }}>
               Abbrechen
             </button>
-            <button onClick={handleCreate} disabled={loading} className="btn-modern"
+            <button onClick={handleCreateClick} disabled={loading} className="btn-modern"
               style={{ flex: 1, background: loading ? 'var(--state-disabled)' : 'var(--color-primary)', color: 'var(--text-on-dark)', fontSize: '14px', fontWeight: 600, border: 'none', borderRadius: '6px', padding: '12px', cursor: loading ? 'default' : 'pointer' }}>
               {loading ? 'Wird erstellt...' : 'Veröffentlichen'}
             </button>
@@ -418,6 +429,27 @@ export default function CreatePostPage() {
         </div>
         </div>
       </main>
+
+      {showNoImageConfirm && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(var(--color-primary-rgb),0.5)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div className="fade-in-up" style={{ maxWidth: '380px', width: '100%', background: 'var(--bg-card)', borderRadius: '10px', padding: '24px', boxShadow: 'var(--shadow-lg)' }}>
+            <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-primary)', marginBottom: '10px' }}>Ohne Foto veröffentlichen?</h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>
+              Inserate mit Fotos werden deutlich häufiger angeklickt und schneller verkauft. Möchtest du trotzdem ohne Bild fortfahren?
+            </p>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={() => setShowNoImageConfirm(false)} className="btn-modern"
+                style={{ flex: 1, background: 'var(--bg-page)', border: '1px solid var(--border-input)', color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500, borderRadius: '6px', padding: '10px', cursor: 'pointer' }}>
+                Bild hinzufügen
+              </button>
+              <button onClick={handleCreate} disabled={loading} className="btn-modern"
+                style={{ flex: 1, background: loading ? 'var(--state-disabled)' : 'var(--color-primary)', color: 'var(--text-on-dark)', fontSize: '13px', fontWeight: 600, border: 'none', borderRadius: '6px', padding: '10px', cursor: loading ? 'default' : 'pointer' }}>
+                {loading ? 'Wird erstellt...' : 'Trotzdem veröffentlichen'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

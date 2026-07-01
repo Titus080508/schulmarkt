@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/client'
 import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import CategoryIcon from '@/components/CategoryIcon'
-import { CATEGORY_BG } from '@/utils/categoryStyle'
+import { categoryPlaceholderBg, CATEGORY_ICON_OPACITY } from '@/utils/categoryStyle'
 
 function formatDay(ts: string) {
   const d = new Date(ts)
@@ -447,10 +447,10 @@ export default function ChatPage() {
 
             {post && (
               <Link href={`/post/${post.id}`} className="card-modern" style={{ textDecoration: 'none', margin: '12px 20px 0', background: 'var(--bg-page)', borderRadius: '10px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-                <div className="thumb-modern" style={{ width: '44px', height: '44px', borderRadius: '6px', background: CATEGORY_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                <div className="thumb-modern" style={{ width: '44px', height: '44px', borderRadius: '6px', background: categoryPlaceholderBg(post.category), display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
                   {post.image_url
                     ? <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    : <CategoryIcon category={post.category} size={20} color="var(--text-faint)" />
+                    : <span style={{ opacity: CATEGORY_ICON_OPACITY }}><CategoryIcon category={post.category} size={24} color="var(--tag-color)" /></span>
                   }
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>

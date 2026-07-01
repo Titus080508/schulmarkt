@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import Footer from '@/components/Footer'
 import CategoryIcon from '@/components/CategoryIcon'
-import { CATEGORY_BG } from '@/utils/categoryStyle'
+import { categoryPlaceholderBg, CATEGORY_ICON_OPACITY } from '@/utils/categoryStyle'
 
 const categoryLabel: Record<string, string> = {
   calculator: 'Taschenrechner', lfs_shirt: 'LFS Sportshirt', clothing: 'Klamotten',
@@ -216,10 +216,10 @@ export default function ProfilePage() {
               {recentPosts.map(post => (
                 <Link key={post.id} href={`/post/${post.id}`} className="post-card-modern"
                   style={{ textDecoration: 'none', background: 'var(--bg-page)', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden', display: 'block' }}>
-                  <div className="post-image-modern" style={{ aspectRatio: '4/3', background: CATEGORY_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                  <div className="post-image-modern" style={{ aspectRatio: '4/3', background: categoryPlaceholderBg(post.category), display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                     {post.image_url
                       ? <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <CategoryIcon category={post.category} size={28} color="var(--text-faint)" />
+                      : <span style={{ opacity: CATEGORY_ICON_OPACITY }}><CategoryIcon category={post.category} size={38} color="var(--tag-color)" /></span>
                     }
                     {post.status === 'sold' && (
                       <span style={{ position: 'absolute', top: '6px', right: '6px', background: 'var(--state-success)', color: 'var(--text-on-dark)', fontSize: '9px', fontWeight: 600, padding: '2px 7px', borderRadius: '999px' }}>Verkauft</span>

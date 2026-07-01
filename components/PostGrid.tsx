@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
-import { CATEGORY_TAG_STYLE, CATEGORY_BG } from '@/utils/categoryStyle'
+import { CATEGORY_TAG_STYLE, categoryPlaceholderBg, CATEGORY_ICON_OPACITY } from '@/utils/categoryStyle'
 import CategoryIcon from './CategoryIcon'
 
 function SearchIcon({ size = 14, color = 'currentColor' }: { size?: number, color?: string }) {
@@ -236,10 +236,10 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
           return (
             <Link key={post.id} href={`/post/${post.id}`} className="post-card-modern"
               style={{ animationDelay: `${Math.min(i, 12) * 60}ms`, textDecoration: 'none', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden', display: 'block' }}>
-              <div className="post-image-modern" style={{ aspectRatio: '4/3', background: CATEGORY_BG, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              <div className="post-image-modern" style={{ aspectRatio: '4/3', background: categoryPlaceholderBg(post.category), display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                 {post.image_url
                   ? <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : <CategoryIcon category={post.category} size={36} color="var(--text-faint)" />
+                  : <span style={{ opacity: CATEGORY_ICON_OPACITY }}><CategoryIcon category={post.category} size={48} color="var(--tag-color)" /></span>
                 }
                 <span style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '10px', fontWeight: 500, padding: '3px 8px', borderRadius: '3px', ...catStyle }}>
                   {categoryLabel[post.category]}

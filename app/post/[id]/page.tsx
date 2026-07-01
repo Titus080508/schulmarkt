@@ -9,7 +9,7 @@ import SimilarPosts from '@/components/SimilarPosts'
 import Footer from '@/components/Footer'
 import SoldButton from '@/components/SoldButton'
 import FavoriteButton from '@/components/FavoriteButton'
-import { CATEGORY_TAG_STYLE, CATEGORY_BG } from '@/utils/categoryStyle'
+import { CATEGORY_TAG_STYLE, categoryPlaceholderBg } from '@/utils/categoryStyle'
 
 const categoryLabel: Record<string, string> = {
   calculator: 'Taschenrechner',
@@ -91,7 +91,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
           <div className="detail-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }}>
             <div className="fade-in-up">
-              <ImageGallery images={allImages} fallbackBg={CATEGORY_BG} fallbackCategory={post.category} />
+              <ImageGallery images={allImages} fallbackBg={categoryPlaceholderBg(post.category)} fallbackCategory={post.category} />
             </div>
 
             <div className="fade-in-up" style={{ animationDelay: '90ms', display: 'flex', flexDirection: 'column', gap: '16px' }}>
