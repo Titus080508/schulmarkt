@@ -30,6 +30,23 @@ function HeartIcon({ size = 14, filled = false, color = 'currentColor' }: { size
   )
 }
 
+function ChevronIcon({ size = 14, direction = 'left', color = 'currentColor' }: { size?: number, direction?: 'left' | 'right', color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d={direction === 'left' ? 'M15 18l-6-6 6-6' : 'M9 18l6-6-6-6'} />
+    </svg>
+  )
+}
+
+function UserIcon({ size = 12, color = 'currentColor' }: { size?: number, color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" />
+    </svg>
+  )
+}
+
 const categoryLabel: Record<string, string> = {
   calculator: 'Taschenrechner',
   lfs_shirt: 'LFS Sportshirt',
@@ -56,6 +73,11 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
   const [searchFocused, setSearchFocused] = useState(false)
   const supabase = createClient()
   const filterRef = useRef<HTMLDivElement>(null)
+  const freeRowRef = useRef<HTMLDivElement>(null)
+
+  function scrollFreeRow(dir: 'left' | 'right') {
+    freeRowRef.current?.scrollBy({ left: dir === 'left' ? -320 : 320, behavior: 'smooth' })
+  }
 
   useEffect(() => { setPage(1) }, [filter, sort, search, minPrice, maxPrice, onlyWithImage, onlyFree])
 
@@ -109,6 +131,11 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
 
   const visible = filtered.slice(0, page * PAGE_SIZE)
   const hasMore = visible.length < filtered.length
+
+  const showFreeRow = filter === 'all' && !search && activeAdvancedCount === 0
+  const freeItems = showFreeRow
+    ? [...posts].filter(p => p.price === 0).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 8)
+    : []
 
   return (
     <>
@@ -221,10 +248,55 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
         </div>
       </div>
 
+      {freeItems.length > 0 && (
+        <div style={{ marginBottom: '24px', position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+            <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>
+              Zu verschenken
+            </p>
+            {freeItems.length > 2 && (
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button onClick={() => scrollFreeRow('left')} aria-label="Nach links scrollen"
+                  style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ChevronIcon size={13} direction="left" />
+                </button>
+                <button onClick={() => scrollFreeRow('right')} aria-label="Nach rechts scrollen"
+                  style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ChevronIcon size={13} direction="right" />
+                </button>
+              </div>
+            )}
+          </div>
+          <div ref={freeRowRef} className="hide-scrollbar" style={{ display: 'flex', gap: '10px', overflowX: 'auto', scrollSnapType: 'x proximity', paddingBottom: '2px' }}>
+            {freeItems.map(post => (
+              <Link key={post.id} href={`/post/${post.id}`} className="post-card-modern"
+                style={{ flexShrink: 0, width: '150px', scrollSnapAlign: 'start', textDecoration: 'none', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px', overflow: 'hidden', display: 'block' }}>
+                <div style={{ aspectRatio: '4/3', background: categoryPlaceholderBg(post.category), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {post.image_url
+                    ? <img src={post.image_url} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : <span style={{ opacity: CATEGORY_ICON_OPACITY }}><CategoryIcon category={post.category} size={36} color="var(--tag-color)" /></span>
+                  }
+                </div>
+                <div style={{ padding: '8px 10px' }}>
+                  <p style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{post.title}</p>
+                  <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--state-success)', background: 'var(--state-success-bg)', padding: '2px 7px', borderRadius: '4px' }}>Verschenken</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {filtered.length === 0 && (
         <div style={{ textAlign: 'center', padding: '60px 20px' }}>
           <p style={{ fontSize: '14px', color: 'var(--text-faint)' }}>Keine Inserate gefunden.</p>
         </div>
+      )}
+
+      {filtered.length > 0 && (
+        <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '10px' }}>
+          Neueste Anzeigen
+        </p>
       )}
 
       <div className="grid-mobile" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '18px' }}>
@@ -253,14 +325,15 @@ export default function PostGrid({ posts, currentUserId, initialFavoriteIds = []
               </div>
               <div style={{ padding: '10px 12px', borderTop: '1px solid var(--border-light)' }}>
                 <p style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{post.title}</p>
-                <p style={{ fontSize: '11px', color: 'var(--text-faint)', marginBottom: '6px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{post.description}</p>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
-                  {post.price === 0
-                    ? <span className="post-price-modern" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--state-success)', background: 'var(--state-success-bg)', padding: '3px 8px', borderRadius: '4px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>Verschenken</span>
-                    : <span className="post-price-modern" style={{ fontSize: '15px', fontWeight: 500, color: 'var(--color-primary)', flexShrink: 0 }}>{post.price.toFixed(2)} €</span>
-                  }
-                  <span style={{ fontSize: '10px', color: 'var(--text-faint)', background: 'var(--bg-page)', padding: '2px 7px', borderRadius: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{post.profiles?.display_name || post.profiles?.username}</span>
-                </div>
+                <p style={{ fontSize: '11px', color: 'var(--text-faint)', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{post.description}</p>
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <UserIcon size={11} color="var(--text-faint)" />
+                  von {post.profiles?.display_name || post.profiles?.username}
+                </p>
+                {post.price === 0
+                  ? <span className="post-price-modern" style={{ fontSize: '11px', fontWeight: 600, color: 'var(--state-success)', background: 'var(--state-success-bg)', padding: '3px 8px', borderRadius: '4px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Verschenken</span>
+                  : <span className="post-price-modern" style={{ fontSize: '15px', fontWeight: 500, color: 'var(--color-primary)', display: 'block' }}>{post.price.toFixed(2)} €</span>
+                }
               </div>
             </Link>
           )

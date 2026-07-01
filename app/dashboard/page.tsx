@@ -47,18 +47,18 @@ export default async function DashboardPage() {
       <main style={{ background: 'var(--bg-page)', minHeight: '100vh' }}>
         <div className="hero-padding" style={{
           background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 55%, var(--color-accent) 100%)',
-          padding: '30px 24px', position: 'relative', overflow: 'hidden'
+          padding: '22px 24px', position: 'relative', overflow: 'hidden'
         }}>
           <div className="hero-inner" style={{ position: 'relative', zIndex: 1, maxWidth: 'var(--content-max)', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
             <div className="fade-in-up" style={{ animationDelay: '0ms' }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(var(--color-bg-rgb),0.1)', border: '1px solid rgba(var(--color-bg-rgb),0.25)', color: 'var(--text-on-dark)', fontSize: '11px', padding: '3px 10px', borderRadius: '4px', marginBottom: '10px', letterSpacing: '0.04em' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(var(--color-bg-rgb),0.1)', border: '1px solid rgba(var(--color-bg-rgb),0.25)', color: 'var(--text-on-dark)', fontSize: '11px', padding: '3px 10px', borderRadius: '4px', marginBottom: '8px', letterSpacing: '0.04em' }}>
                 Erzb. Liebfrauenschule Köln
               </div>
-              <h2 style={{ fontSize: '20px', fontWeight: 500, color: 'var(--text-on-dark)', marginBottom: '4px' }}>Hallo, {profile?.display_name || profile?.username}</h2>
-              <p style={{ fontSize: '13px', color: 'rgba(var(--color-bg-rgb),0.7)', marginBottom: '16px', maxWidth: '400px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 500, color: 'var(--text-on-dark)', marginBottom: '3px' }}>Hallo, {profile?.display_name || profile?.username}</h2>
+              <p style={{ fontSize: '12px', color: 'rgba(var(--color-bg-rgb),0.7)', marginBottom: '12px', maxWidth: '400px' }}>
                 Kaufe und verkaufe Artikel von Mitschülern.
               </p>
-              <a href="/create" className="hero-cta-modern" style={{ background: 'var(--color-bg)', color: 'var(--color-primary)', fontSize: '14px', fontWeight: 700, border: 'none', borderRadius: '4px', padding: '12px 24px', textDecoration: 'none', display: 'inline-block', boxShadow: 'var(--shadow-md)' }}>
+              <a href="/create" className="hero-cta-modern" style={{ background: 'var(--color-bg)', color: 'var(--color-primary)', fontSize: '13px', fontWeight: 700, border: 'none', borderRadius: '4px', padding: '10px 20px', textDecoration: 'none', display: 'inline-block', boxShadow: 'var(--shadow-md)' }}>
                 + Artikel einstellen
               </a>
             </div>
@@ -69,8 +69,8 @@ export default async function DashboardPage() {
                 { num: myListingsCount, label: 'Meine Anzeigen' },
                 { num: unreadMessages || 0, label: 'Nachrichten', highlight: (unreadMessages || 0) > 0 },
               ].map((s, i) => (
-                <div key={s.label} className="stat-card-modern" style={{ animationDelay: `${i * 70}ms`, textAlign: 'center', background: 'rgba(var(--color-bg-rgb),0.08)', border: '1px solid rgba(var(--color-bg-rgb),0.15)', borderRadius: '8px', padding: '12px 16px' }}>
-                  <div style={{ fontSize: '22px', fontWeight: 500, color: s.highlight ? 'var(--color-accent-on-dark)' : 'rgba(var(--color-bg-rgb),0.92)' }}>{s.num}</div>
+                <div key={s.label} className="stat-card-modern" style={{ animationDelay: `${i * 70}ms`, textAlign: 'center', background: 'rgba(var(--color-bg-rgb),0.08)', border: '1px solid rgba(var(--color-bg-rgb),0.15)', borderRadius: '8px', padding: '10px 14px' }}>
+                  <div style={{ fontSize: '19px', fontWeight: 500, color: s.highlight ? 'var(--color-accent-on-dark)' : 'rgba(var(--color-bg-rgb),0.92)' }}>{s.num}</div>
                   <div style={{ fontSize: '11px', color: 'rgba(var(--color-bg-rgb),0.6)', marginTop: '2px' }}>{s.label}</div>
                 </div>
               ))}

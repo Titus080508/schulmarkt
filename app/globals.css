@@ -447,6 +447,15 @@ main img {
   }
 }
 
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Mobile Responsive */
 @media (max-width: 640px) {
   .desktop-only { display: none !important; }
@@ -455,7 +464,7 @@ main img {
   .detail-grid { grid-template-columns: 1fr !important; }
   .hero-stats { display: flex !important; overflow-x: auto; gap: 8px !important; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .hero-stats::-webkit-scrollbar { display: none; }
-  .hero-padding { padding: 20px 16px !important; }
+  .hero-padding { padding: 16px 16px !important; }
   .main-padding { padding: 16px !important; }
   .announce-padding { padding: 16px 16px 0 !important; }
   .create-layout { flex-direction: column !important; }

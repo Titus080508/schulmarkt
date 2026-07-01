@@ -107,13 +107,17 @@ export default function Navbar({ username }: { username?: string }) {
       setUnread(unreadCount)
     }
 
+    await loadNotifications(user.id)
+  }
+
+  async function loadNotifications(userId: string) {
     const { data: notifs } = await supabase
-      .from('notifications').select('*').eq('user_id', user.id)
-      .order('created_at', { ascending: false }).limit(10)
+      .from('notifications').select('*').eq('user_id', userId).eq('read', false)
+      .order('created_at', { ascending: false }).limit(20)
 
     if (notifs) {
       setNotifications(notifs)
-      setUnreadNotifs(notifs.filter(n => !n.read).length)
+      setUnreadNotifs(notifs.length)
     }
   }
 
@@ -213,7 +217,15 @@ export default function Navbar({ username }: { username?: string }) {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <div style={{ position: 'relative' }} ref={notifRef}>
-          <button onClick={() => { setNotifOpen(!notifOpen); if (!notifOpen) markNotifsRead() }} className="icon-btn-modern"
+          <button onClick={async () => {
+              const opening = !notifOpen
+              setNotifOpen(opening)
+              if (opening) {
+                const { data: { user } } = await supabase.auth.getUser()
+                if (user) await loadNotifications(user.id)
+                markNotifsRead()
+              }
+            }} className="icon-btn-modern"
             style={{ position: 'relative', width: '36px', height: '36px', background: 'transparent', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-on-dark)' }}>
             <BellIcon size={17} />
             {unreadNotifs > 0 && (
@@ -221,15 +233,15 @@ export default function Navbar({ username }: { username?: string }) {
             )}
           </button>
           {notifOpen && (
-            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', width: 'min(280px, calc(100vw - 16px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--shadow-lg)', zIndex: 100, overflow: 'hidden' }}>
-              <div style={{ padding: '11px 14px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="dropdown-pop" style={{ position: 'fixed', top: '64px', right: '12px', maxHeight: 'calc(100vh - 80px)', width: 'min(280px, calc(100vw - 16px))', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--shadow-lg)', zIndex: 100, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <div style={{ padding: '11px 14px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
                 <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>Benachrichtigungen</span>
                 {unreadNotifs > 0 && <span style={{ fontSize: '11px', background: 'var(--state-danger-bg)', color: 'var(--state-danger)', padding: '1px 7px', borderRadius: '999px', fontWeight: 600 }}>{unreadNotifs} neu</span>}
               </div>
               {notifications.length === 0 ? (
                 <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-faint)', fontSize: '13px' }}>Keine Benachrichtigungen</div>
               ) : (
-                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
                   {notifications.map(notif => {
                     const adminTypes = ['warning', 'report', 'delete', 'announce']
                     const typeStyle: Record<string, { bg: string; border: string; color: string }> = {
